@@ -68,7 +68,14 @@ export interface Annotation {
   size: number
   text?: string
   points?: number[]
+  cx?: number // quadratic control point — present only on curved arrows
+  cy?: number
+  heads?: ArrowHeads
+  dashed?: boolean
 }
+
+export type ArrowHeads = 'end' | 'both' | 'none'
+export interface StrokeOpts { curve: boolean; heads: ArrowHeads; dashed: boolean }
 
 export const GRADIENTS: { name: string; colors: string[]; angle: number }[] = [
   { name: 'Ember', colors: ['#ffb347', '#e8541e', '#7a1f3d'], angle: 135 },

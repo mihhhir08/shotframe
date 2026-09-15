@@ -9,6 +9,36 @@ function box(a: Annotation) {
   return { x: Math.min(a.x1, a.x2), y: Math.min(a.y1, a.y2), w: Math.abs(a.x2 - a.x1), h: Math.abs(a.y2 - a.y1) }
 }
 
+export const curved = (a: Annotation) => a.cx !== undefined && a.cy !== undefined
+const control = (a: Annotation) => (curved(a) ? { x: a.cx!, y: a.cy! } : { x: (a.x1 + a.x2) / 2, y: (a.y1 + a.y2) / 2 })
+
+// The handle sits on the curve (t = 0.5), which is easier to grab than the control point itself.
+export function curveHandle(a: Annotation) {
+  const c = control(a)
+  return curved(a)
+    ? { x: 0.25 * a.x1 + 0.5 * c.x + 0.25 * a.x2, y: 0.25 * a.y1 + 0.5 * c.y + 0.25 * a.y2 }
+    : c
+}
+
+export function bendThrough(a: Annotation, mx: number, my: number, snap: number): Annotation {
+  const hx = (a.x1 + a.x2) / 2
+  const hy = (a.y1 + a.y2) / 2
+  if (Math.hypot(mx - hx, my - hy) < snap) return straighten(a)
+  return { ...a, cx: 2 * mx - hx, cy: 2 * my - hy }
+}
+
+export function withBend(a: Annotation): Annotation {
+  const [dx, dy] = [a.x2 - a.x1, a.y2 - a.y1]
+  const len = Math.hypot(dx, dy)
+  if (len < 1) return a
+  return bendThrough(a, (a.x1 + a.x2) / 2 - (dy / len) * len * 0.18, (a.y1 + a.y2) / 2 + (dx / len) * len * 0.18, 0)
+}
+
+export function straighten(a: Annotation): Annotation {
+  const { cx: _cx, cy: _cy, ...rest } = a
+  return rest
+}
+
 // ctx draws in device pixels; (offX, offY) is the crop origin in image px.
 export function drawAnnotation(ctx: CanvasRenderingContext2D, a: Annotation, px: number, offX: number, offY: number, stepNo: number) {
   const { x, y, w, h } = box(a)
@@ -22,29 +52,47 @@ export function drawAnnotation(ctx: CanvasRenderingContext2D, a: Annotation, px:
 
   switch (a.type) {
     case 'arrow': {
-      const ang = Math.atan2(a.y2 - a.y1, a.x2 - a.x1)
+      const c = control(a)
       const len = Math.hypot(a.x2 - a.x1, a.y2 - a.y1)
       const head = Math.min(len * 0.7, a.size * 4 + 6)
+      const heads = a.heads ?? 'end'
+      // tangents at the ends: straight lines fall out of this too, since the control point is the midpoint
+      const endAng = Math.atan2(a.y2 - c.y, a.x2 - c.x)
+      const startAng = Math.atan2(a.y1 - c.y, a.x1 - c.x)
+      const trim = head * 0.7
+      const back = (px2: number, py: number, ang: number, on: boolean) =>
+        on ? [px2 - Math.cos(ang) * trim, py - Math.sin(ang) * trim] : [px2, py]
+      const [ex, ey] = back(a.x2, a.y2, endAng, heads !== 'none')
+      const [sx, sy] = back(a.x1, a.y1, startAng, heads === 'both')
+      if (a.dashed) ctx.setLineDash([a.size * 1.6, a.size * 2])
       ctx.beginPath()
-      ctx.moveTo(a.x1, a.y1)
-      ctx.lineTo(a.x2 - Math.cos(ang) * head * 0.7, a.y2 - Math.sin(ang) * head * 0.7)
+      ctx.moveTo(sx, sy)
+      if (curved(a)) ctx.quadraticCurveTo(c.x, c.y, ex, ey)
+      else ctx.lineTo(ex, ey)
       ctx.stroke()
-      ctx.beginPath()
-      ctx.moveTo(a.x2, a.y2)
-      ctx.lineTo(a.x2 - head * Math.cos(ang - 0.5), a.y2 - head * Math.sin(ang - 0.5))
-      ctx.lineTo(a.x2 - head * Math.cos(ang + 0.5), a.y2 - head * Math.sin(ang + 0.5))
-      ctx.closePath()
+      ctx.setLineDash([])
       ctx.lineWidth = a.size * 0.6
-      ctx.fill()
-      ctx.stroke()
+      const tip = (tx: number, ty: number, ang: number) => {
+        ctx.beginPath()
+        ctx.moveTo(tx, ty)
+        ctx.lineTo(tx - head * Math.cos(ang - 0.5), ty - head * Math.sin(ang - 0.5))
+        ctx.lineTo(tx - head * Math.cos(ang + 0.5), ty - head * Math.sin(ang + 0.5))
+        ctx.closePath()
+        ctx.fill()
+        ctx.stroke()
+      }
+      if (heads !== 'none') tip(a.x2, a.y2, endAng)
+      if (heads === 'both') tip(a.x1, a.y1, startAng)
       break
     }
     case 'rect':
+      if (a.dashed) ctx.setLineDash([a.size * 1.6, a.size * 2])
       ctx.beginPath()
       ctx.roundRect(x, y, w, h, a.size)
       ctx.stroke()
       break
     case 'ellipse':
+      if (a.dashed) ctx.setLineDash([a.size * 1.6, a.size * 2])
       ctx.beginPath()
       ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2)
       ctx.stroke()
@@ -104,6 +152,7 @@ export function drawAnnotation(ctx: CanvasRenderingContext2D, a: Annotation, px:
     }
     case 'pen': {
       const p = a.points || []
+      if (a.dashed) ctx.setLineDash([a.size * 1.6, a.size * 2])
       ctx.beginPath()
       for (let i = 0; i < p.length; i += 2) i ? ctx.lineTo(p[i], p[i + 1]) : ctx.moveTo(p[i], p[i + 1])
       ctx.stroke()
@@ -131,6 +180,12 @@ export function bounds(a: Annotation) {
     const w = Math.max(...lines.map((l) => measure!.measureText(l).width))
     return { x: a.x1, y: a.y1, w, h: lines.length * a.size * 6 }
   }
+  if (a.type === 'arrow' && curved(a)) {
+    const m = curveHandle(a)
+    const x = Math.min(a.x1, a.x2, m.x)
+    const y = Math.min(a.y1, a.y2, m.y)
+    return { x, y, w: Math.max(a.x1, a.x2, m.x) - x, h: Math.max(a.y1, a.y2, m.y) - y }
+  }
   if (a.type === 'pen' && a.points?.length) {
     const xs = a.points.filter((_, i) => i % 2 === 0)
     const ys = a.points.filter((_, i) => i % 2 === 1)
@@ -154,6 +209,8 @@ export function moveAnnotation(a: Annotation, dx: number, dy: number): Annotatio
   return {
     ...a,
     x1: a.x1 + dx, y1: a.y1 + dy, x2: a.x2 + dx, y2: a.y2 + dy,
+    cx: a.cx === undefined ? undefined : a.cx + dx,
+    cy: a.cy === undefined ? undefined : a.cy + dy,
     points: a.points?.map((v, i) => v + (i % 2 ? dy : dx)),
   }
 }

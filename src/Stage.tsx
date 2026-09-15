@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react'
-import { bounds, hitTest, moveAnnotation } from './annotations.ts'
+import { bendThrough, bounds, curveHandle, hitTest, moveAnnotation, withBend } from './annotations.ts'
 import { canvasToImage, computeLayout, imageToCanvas } from './layout.ts'
 import type { SetSettings } from './Panel.tsx'
 import { render, type Scene } from './render.ts'
-import type { Annotation, Crop, Tool } from './settings.ts'
+import type { Annotation, Crop, StrokeOpts, Tool } from './settings.ts'
 
 interface Props {
   scene: Scene
@@ -11,6 +11,7 @@ interface Props {
   selectedId: string | null
   color: string
   sizeLevel: number
+  stroke: StrokeOpts
   onSelect: (id: string | null) => void
   onAdd: (a: Annotation) => void
   onUpdate: (a: Annotation, key?: string) => void
@@ -22,13 +23,14 @@ type Drag =
   | { kind: 'move'; start: { x: number; y: number }; orig: Annotation }
   | { kind: 'pos'; x: number; y: number; posX: number; posY: number }
   | { kind: 'crop'; mode: string; start: { x: number; y: number }; orig: Crop }
+  | { kind: 'handle'; which: string; orig: Annotation }
 
 export const SIZES = [3, 6, 11]
 const FULL: Crop = { x: 0, y: 0, w: 1, h: 1 }
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 export const newId = () => Math.random().toString(36).slice(2, 10)
 
-export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onAdd, onUpdate, set }: Props) {
+export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSelect, onAdd, onUpdate, set }: Props) {
   const s = scene.settings
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -90,6 +92,13 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
     const ip = canvasToImage(L, p.x, p.y)
     ;(e.target as Element).setPointerCapture(e.pointerId)
 
+    const handle = (e.target as HTMLElement).dataset?.handle
+    const sel = scene.annotations.find((a) => a.id === selectedId)
+    if (handle && sel) {
+      drag.current = { kind: 'handle', which: handle, orig: sel }
+      return
+    }
+
     if (cropping) {
       const c = s.crop ?? FULL
       const a = imageToCanvas(L, c.x * scene.imgW, c.y * scene.imgH)
@@ -124,7 +133,12 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
       onAdd({ id: newId(), type: 'step', x1: ip.x, y1: ip.y, x2: ip.x, y2: ip.y, color, size })
       return
     }
-    setDraft({ id: newId(), type: tool, x1: ip.x, y1: ip.y, x2: ip.x, y2: ip.y, color, size, points: tool === 'pen' ? [ip.x, ip.y] : undefined })
+    setDraft({
+      id: newId(), type: tool, x1: ip.x, y1: ip.y, x2: ip.x, y2: ip.y, color, size,
+      points: tool === 'pen' ? [ip.x, ip.y] : undefined,
+      heads: tool === 'arrow' ? stroke.heads : undefined,
+      dashed: stroke.dashed || undefined,
+    })
     drag.current = { kind: 'draw' }
   }
 
@@ -135,7 +149,21 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
     const ip = canvasToImage(L, p.x, p.y)
 
     if (d.kind === 'draw') {
-      setDraft((a) => a && (a.type === 'pen' ? { ...a, points: [...a.points!, ip.x, ip.y] } : { ...a, x2: ip.x, y2: ip.y }))
+      setDraft((a) => {
+        if (!a) return a
+        if (a.type === 'pen') return { ...a, points: [...a.points!, ip.x, ip.y] }
+        const next = { ...a, x2: ip.x, y2: ip.y }
+        return a.type === 'arrow' && stroke.curve ? withBend(next) : next
+      })
+    } else if (d.kind === 'handle') {
+      const o = d.orig
+      const snap = 8 / (fit * L.k)
+      onUpdate(
+        d.which === 'p1' ? { ...o, x1: ip.x, y1: ip.y }
+          : d.which === 'p2' ? { ...o, x2: ip.x, y2: ip.y }
+            : bendThrough(o, ip.x, ip.y, snap),
+        `handle:${o.id}:${d.which}`,
+      )
     } else if (d.kind === 'move') {
       onUpdate(moveAnnotation(d.orig, ip.x - d.start.x, ip.y - d.start.y), `move:${d.orig.id}`)
     } else if (d.kind === 'pos') {
@@ -201,6 +229,10 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
     const z = toCss(b.x + b.w, b.y + b.h)
     return { left: a.x - 6, top: a.y - 6, width: z.x - a.x + 12, height: z.y - a.y + 12 }
   })()
+  const arrowHandles = selected?.type === 'arrow' && flat
+    ? ([['p1', selected.x1, selected.y1], ['mid', curveHandle(selected).x, curveHandle(selected).y], ['p2', selected.x2, selected.y2]] as const)
+      .map(([key, ix, iy]) => ({ key, ...toCss(ix, iy) }))
+    : null
   const crop = cropDraft ?? s.crop ?? FULL
   const cropBox = cropping && (() => {
     const a = toCss(crop.x * scene.imgW, crop.y * scene.imgH)
@@ -218,6 +250,9 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
           <canvas ref={canvasRef} className={s.bgType === 'transparent' ? 'checker' : ''} style={{ width: '100%', height: '100%' }} />
           <div className="overlay" style={{ cursor }} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onDoubleClick={onDouble}>
             {selBox && <div className="sel-box" style={selBox} />}
+            {arrowHandles?.map((h) => (
+              <i key={h.key} className="handle" data-handle={h.key} style={{ left: h.x, top: h.y }} />
+            ))}
             {cropBox && (
               <div className="crop-box" style={cropBox}>
                 <i className="nw" /><i className="ne" /><i className="sw" /><i className="se" />

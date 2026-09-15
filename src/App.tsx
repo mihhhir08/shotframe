@@ -5,7 +5,8 @@ import { loadFile, loadImage, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
 import { bgCss, Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type Scene } from './render.ts'
-import { DEFAULTS, type Annotation, type Settings, type Tool } from './settings.ts'
+import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
+import { curved, straighten, withBend } from './annotations.ts'
 import { SIZES, Stage } from './Stage.tsx'
 
 interface Doc { settings: Settings; annotations: Annotation[] }
@@ -76,6 +77,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [color, setColor] = useState('#ff3b30')
   const [sizeLevel, setSizeLevel] = useState(1)
+  const [stroke, setStroke] = useState<StrokeOpts>({ curve: false, heads: 'end', dashed: false })
   const [format, setFormat] = useState<(typeof FORMATS)[number]>(() => load('shotframe:format', 'png'))
   const [scale, setScale] = useState<number>(() => load('shotframe:scale', 1))
   const [tab, setTab] = useState<PanelTab>(() => {
@@ -252,6 +254,18 @@ export default function App() {
     setSizeLevel(l)
     if (selected && layout) updateAnnotation({ ...selected, size: SIZES[l] * layout.u })
   }
+  // the controls show the selected annotation's own settings, and edit it in place
+  const strokeOf = (a?: Annotation): StrokeOpts =>
+    a ? { curve: curved(a), heads: a.heads ?? 'end', dashed: !!a.dashed } : stroke
+  const applyStroke = (patch: Partial<StrokeOpts>) => {
+    setStroke({ ...strokeOf(selected), ...patch })
+    if (!selected) return
+    let a: Annotation = { ...selected }
+    if (patch.dashed !== undefined) a.dashed = patch.dashed
+    if (patch.heads !== undefined) a.heads = patch.heads
+    if (patch.curve !== undefined) a = patch.curve ? withBend(a) : straighten(a)
+    updateAnnotation(a)
+  }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -318,7 +332,7 @@ export default function App() {
 
       <main className="main">
         {scene ? (
-          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel}
+          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
         ) : (
           <div className="empty">
@@ -359,7 +373,21 @@ export default function App() {
                       </div>
                     )}
                     <Seg value={String(sizeLevel)} options={['S', 'M', 'L'].map((l, i) => [String(i), l])} onChange={(v) => pickSize(+v)} />
-                    {selected && <button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
+                    {kind === 'arrow' && (
+                      <>
+                        <Seg value={strokeOf(selected).curve ? 'curve' : 'straight'}
+                          options={[['straight', <Icon key="s" name="arrow" size={15} />], ['curve', <Icon key="c" name="curve" size={15} />]]}
+                          onChange={(v) => applyStroke({ curve: v === 'curve' })} />
+                        <Seg value={strokeOf(selected).heads}
+                          options={[['end', <Icon key="e" name="headEnd" size={15} />], ['both', <Icon key="b" name="headBoth" size={15} />], ['none', <Icon key="n" name="headNone" size={15} />]]}
+                          onChange={(v) => applyStroke({ heads: v as ArrowHeads })} />
+                      </>
+                    )}
+                    {['arrow', 'rect', 'ellipse', 'pen'].includes(kind) && (
+                      <button className={`icon-btn ${strokeOf(selected).dashed ? 'on' : ''}`} title="Dashed line" aria-pressed={strokeOf(selected).dashed}
+                        onClick={() => applyStroke({ dashed: !strokeOf(selected).dashed })}><Icon name="dash" size={16} /></button>
+                    )}
+                    {selected &&<button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
                     {doc.annotations.length > 0 && (
                       <button className="btn ghost small" onClick={() => { update((d) => ({ ...d, annotations: [] })); setSelectedId(null) }}>Clear all</button>
                     )}
