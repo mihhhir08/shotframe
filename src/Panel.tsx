@@ -44,7 +44,8 @@ export function Panel({ s, set, layout, image, presets, onSavePreset, onDeletePr
           <div className="align-grid">
             {[-1, 0, 1].flatMap((ay) => [-1, 0, 1].map((ax) => {
               const p = layout ? alignPos(layout, ax, ay) : { posX: 0, posY: 0 }
-              const on = Math.abs(p.posX - s.posX) < 0.002 && Math.abs(p.posY - s.posY) < 0.002
+              // with no free space every button resolves to 0, so only the centre one counts as active
+              const on = Math.abs(p.posX - s.posX) < 0.002 && Math.abs(p.posY - s.posY) < 0.002 && (ax === 0 || p.posX !== 0) && (ay === 0 || p.posY !== 0)
               return <button key={`${ax}${ay}`} className={on ? 'on' : ''} aria-label={`Align ${ax},${ay}`} onClick={() => set(p)} />
             }))}
           </div>
@@ -272,7 +273,7 @@ const alpha = (hex: string) => (hex.length > 7 ? Math.round(parseInt(hex.slice(7
 const meshCss = (c: string[]) =>
   `radial-gradient(at 12% 18%, ${c[1]} 0, transparent 60%), radial-gradient(at 88% 14%, ${c[2]} 0, transparent 60%), radial-gradient(at 85% 88%, ${c[3]} 0, transparent 60%), radial-gradient(at 18% 82%, ${c[4]} 0, transparent 60%), ${c[0]}`
 
-function bgCss(s: Settings) {
+export function bgCss(s: Settings) {
   if (s.bgType === 'gradient') return `linear-gradient(${s.gradAngle}deg, ${s.gradColors.join(',')})`
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor
