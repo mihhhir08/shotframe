@@ -31,9 +31,15 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   drawBackground(ctx, scene, L)
 
   let layer = makeWindow(makeShot(scene, L, px), s, L, px)
-  if (!opts.flat && (s.tiltX || s.tiltY)) layer = tilt(layer, s.tiltX, s.tiltY) ?? layer
-  const lw = layer.width / px
-  const lh = layer.height / px
+  let fitTilt = 1
+  if (!opts.flat && (s.tiltX || s.tiltY)) {
+    const t = tilt(layer, s.tiltX, s.tiltY)
+    // keep the tilted window inside its flat footprint so it never spills over padding or caption
+    if (t) fitTilt = Math.min(1, layer.width / t.width, layer.height / t.height)
+    layer = t ?? layer
+  }
+  const lw = (layer.width / px) * fitTilt
+  const lh = (layer.height / px) * fitTilt
 
   ctx.save()
   ctx.setTransform(px, 0, 0, px, 0, 0)
