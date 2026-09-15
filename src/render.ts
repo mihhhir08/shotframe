@@ -19,9 +19,14 @@ export interface RenderOpts {
   ignoreCrop?: boolean // show the whole image (used by the crop tool)
 }
 
+// Motion only changes scale/position/tilt/rotation, so the background and the framed
+// screenshot can be drawn once and reused for every frame. Callers pass a fresh object
+// whenever anything else changes.
+export interface RenderCache { bg?: HTMLCanvasElement; win?: HTMLCanvasElement }
+
 const SYS = `-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif`
 
-export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts: RenderOpts = {}): Layout {
+export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts: RenderOpts = {}, cache?: RenderCache): Layout {
   const s = scene.settings
   const L = computeLayout(s, scene.imgW, scene.imgH, opts.ignoreCrop)
   canvas.width = Math.max(1, Math.round(L.W * px))
@@ -29,9 +34,20 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   const ctx = canvas.getContext('2d')!
   ctx.imageSmoothingQuality = 'high'
 
-  drawBackground(ctx, scene, L)
+  if (cache?.bg) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.drawImage(cache.bg, 0, 0)
+  } else {
+    drawBackground(ctx, scene, L)
+    if (cache) {
+      const [copy, cctx] = makeCanvas(canvas.width, canvas.height)
+      cctx.drawImage(canvas, 0, 0)
+      cache.bg = copy
+    }
+  }
 
-  let layer = makeWindow(makeShot(scene, L, px), s, L, px)
+  let layer = cache?.win ?? makeWindow(makeShot(scene, L, px), s, L, px)
+  if (cache && !cache.win) cache.win = layer
   let fitTilt = 1
   if (!opts.flat && (s.tiltX || s.tiltY)) {
     const t = tilt(layer, s.tiltX, s.tiltY)

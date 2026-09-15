@@ -6,13 +6,15 @@ import {
   ASPECTS, FRAMES, GRADIENTS, MESHES, SOLIDS, STYLE_PRESETS,
   type BgType, type Corner, type Settings,
 } from './settings.ts'
+import { MOTIONS } from './motion.ts'
 import { WALLPAPERS, wallpaperThumb } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export interface UserPreset { name: string; settings: Partial<Settings> }
-export type PanelTab = 'presets' | 'background' | 'canvas' | 'style' | 'frame' | '3d' | 'text'
+export type PanelTab = 'motion' | 'presets' | 'background' | 'canvas' | 'style' | 'frame' | '3d' | 'text'
 
 export const TABS: [PanelTab, IconName, string][] = [
+  ['motion', 'film', 'Motion'],
   ['presets', 'sparkle', 'Presets'],
   ['background', 'image', 'Background'],
   ['canvas', 'layout', 'Canvas'],
@@ -25,6 +27,7 @@ export const TABS: [PanelTab, IconName, string][] = [
 interface Props {
   tab: PanelTab
   onTab: (t: PanelTab) => void
+  motion: boolean
   s: Settings
   set: SetSettings
   layout: Layout | null
@@ -35,12 +38,13 @@ interface Props {
   onReset: () => void
 }
 
-export function Panel({ tab, onTab, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset }: Props) {
-  const current = TABS.find((t) => t[0] === tab) ?? TABS[0]
+export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset }: Props) {
+  const tabs = TABS.filter(([id]) => motion || id !== 'motion')
+  const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
   return (
     <aside className="panel">
       <nav className="panel-tabs" role="tablist" aria-label="Settings">
-        {TABS.map(([id, icon, label]) => (
+        {tabs.map(([id, icon, label]) => (
           <button key={id} role="tab" aria-selected={tab === id} aria-label={label} title={label}
             className={tab === id ? 'on' : ''} onClick={() => onTab(id)}>
             <Icon name={icon} size={17} />
@@ -54,6 +58,24 @@ export function Panel({ tab, onTab, s, set, layout, image, presets, onSavePreset
           <button className="btn ghost small" onClick={onReset} title="Reset every style setting"><Icon name="reset" size={13} /> Reset</button>
         </header>
 
+        {tab === 'motion' && motion && (
+          <>
+            <Group title="Animation">
+              <div className="motion-grid">
+                {MOTIONS.map((m) => (
+                  <button key={m.id} className={`motion-card m-${m.id} ${s.motion === m.id ? 'on' : ''}`} onClick={() => set({ motion: m.id })}>
+                    <span className="motion-stage"><i /></span>
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </Group>
+            <Group title="Timing">
+              <Slider label="Duration" value={s.motionDuration} min={2} max={12} step={0.5} unit="s" onChange={(v) => set({ motionDuration: v }, 'motionDuration')} />
+              <p className="hint">The animation starts from your current style and lands on it. Export an MP4 from the Export menu.</p>
+            </Group>
+          </>
+        )}
         {tab === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
         {tab === 'background' && <Background s={s} set={set} image={image} />}
 

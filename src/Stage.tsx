@@ -2,7 +2,9 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEven
 import { bendThrough, bounds, curveHandle, hitTest, moveAnnotation, withBend } from './annotations.ts'
 import { canvasToImage, computeLayout, imageToCanvas } from './layout.ts'
 import type { SetSettings } from './Panel.tsx'
-import { render, type Scene } from './render.ts'
+import { Icon } from './icons.tsx'
+import { MOTIONS, motionPatch } from './motion.ts'
+import { render, type RenderCache, type Scene } from './render.ts'
 import type { Annotation, Crop, StrokeOpts, Tool } from './settings.ts'
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
   color: string
   sizeLevel: number
   stroke: StrokeOpts
+  motion: boolean
   onSelect: (id: string | null) => void
   onAdd: (a: Annotation) => void
   onUpdate: (a: Annotation, key?: string) => void
@@ -30,7 +33,7 @@ const FULL: Crop = { x: 0, y: 0, w: 1, h: 1 }
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 export const newId = () => Math.random().toString(36).slice(2, 10)
 
-export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSelect, onAdd, onUpdate, set }: Props) {
+export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motion, onSelect, onAdd, onUpdate, set }: Props) {
   const s = scene.settings
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -40,9 +43,15 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
   const [cropDraft, setCropDraft] = useState<Crop | null>(null)
   const [text, setText] = useState<{ id?: string; x: number; y: number; value: string } | null>(null)
 
-  const cropping = tool === 'crop'
+  const [playing, setPlaying] = useState(true)
+  const playRef = useRef(true)
+  const tRef = useRef(0)
+  const scrubRef = useRef<HTMLInputElement>(null)
+  const timeRef = useRef<HTMLOutputElement>(null)
+
+  const cropping = tool === 'crop' && !motion
   // ponytail: rotate/tilt are hidden while annotating so clicks map 1:1; mapping through the tilt is the upgrade
-  const flat = tool !== 'select' || selectedId !== null
+  const flat = !motion && (tool !== 'select' || selectedId !== null)
   const L = useMemo(() => computeLayout(s, scene.imgW, scene.imgH, cropping), [s, scene.imgW, scene.imgH, cropping])
   const fit = box.w ? Math.min((box.w - 64) / L.W, (box.h - 48) / L.H) : 0
   const px = Math.min(fit * (window.devicePixelRatio || 1), 2)
@@ -54,8 +63,32 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
     return () => ro.disconnect()
   }, [])
 
+  useEffect(() => { playRef.current = playing }, [playing])
+
+  // Motion preview: one loop redraws the animated frame; the cache keeps the static layers.
   useEffect(() => {
-    if (!fit) return
+    if (!motion || !fit) return
+    const cache: RenderCache = {}
+    const duration = Math.max(0.5, s.motionDuration) * 1000
+    let raf = 0
+    let last = performance.now()
+    let drawn = -1
+    const frame = (now: number) => {
+      raf = requestAnimationFrame(frame)
+      if (playRef.current) tRef.current = (tRef.current + (now - last) / duration) % 1
+      last = now
+      if (tRef.current === drawn) return
+      drawn = tRef.current
+      render(canvasRef.current!, { ...scene, settings: { ...s, ...motionPatch(s.motion, tRef.current, s) } }, px, {}, cache)
+      if (scrubRef.current) scrubRef.current.value = String(Math.round(tRef.current * 1000))
+      if (timeRef.current) timeRef.current.textContent = `${(tRef.current * s.motionDuration).toFixed(1)}s / ${s.motionDuration}s`
+    }
+    raf = requestAnimationFrame(frame)
+    return () => cancelAnimationFrame(raf)
+  }, [motion, scene, px, fit, s])
+
+  useEffect(() => {
+    if (!fit || motion) return
     const id = requestAnimationFrame(() => {
       let annotations = scene.annotations
       if (text?.id) annotations = annotations.filter((a) => a.id !== text.id)
@@ -63,12 +96,24 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
       render(canvasRef.current!, { ...scene, annotations }, px, { flat, ignoreCrop: cropping })
     })
     return () => cancelAnimationFrame(id)
-  }, [scene, draft, px, fit, flat, cropping, text?.id])
+  }, [scene, draft, px, fit, flat, cropping, text?.id, motion])
 
   useEffect(() => {
     setDraft(null)
     setText(null)
   }, [tool])
+
+  useEffect(() => {
+    if (!motion) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === ' ' && !(e.target as HTMLElement).closest('input, textarea')) {
+        e.preventDefault()
+        setPlaying((p) => !p)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [motion])
 
   const toLogical = (e: { clientX: number; clientY: number }) => {
     const r = canvasRef.current!.getBoundingClientRect()
@@ -133,6 +178,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
       onAdd({ id: newId(), type: 'step', x1: ip.x, y1: ip.y, x2: ip.x, y2: ip.y, color, size })
       return
     }
+    if (tool === 'crop') return // motion mode leaves the crop tool selected but hides the overlay
     setDraft({
       id: newId(), type: tool, x1: ip.x, y1: ip.y, x2: ip.x, y2: ip.y, color, size,
       points: tool === 'pen' ? [ip.x, ip.y] : undefined,
@@ -248,6 +294,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
       {fit > 0 && (
         <div className="stage-canvas" style={{ width: L.W * fit, height: L.H * fit }}>
           <canvas ref={canvasRef} className={s.bgType === 'transparent' ? 'checker' : ''} style={{ width: '100%', height: '100%' }} />
+          {motion ? null : (
           <div className="overlay" style={{ cursor }} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onDoubleClick={onDouble}>
             {selBox && <div className="sel-box" style={selBox} />}
             {arrowHandles?.map((h) => (
@@ -260,6 +307,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
               </div>
             )}
           </div>
+          )}
           {text && textPos && (
             <textarea
               className="text-edit"
@@ -276,6 +324,20 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, onSel
               }}
             />
           )}
+        </div>
+      )}
+      {motion && (
+        <div className="dock">
+          <div className="timeline">
+            <button className="icon-btn" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pause' : 'Play'} title="Play / pause (space)">
+              <Icon name={playing ? 'pause' : 'play'} size={17} />
+            </button>
+            <input ref={scrubRef} type="range" min={0} max={1000} defaultValue={0} aria-label="Timeline"
+              onInput={(e) => { tRef.current = +(e.target as HTMLInputElement).value / 1000; setPlaying(false) }} />
+            <output ref={timeRef} className="time">0.0s / {s.motionDuration}s</output>
+            <span className="sep" />
+            <span className="toolopts-label">{MOTIONS.find((m) => m.id === s.motion)?.label}</span>
+          </div>
         </div>
       )}
     </div>

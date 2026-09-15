@@ -4,7 +4,8 @@ import { Icon, type IconName } from './icons.tsx'
 import { loadFile, loadImage, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
 import { bgCss, Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
-import { render, type Scene } from './render.ts'
+import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
+import { render, type RenderCache, type Scene } from './render.ts'
 import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
 import { curved, straighten, withBend } from './annotations.ts'
 import { SIZES, Stage } from './Stage.tsx'
@@ -85,6 +86,10 @@ export default function App() {
     return TABS.some((x) => x[0] === t) ? t : 'background'
   })
   const [presets, setPresets] = useState<UserPreset[]>(() => load('shotframe:presets', []))
+  const [mode, setModeRaw] = useState<'static' | 'motion'>('static')
+  const [videoSize, setVideoSize] = useState<number>(() => load('shotframe:videoSize', 1920))
+  const [fps, setFps] = useState<number>(() => load('shotframe:fps', 30))
+  const [recording, setRecording] = useState<number | null>(null)
   const [toast, setToast] = useState('')
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -112,6 +117,14 @@ export default function App() {
   }, [s])
   useEffect(() => { save('shotframe:format', format); save('shotframe:scale', scale) }, [format, scale])
   useEffect(() => { save('shotframe:tab', tab) }, [tab])
+  useEffect(() => { save('shotframe:videoSize', videoSize); save('shotframe:fps', fps) }, [videoSize, fps])
+
+  const setMode = (m: 'static' | 'motion') => {
+    setModeRaw(m)
+    setSelectedId(null)
+    setToolRaw('select')
+    setTab(m === 'motion' ? 'motion' : 'background')
+  }
 
   useEffect(() => {
     if (!s.bgImage) return setBgImg(null)
@@ -236,6 +249,48 @@ export default function App() {
     }
   }
 
+  // Records the animation in real time off a canvas. ponytail: MediaRecorder is the
+  // no-dependency route; if a slow machine drops frames, WebCodecs is the upgrade.
+  const exportVideo = async () => {
+    if (!scene || !layout || recording !== null) return
+    menuRef.current?.hidePopover?.()
+    const mime = videoMime()
+    if (!mime) return flash('This browser cannot record video')
+    const px = videoSize / Math.max(layout.W, layout.H)
+    const even = (n: number) => Math.max(2, Math.round((n * px) / 2) * 2)
+    const [out, octx] = makeCanvas(even(layout.W), even(layout.H))
+    const work = document.createElement('canvas')
+    const cache: RenderCache = {}
+    const frame = (t: number) => {
+      render(work, { ...scene, settings: { ...s, ...motionPatch(s.motion, t, s) } }, px, {}, cache)
+      octx.drawImage(work, 0, 0, out.width, out.height)
+    }
+    frame(0)
+    setRecording(0)
+    const rec = new MediaRecorder(out.captureStream(fps), { mimeType: mime, videoBitsPerSecond: videoSize >= 2560 ? 24e6 : 12e6 })
+    const chunks: Blob[] = []
+    rec.ondataavailable = (e) => e.data.size && chunks.push(e.data)
+    const stopped = new Promise((r) => (rec.onstop = r))
+    rec.start()
+    const start = performance.now()
+    const ms = s.motionDuration * 1000
+    await new Promise<void>((resolve) => {
+      const tick = () => {
+        const t = Math.min(1, (performance.now() - start) / ms)
+        frame(t)
+        setRecording(t)
+        if (t >= 1) setTimeout(resolve, 2000 / fps)
+        else requestAnimationFrame(tick)
+      }
+      requestAnimationFrame(tick)
+    })
+    rec.stop()
+    await stopped
+    setRecording(null)
+    saveBlob(new Blob(chunks, { type: mime.split(';')[0] }), mime.includes('mp4') ? 'mp4' : 'webm')
+    flash('Video saved')
+  }
+
   const addAnnotation = (a: Annotation) => update((d) => ({ ...d, annotations: [...d.annotations, a] }))
   const updateAnnotation = (a: Annotation, key?: string) =>
     update((d) => ({ ...d, annotations: d.annotations.map((x) => (x.id === a.id ? a : x)) }), key)
@@ -275,12 +330,12 @@ export default function App() {
       if (mod && k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo() }
       else if (mod && k === 'y') { e.preventDefault(); redo() }
       else if (mod && k === 'c') { if (scene && !getSelection()?.toString()) { e.preventDefault(); copy() } }
-      else if (mod && k === 's') { e.preventDefault(); download() }
+      else if (mod && k === 's') { e.preventDefault(); if (mode === 'static') download(); else exportVideo() }
       else if (mod && k === 'o') { e.preventDefault(); fileRef.current?.click() }
       else if (mod || e.altKey) return
       else if ((k === 'backspace' || k === 'delete') && selectedId) { e.preventDefault(); removeSelected() }
       else if (k === 'escape' || (k === 'enter' && tool === 'crop')) { setSelectedId(null); setTool('select') }
-      else if (scene) {
+      else if (scene && mode === 'static') {
         const t = TOOLS.find((x) => x[3].toLowerCase() === k)
         if (t) setTool(t[0])
       }
@@ -305,34 +360,57 @@ export default function App() {
           <button className="btn ghost" onClick={() => fileRef.current?.click()} title={`Open (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
           <button className="btn ghost" onClick={pasteButton} title={`Paste (${MOD}V)`}><Icon name="copy" size={15} /> Paste</button>
         </div>
+        <div className="mode">
+          <Seg value={mode} options={[['static', 'Static'], ['motion', 'Motion']]} onChange={(v) => setMode(v as 'static' | 'motion')} />
+        </div>
         <div className="top-export">
-          <button className="btn" disabled={!scene} onClick={copy} title={`Copy (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>
+          {mode === 'static' && <button className="btn" disabled={!scene} onClick={copy} title={`Copy (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>}
           <div className="split">
-            <button className="btn primary" disabled={!scene} onClick={download} title={`Export (${MOD}S)`}>
-              <Icon name="download" size={15} /> Export <span className="split-meta">{format.toUpperCase()} {scale}×</span>
+            <button className="btn primary" disabled={!scene || recording !== null} onClick={mode === 'static' ? download : exportVideo} title={`Export (${MOD}S)`}>
+              <Icon name="download" size={15} /> Export
+              <span className="split-meta">{mode === 'static' ? `${format.toUpperCase()} ${scale}×` : `MP4 ${VIDEO_SIZES.find(([, p]) => p === videoSize)?.[0]}`}</span>
             </button>
             <button className="btn primary split-arrow" popoverTarget="export-menu" aria-label="Export options"><Icon name="chevron" size={15} /></button>
           </div>
           <div id="export-menu" ref={menuRef} popover="auto" className="menu">
-            <div className="menu-row">
-              <span className="menu-label">Format</span>
-              <Seg value={format} options={FORMATS.map((f) => [f, f.toUpperCase()])} onChange={(v) => setFormat(v as (typeof FORMATS)[number])} />
-            </div>
-            <div className="menu-row">
-              <span className="menu-label">Scale</span>
-              <Seg value={String(scale)} options={SCALES.map((x) => [String(x), `${x}×`])} onChange={(v) => setScale(+v)} />
-            </div>
-            <div className="menu-foot">
-              <span className="dims">{layout ? `${outW} × ${outH} px` : 'Open a screenshot first'}</span>
-              <button className="btn primary" disabled={!scene} onClick={download}><Icon name="download" size={14} /> Export</button>
-            </div>
+            {mode === 'static' ? (
+              <>
+                <div className="menu-row">
+                  <span className="menu-label">Format</span>
+                  <Seg value={format} options={FORMATS.map((f) => [f, f.toUpperCase()])} onChange={(v) => setFormat(v as (typeof FORMATS)[number])} />
+                </div>
+                <div className="menu-row">
+                  <span className="menu-label">Scale</span>
+                  <Seg value={String(scale)} options={SCALES.map((x) => [String(x), `${x}×`])} onChange={(v) => setScale(+v)} />
+                </div>
+                <div className="menu-foot">
+                  <span className="dims">{layout ? `${outW} × ${outH} px` : 'Open a screenshot first'}</span>
+                  <button className="btn primary" disabled={!scene} onClick={download}><Icon name="download" size={14} /> Export</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="menu-row">
+                  <span className="menu-label">Size</span>
+                  <Seg value={String(videoSize)} options={VIDEO_SIZES.map(([l, p]) => [String(p), l])} onChange={(v) => setVideoSize(+v)} />
+                </div>
+                <div className="menu-row">
+                  <span className="menu-label">Frame rate</span>
+                  <Seg value={String(fps)} options={[['30', '30 fps'], ['60', '60 fps']]} onChange={(v) => setFps(+v)} />
+                </div>
+                <div className="menu-foot">
+                  <span className="dims">{videoMime()?.includes('mp4') ? 'MP4' : 'WebM'} · {s.motionDuration}s</span>
+                  <button className="btn primary" disabled={!scene || recording !== null} onClick={exportVideo}><Icon name="download" size={14} /> Export</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
 
       <main className="main">
         {scene ? (
-          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke}
+          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke} motion={mode === 'motion'}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
         ) : (
           <div className="empty">
@@ -350,7 +428,15 @@ export default function App() {
           </div>
         )}
 
-        {scene && (
+        {recording !== null && (
+          <div className="recording" role="status">
+            <span>Recording video… {Math.round(recording * 100)}%</span>
+            <span className="recording-bar"><i style={{ width: `${recording * 100}%` }} /></span>
+            <small className="hint">Keep this tab in front while it records.</small>
+          </div>
+        )}
+
+        {scene && mode === 'static' && (
           <div className="dock">
             {showOpts && (
               <div className="toolopts">
@@ -413,7 +499,7 @@ export default function App() {
         {dragging && <div className="drop-hint"><span>Drop to open</span></div>}
       </main>
 
-      <Panel tab={tab} onTab={setTab} s={s} set={set} layout={layout} image={image} presets={presets}
+      <Panel tab={tab} onTab={setTab} motion={mode === 'motion'} s={s} set={set} layout={layout} image={image} presets={presets}
         onSavePreset={(name) => {
           const { crop: _crop, ...style } = s
           const next = [...presets.filter((p) => p.name !== name), { name, settings: style }]

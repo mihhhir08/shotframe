@@ -49,6 +49,9 @@ export interface Settings {
   watermark: string
   watermarkPos: Corner
   watermarkOpacity: number
+
+  motion: string
+  motionDuration: number
 }
 
 export type AnnotationType =
@@ -184,6 +187,9 @@ export const DEFAULTS: Settings = {
   watermark: '',
   watermarkPos: 'br',
   watermarkOpacity: 70,
+
+  motion: 'tilt-in',
+  motionDuration: 4,
 }
 
 export const STYLE_PRESETS: { name: string; patch: Partial<Settings> }[] = [
