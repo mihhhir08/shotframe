@@ -21,7 +21,7 @@ export const TABS: [PanelTab, IconName, string][] = [
   ['style', 'style', 'Screenshot'],
   ['frame', 'window', 'Frame'],
   ['3d', 'cube', '3D & rotation'],
-  ['text', 'text', 'Text'],
+  ['text', 'text', 'Text & watermark'],
 ]
 
 interface Props {
