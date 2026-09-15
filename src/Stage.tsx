@@ -42,7 +42,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
   // ponytail: rotate/tilt are hidden while annotating so clicks map 1:1; mapping through the tilt is the upgrade
   const flat = tool !== 'select' || selectedId !== null
   const L = useMemo(() => computeLayout(s, scene.imgW, scene.imgH, cropping), [s, scene.imgW, scene.imgH, cropping])
-  const fit = box.w ? Math.min((box.w - 64) / L.W, (box.h - 64) / L.H) : 0
+  const fit = box.w ? Math.min((box.w - 64) / L.W, (box.h - 48) / L.H) : 0
   const px = Math.min(fit * (window.devicePixelRatio || 1), 2)
 
   useLayoutEffect(() => {

@@ -3,7 +3,7 @@ import { makeCanvas } from './canvas.ts'
 import { Icon, type IconName } from './icons.tsx'
 import { loadFile, loadImage, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
-import { bgCss, Panel, type SetSettings, type UserPreset } from './Panel.tsx'
+import { bgCss, Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type Scene } from './render.ts'
 import { DEFAULTS, type Annotation, type Settings, type Tool } from './settings.ts'
 import { SIZES, Stage } from './Stage.tsx'
@@ -78,10 +78,15 @@ export default function App() {
   const [sizeLevel, setSizeLevel] = useState(1)
   const [format, setFormat] = useState<(typeof FORMATS)[number]>(() => load('shotframe:format', 'png'))
   const [scale, setScale] = useState<number>(() => load('shotframe:scale', 1))
+  const [tab, setTab] = useState<PanelTab>(() => {
+    const t = load<PanelTab>('shotframe:tab', 'background')
+    return TABS.some((x) => x[0] === t) ? t : 'background'
+  })
   const [presets, setPresets] = useState<UserPreset[]>(() => load('shotframe:presets', []))
   const [toast, setToast] = useState('')
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const toastTimer = useRef(0)
 
   const flash = (msg: string) => {
@@ -104,6 +109,7 @@ export default function App() {
     return () => clearTimeout(t)
   }, [s])
   useEffect(() => { save('shotframe:format', format); save('shotframe:scale', scale) }, [format, scale])
+  useEffect(() => { save('shotframe:tab', tab) }, [tab])
 
   useEffect(() => {
     if (!s.bgImage) return setBgImg(null)
@@ -203,14 +209,18 @@ export default function App() {
     out.toBlob((b) => (b ? resolve(b) : reject(new Error('Export failed'))), type, 0.93)
   })
 
-  const download = async () => {
-    if (!scene) return
-    const blob = await exportBlob(`image/${format}`)
+  const saveBlob = (blob: Blob, ext: string) => {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(blob)
-    a.download = `shotframe-${stamp()}.${format === 'jpeg' ? 'jpg' : format}`
+    a.download = `shotframe-${stamp()}.${ext}`
     a.click()
     setTimeout(() => URL.revokeObjectURL(a.href), 10000)
+  }
+
+  const download = async () => {
+    if (!scene) return
+    menuRef.current?.hidePopover?.()
+    saveBlob(await exportBlob(`image/${format}`), format === 'jpeg' ? 'jpg' : format)
     flash('Image saved')
   }
 
@@ -220,7 +230,7 @@ export default function App() {
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': exportBlob('image/png') })])
       flash('Copied to clipboard')
     } catch {
-      flash('Copy failed. Try Download instead.')
+      flash('Copy failed. Try Export instead.')
     }
   }
 
@@ -236,7 +246,7 @@ export default function App() {
 
   const pickColor = (c: string) => {
     setColor(c)
-    if (selected) updateAnnotation({ ...selected, color: c })
+    if (selected) updateAnnotation({ ...selected, color: c }, 'color')
   }
   const pickSize = (l: number) => {
     setSizeLevel(l)
@@ -265,7 +275,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  const drawing = tool !== 'select' && tool !== 'crop'
+  const kind = selected?.type ?? tool
+  const showOpts = scene && (tool !== 'select' || selected)
   const outW = layout ? Math.round(layout.W * exportPx) : 0
   const outH = layout ? Math.round(layout.H * exportPx) : 0
 
@@ -280,60 +291,32 @@ export default function App() {
           <button className="btn ghost" onClick={() => fileRef.current?.click()} title={`Open (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
           <button className="btn ghost" onClick={pasteButton} title={`Paste (${MOD}V)`}><Icon name="copy" size={15} /> Paste</button>
         </div>
-        <div className="top-group">
-          <button className="icon-btn" disabled={!canUndo} onClick={undo} aria-label="Undo" title={`Undo (${MOD}Z)`}><Icon name="undo" /></button>
-          <button className="icon-btn" disabled={!canRedo} onClick={redo} aria-label="Redo" title={`Redo (${MOD}⇧Z)`}><Icon name="redo" /></button>
-        </div>
         <div className="top-export">
-          <select value={format} onChange={(e) => setFormat(e.target.value as (typeof FORMATS)[number])} aria-label="Format">
-            {FORMATS.map((f) => <option key={f} value={f}>{f.toUpperCase()}</option>)}
-          </select>
-          <select value={scale} onChange={(e) => setScale(+e.target.value)} aria-label="Export scale">
-            {SCALES.map((x) => <option key={x} value={x}>{x}×</option>)}
-          </select>
-          {layout && <span className="dims">{outW} × {outH}</span>}
           <button className="btn" disabled={!scene} onClick={copy} title={`Copy (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>
-          <button className="btn primary" disabled={!scene} onClick={download} title={`Save (${MOD}S)`}><Icon name="download" size={15} /> Download</button>
+          <div className="split">
+            <button className="btn primary" disabled={!scene} onClick={download} title={`Export (${MOD}S)`}>
+              <Icon name="download" size={15} /> Export <span className="split-meta">{format.toUpperCase()} {scale}×</span>
+            </button>
+            <button className="btn primary split-arrow" popoverTarget="export-menu" aria-label="Export options"><Icon name="chevron" size={15} /></button>
+          </div>
+          <div id="export-menu" ref={menuRef} popover="auto" className="menu">
+            <div className="menu-row">
+              <span className="menu-label">Format</span>
+              <Seg value={format} options={FORMATS.map((f) => [f, f.toUpperCase()])} onChange={(v) => setFormat(v as (typeof FORMATS)[number])} />
+            </div>
+            <div className="menu-row">
+              <span className="menu-label">Scale</span>
+              <Seg value={String(scale)} options={SCALES.map((x) => [String(x), `${x}×`])} onChange={(v) => setScale(+v)} />
+            </div>
+            <div className="menu-foot">
+              <span className="dims">{layout ? `${outW} × ${outH} px` : 'Open a screenshot first'}</span>
+              <button className="btn primary" disabled={!scene} onClick={download}><Icon name="download" size={14} /> Export</button>
+            </div>
+          </div>
         </div>
       </header>
 
-      <nav className="rail" aria-label="Tools">
-        {TOOLS.map(([id, icon, label, key], i) => (
-          <button key={id} className={`tool ${tool === id ? 'on' : ''} ${i === 2 || i === 9 ? 'gap' : ''}`} disabled={!scene}
-            onClick={() => setTool(id)} aria-label={label} title={`${label} (${key})`}>
-            <Icon name={icon} />
-          </button>
-        ))}
-      </nav>
-
       <main className="main">
-        {scene && (drawing || selected || tool === 'crop') && (
-          <div className="toolopts">
-            {tool === 'crop' ? (
-              <>
-                <span className="toolopts-label">Drag to crop</span>
-                <button className="btn ghost" disabled={!s.crop} onClick={() => set({ crop: null })}>Reset</button>
-                <button className="btn primary" onClick={() => setTool('select')}><Icon name="check" size={14} /> Done</button>
-              </>
-            ) : (
-              <>
-                {!['blur', 'pixelate', 'spotlight'].includes(selected?.type ?? tool) && INK.map((c) => (
-                  <button key={c} className={`ink ${(selected?.color ?? color) === c ? 'on' : ''}`} style={{ background: c }} aria-label={`Colour ${c}`} onClick={() => pickColor(c)} />
-                ))}
-                <div className="seg small">
-                  {['S', 'M', 'L'].map((l, i) => (
-                    <button key={l} className={sizeLevel === i ? 'on' : ''} onClick={() => pickSize(i)}>{l}</button>
-                  ))}
-                </div>
-                {selected && <button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
-                {doc.annotations.length > 0 && (
-                  <button className="btn ghost" onClick={() => { update((d) => ({ ...d, annotations: [] })); setSelectedId(null) }}>Clear all</button>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
         {scene ? (
           <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
@@ -352,10 +335,57 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {scene && (
+          <div className="dock">
+            {showOpts && (
+              <div className="toolopts">
+                {tool === 'crop' ? (
+                  <>
+                    <span className="toolopts-label">Drag to crop</span>
+                    <button className="btn ghost small" disabled={!s.crop} onClick={() => set({ crop: null })}>Reset</button>
+                    <button className="btn primary small" onClick={() => setTool('select')}><Icon name="check" size={14} /> Done</button>
+                  </>
+                ) : (
+                  <>
+                    {!['blur', 'pixelate', 'spotlight'].includes(kind) && (
+                      <div className="inks">
+                        {INK.map((c) => (
+                          <button key={c} className={`ink ${(selected?.color ?? color) === c ? 'on' : ''}`} style={{ background: c }} aria-label={`Colour ${c}`} onClick={() => pickColor(c)} />
+                        ))}
+                        <label className="ink custom" title="Custom colour">
+                          <input type="color" value={(selected?.color ?? color).slice(0, 7)} onChange={(e) => pickColor(e.target.value)} />
+                        </label>
+                      </div>
+                    )}
+                    <Seg value={String(sizeLevel)} options={['S', 'M', 'L'].map((l, i) => [String(i), l])} onChange={(v) => pickSize(+v)} />
+                    {selected && <button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
+                    {doc.annotations.length > 0 && (
+                      <button className="btn ghost small" onClick={() => { update((d) => ({ ...d, annotations: [] })); setSelectedId(null) }}>Clear all</button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            <div className="toolbar" role="toolbar" aria-label="Tools">
+              {TOOLS.map(([id, icon, label, key], i) => (
+                <span key={id} className="toolbar-item">
+                  {(i === 2 || i === 9) && <span className="sep" />}
+                  <button className={`tool ${tool === id ? 'on' : ''}`} onClick={() => setTool(id)} aria-label={label} title={`${label} (${key})`}>
+                    <Icon name={icon} />
+                  </button>
+                </span>
+              ))}
+              <span className="sep" />
+              <button className="tool" disabled={!canUndo} onClick={undo} aria-label="Undo" title={`Undo (${MOD}Z)`}><Icon name="undo" /></button>
+              <button className="tool" disabled={!canRedo} onClick={redo} aria-label="Redo" title={`Redo (${MOD}⇧Z)`}><Icon name="redo" /></button>
+            </div>
+          </div>
+        )}
         {dragging && <div className="drop-hint"><span>Drop to open</span></div>}
       </main>
 
-      <Panel s={s} set={set} layout={layout} image={image} presets={presets}
+      <Panel tab={tab} onTab={setTab} s={s} set={set} layout={layout} image={image} presets={presets}
         onSavePreset={(name) => {
           const { crop: _crop, ...style } = s
           const next = [...presets.filter((p) => p.name !== name), { name, settings: style }]
