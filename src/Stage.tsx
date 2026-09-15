@@ -23,7 +23,7 @@ type Drag =
   | { kind: 'pos'; x: number; y: number; posX: number; posY: number }
   | { kind: 'crop'; mode: string; start: { x: number; y: number }; orig: Crop }
 
-const SIZES = [3, 6, 11]
+export const SIZES = [3, 6, 11]
 const FULL: Crop = { x: 0, y: 0, w: 1, h: 1 }
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 export const newId = () => Math.random().toString(36).slice(2, 10)
@@ -84,6 +84,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
 
   const onDown = (e: PointerEvent) => {
     if (e.button !== 0) return
+    e.preventDefault() // otherwise the mousedown steals focus from the text box we are about to open
     if (text) return commitText()
     const p = toLogical(e)
     const ip = canvasToImage(L, p.x, p.y)
@@ -101,7 +102,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, onSelect, onA
       if (inX && Math.abs(p.y - b.y) < tol) mode += 's'
       if (inY && Math.abs(p.x - a.x) < tol) mode += 'w'
       if (inY && Math.abs(p.x - b.x) < tol) mode += 'e'
-      if (!mode) mode = p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y ? 'move' : 'new'
+      if (!mode) mode = s.crop && p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y ? 'move' : 'new'
       drag.current = { kind: 'crop', mode, start: ip, orig: c }
       return
     }
