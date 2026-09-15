@@ -486,7 +486,8 @@ kbd {
   font-weight: 600;
 }
 .recording-bar { width: 260px; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
-.recording-bar i { display: block; height: 100%; background: var(--accent); transition: width 0.1s linear; }
+/* scaleX, not width: this animates while the video is recording, so it must not cause layout */
+.recording-bar i { display: block; width: 100%; height: 100%; background: var(--accent); transform-origin: left; transition: transform 0.1s linear; }
 
 .num { display: flex; align-items: center; gap: 6px; flex: 1; color: var(--muted); font-family: var(--mono); font-size: 11px; }
 

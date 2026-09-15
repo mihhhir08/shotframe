@@ -431,7 +431,7 @@ export default function App() {
         {recording !== null && (
           <div className="recording" role="status">
             <span>Recording video… {Math.round(recording * 100)}%</span>
-            <span className="recording-bar"><i style={{ width: `${recording * 100}%` }} /></span>
+            <span className="recording-bar"><i style={{ transform: `scaleX(${recording})` }} /></span>
             <small className="hint">Keep this tab in front while it records.</small>
           </div>
         )}
