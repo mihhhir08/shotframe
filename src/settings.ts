@@ -1,4 +1,4 @@
-export type BgType = 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
+export type BgType = 'wallpaper' | 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
 export type FrameType =
   | 'none' | 'macLight' | 'macDark' | 'windowsLight' | 'windowsDark'
   | 'browserLight' | 'browserDark' | 'glass'
@@ -7,6 +7,7 @@ export interface Crop { x: number; y: number; w: number; h: number } // 0..1 of 
 
 export interface Settings {
   bgType: BgType
+  wallpaper: string
   gradColors: string[]
   gradAngle: number
   gradRadial: boolean
@@ -134,6 +135,7 @@ export const FRAMES: { id: FrameType; label: string }[] = [
 
 export const DEFAULTS: Settings = {
   bgType: 'gradient',
+  wallpaper: 'waves-dusk',
   gradColors: GRADIENTS[0].colors,
   gradAngle: 135,
   gradRadial: false,
@@ -185,5 +187,6 @@ export const STYLE_PRESETS: { name: string; patch: Partial<Settings> }[] = [
   { name: 'Browser', patch: { bgType: 'gradient', gradColors: GRADIENTS[2].colors, gradAngle: 135, frame: 'browserLight', radius: 12, tiltX: 0, tiltY: 0, shadowBlur: 60, shadowOpacity: 30 } },
   { name: 'Midnight', patch: { bgType: 'gradient', gradColors: GRADIENTS[14].colors, frame: 'macDark', radius: 12, tiltX: 0, tiltY: 0, borderWidth: 1.5, borderColor: '#ffffff33', shadowBlur: 80, shadowOpacity: 60 } },
   { name: 'Blurred', patch: { bgType: 'blurred', bgBlur: 60, frame: 'none', radius: 16, tiltX: 0, tiltY: 0, borderWidth: 2, borderColor: '#ffffff55', shadowBlur: 70, shadowOpacity: 45 } },
+  { name: 'Meadow', patch: { bgType: 'wallpaper', wallpaper: 'waves-meadow', frame: 'macLight', radius: 12, tiltX: 0, tiltY: 0, shadowBlur: 70, shadowOpacity: 35, shadowY: 30, borderWidth: 0 } },
   { name: 'Lagoon', patch: { bgType: 'mesh', meshColors: MESHES[2].colors, frame: 'browserDark', radius: 12, tiltX: -10, tiltY: 16, shadowBlur: 90, shadowOpacity: 55, shadowY: 40 } },
 ]

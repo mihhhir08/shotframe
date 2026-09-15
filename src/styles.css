@@ -357,6 +357,23 @@ kbd {
 .swatches button:hover { transform: scale(1.07); }
 .swatches button.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
 
+.wallpapers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.wallpapers button {
+  position: relative; overflow: hidden;
+  aspect-ratio: 16 / 10; border-radius: 9px;
+  box-shadow: inset 0 0 0 1px #ffffff1a;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.wallpapers img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wallpapers span {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 14px 8px 5px; text-align: left;
+  font-size: 11px; font-weight: 600; color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
+}
+.wallpapers button:hover { transform: translateY(-2px); }
+.wallpapers button.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+
 .stops { display: flex; gap: 7px; align-items: center; }
 .color {
   position: relative; display: block; flex: none;

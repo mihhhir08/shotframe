@@ -6,6 +6,7 @@ import {
   ASPECTS, FRAMES, GRADIENTS, MESHES, SOLIDS, STYLE_PRESETS,
   type BgType, type Corner, type Settings,
 } from './settings.ts'
+import { WALLPAPERS, wallpaperThumb } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export interface UserPreset { name: string; settings: Partial<Settings> }
@@ -229,7 +230,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
   )
 }
 
-const BG_TABS: [BgType, string][] = [['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
+const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
 function Background({ s, set, image }: { s: Settings; set: SetSettings; image: LoadedImage | null }) {
   return (
@@ -237,6 +238,19 @@ function Background({ s, set, image }: { s: Settings; set: SetSettings; image: L
       <Group title="Type">
         <Seg value={s.bgType} options={BG_TABS} onChange={(v) => set({ bgType: v as BgType })} wrap />
       </Group>
+
+      {s.bgType === 'wallpaper' && (
+        <Group title="Wallpaper">
+          <div className="wallpapers">
+            {WALLPAPERS.map((w) => (
+              <button key={w.id} className={s.wallpaper === w.id ? 'on' : ''} onClick={() => set({ wallpaper: w.id })} title={w.name}>
+                <img src={wallpaperThumb(w.id)} alt="" />
+                <span>{w.name}</span>
+              </button>
+            ))}
+          </div>
+        </Group>
+      )}
 
       {s.bgType === 'gradient' && (
         <Group title="Gradient">
@@ -338,6 +352,7 @@ const meshCss = (c: string[]) =>
   `radial-gradient(at 12% 18%, ${c[1]} 0, transparent 60%), radial-gradient(at 88% 14%, ${c[2]} 0, transparent 60%), radial-gradient(at 85% 88%, ${c[3]} 0, transparent 60%), radial-gradient(at 18% 82%, ${c[4]} 0, transparent 60%), ${c[0]}`
 
 export function bgCss(s: Settings) {
+  if (s.bgType === 'wallpaper') return `center / cover url(${wallpaperThumb(s.wallpaper)})`
   if (s.bgType === 'gradient') return `linear-gradient(${s.gradAngle}deg, ${s.gradColors.join(',')})`
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor
