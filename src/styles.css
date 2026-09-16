@@ -611,6 +611,15 @@ kbd {
   }
   .panel-tabs::-webkit-scrollbar { display: none; }
   .panel-tabs button { flex: 0 0 auto; grid-auto-flow: column; align-items: center; gap: 7px; padding: 8px 12px; font-size: 12px; }
+  /* the phone sheet is glass over the room, so the sticky header has to be lighter
+     than the desktop one or it reads as a box laid on the panel */
+  .panel-head {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--glow-a) 9%, rgba(20, 19, 24, 0.6)) 64%,
+      transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
   .menu { inset: 70px 10px auto 10px; width: auto; }
   .toolbar { overflow-x: auto; max-width: calc(100vw - 28px); }
   .first-run-card { padding: 26px 20px 22px; }
