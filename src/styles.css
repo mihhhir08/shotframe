@@ -498,5 +498,20 @@ kbd {
   .app { grid-template: 52px 1fr 44vh / 1fr; grid-template-areas: 'top' 'main' 'panel'; }
   .panel { margin: 0; border-radius: 0; border-width: 1px 0 0; }
   .toolbar { overflow-x: auto; max-width: calc(100vw - 16px); }
+  /* the top bar runs out of room: drop the wordmark and Copy, and let the mode
+     switch sit in the flow instead of pinned to the centre */
+  .top { gap: 10px; padding: 0 10px; }
+  .brand span { display: none; }
+  .mode { position: static; transform: none; width: auto; }
+  .top-export > .btn:first-child { display: none; }
+  .menu { inset: 58px 8px auto 8px; width: auto; }
+  /* the welcome card has to fit the shorter main area */
+  .empty { padding: 16px; overflow-y: auto; place-items: start center; }
+  .empty-card { padding: 16px; border-radius: 16px; }
+  .empty-inner { padding: 26px 18px 22px; }
+  .empty h1 { font-size: 22px; }
+  .empty p { margin-bottom: 18px; font-size: 14px; }
+  .empty .row.center { flex-wrap: wrap; }
+  .empty small { margin-top: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
