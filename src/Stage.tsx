@@ -67,6 +67,12 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
 
   useEffect(() => { playRef.current = playing }, [playing])
 
+  // The phone layout stacks under the plate, so it needs the plate's real height,
+  // not the height of the box the plate is centred in.
+  useEffect(() => {
+    document.documentElement.style.setProperty('--plate-h', `${Math.round(L.H * fit)}px`)
+  }, [L.H, fit])
+
   // Motion preview: one loop redraws the animated frame; the cache keeps the static layers.
   useEffect(() => {
     if (!motion || !fit) return
@@ -336,7 +342,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
       )}
       {motion && (
         <div className="dock">
-          <div className="timeline">
+          <div className="timeline slab">
             <button className="icon-btn" onClick={() => setPlaying(!playing)} aria-label={playing ? 'Pause' : 'Play'} title="Play / pause (space)">
               <Icon name={playing ? 'pause' : 'play'} size={17} />
             </button>

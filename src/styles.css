@@ -1,4 +1,22 @@
 /* Studio glass: a dark room, floating smoked-glass slabs, one lit object (the screenshot). */
+
+/* Self-hosted: the world's voice should not be a third-party runtime dependency,
+   and swap-from-system on first paint shows the wrong face for a beat. */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  font-display: block;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Spline Sans Mono';
+  src: url('/fonts/spline-sans-mono.woff2') format('woff2-variations');
+  font-weight: 400 500;
+  font-display: block;
+  font-style: normal;
+}
+
 :root {
   color-scheme: dark;
 
@@ -16,7 +34,8 @@
 
   --text: #f2f0ee;
   --muted: #9a958f;
-  --faint: #6a655f;
+  --faint: #8a8580;
+  --dim: #5a5550; /* non-text only: the position-grid dot */
 
   --accent: #ff8f45;
   --accent-hi: #ffab73;
@@ -38,6 +57,7 @@
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --fast: 140ms var(--ease);
   --slow: 260ms var(--ease);
+  --settle: 420ms cubic-bezier(0.16, 1, 0.3, 1); /* damped release, from the instrument-panel raise: decelerate, never bounce */
 
   --sans: 'Archivo', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono: 'Spline Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -91,12 +111,15 @@ input, textarea { caret-color: var(--accent); }
 
 /* ---------- floating slabs ---------- */
 .slab {
-  background: var(--glass);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 9%, var(--glass)), var(--glass) 62%),
+    var(--glass);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid var(--edge);
-  border-top-color: var(--edge-lit);
+  border-top-color: color-mix(in srgb, var(--glow-a) 26%, var(--edge-lit));
   box-shadow: var(--lift-3), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  transition: border-top-color 700ms var(--ease), background 700ms var(--ease);
 }
 
 .bar {
@@ -121,10 +144,10 @@ input, textarea { caret-color: var(--accent); }
   background: var(--glass-2);
   border: 1px solid transparent;
   font-weight: 500; white-space: nowrap;
-  transition: background var(--fast), color var(--fast), transform var(--fast), box-shadow var(--fast);
+  transition: background var(--fast), color var(--fast), transform var(--settle), box-shadow var(--fast);
 }
 .btn:not(:disabled):hover { background: var(--glass-3); }
-.btn:not(:disabled):active { transform: translateY(1px); }
+.btn:not(:disabled):active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }
 .btn.primary {
   background: linear-gradient(180deg, var(--accent-hi), var(--accent));
   color: var(--accent-ink); font-weight: 600;
@@ -272,10 +295,10 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   display: grid; place-items: center;
   width: 36px; height: 36px; border-radius: 10px;
   color: var(--muted);
-  transition: background var(--fast), color var(--fast), transform var(--fast);
+  transition: background var(--fast), color var(--fast), transform var(--settle);
 }
 .tool:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
-.tool:not(:disabled):active { transform: scale(0.94); }
+.tool:not(:disabled):active { transform: scale(0.93); transition-duration: 60ms; }
 .tool.on { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(255, 143, 69, 0.35); }
 .toolopts {
   display: flex; align-items: center; gap: 10px;
@@ -298,6 +321,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .ink.custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 .timeline { display: flex; align-items: center; gap: 12px; padding: 7px 14px 7px 7px; border-radius: 14px; }
+.stage > .dock { left: 0; right: 0; bottom: -62px; }
 .timeline input[type='range'] { width: min(44vw, 400px); height: 18px; margin: 0; appearance: none; background: transparent; cursor: pointer; }
 .timeline input::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); }
 .timeline input::-webkit-slider-thumb { appearance: none; width: 13px; height: 13px; margin-top: -4.5px; border-radius: 50%; background: var(--accent); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); }
@@ -323,7 +347,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .panel-tabs button {
   display: grid; justify-items: center; gap: 5px;
   padding: 9px 2px 8px; border-radius: 10px;
-  color: var(--faint); font-size: 10px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em;
+  color: var(--faint); font-size: 10.5px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em;
   transition: background var(--fast), color var(--fast);
 }
 .panel-tabs button:hover { color: var(--text); background: var(--glass-2); }
@@ -434,7 +458,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   background: rgba(0, 0, 0, 0.28); border: 1px solid var(--edge);
   transition: border-color var(--fast);
 }
-.align-grid button::after { content: ''; position: absolute; inset: 9px; border-radius: 2px; background: var(--faint); transition: background var(--fast); }
+.align-grid button::after { content: ''; position: absolute; inset: 9px; border-radius: 2px; background: var(--dim); transition: background var(--fast); }
 .align-grid button:hover::after { background: var(--text); }
 .align-grid button.on { border-color: var(--accent); }
 .align-grid button.on::after { background: var(--accent); }
@@ -559,10 +583,11 @@ kbd {
   .mode-wrap { position: static; transform: none; margin-right: auto; }
   /* a phone bar holds three things: what this is, which mode, and how to get the file out */
   .bar-group.file-actions, .bar-sep, .bar-right .bar-group, .bar-right > .btn { display: none; }
-  .stage { inset: 72px 14px auto 14px; height: min(42dvh, 380px); }
-  .dock { right: 14px; bottom: auto; top: calc(72px + min(42dvh, 380px) + 8px); }
+  /* hug the plate to the top of its box so nothing stacks below a dead band */
+  .stage { inset: 72px 14px auto 14px; height: min(42dvh, 380px); place-items: start center; }
+  .dock { right: 14px; bottom: auto; top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 38px); }
   .panel {
-    top: calc(72px + min(42dvh, 380px) + 64px); right: 14px; left: 14px; bottom: 14px;
+    top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 96px); right: 14px; left: 14px; bottom: 14px;
     width: auto; grid-template-columns: 1fr; grid-template-rows: auto 1fr;
   }
   /* the rail turns into a scrolling row: a vertical one cannot fit a phone sheet */
@@ -571,6 +596,7 @@ kbd {
     padding: 8px; overflow-x: auto; overflow-y: hidden;
     border-right: 0; border-bottom: 1px solid var(--hairline);
     scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 86%, transparent);
   }
   .panel-tabs::-webkit-scrollbar { display: none; }
   .panel-tabs button { flex: 0 0 auto; grid-auto-flow: column; align-items: center; gap: 7px; padding: 8px 12px; font-size: 12px; }
