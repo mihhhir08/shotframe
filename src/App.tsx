@@ -422,7 +422,7 @@ export default function App() {
                   <button className="btn primary" onClick={() => fileRef.current?.click()}><Icon name="image" size={15} /> Choose file</button>
                   <button className="btn" onClick={() => openImage(sampleImage())}><Icon name="sparkle" size={15} /> Try a sample</button>
                 </div>
-                <small>Everything stays on your device. Nothing is uploaded.</small>
+                <small>Your images never leave your device. Nothing is uploaded.</small>
               </div>
             </div>
           </div>
