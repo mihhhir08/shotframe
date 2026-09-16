@@ -382,8 +382,8 @@ export function bgCss(s: Settings) {
   if (s.bgType === 'gradient') return `linear-gradient(${s.gradAngle}deg, ${s.gradColors.join(',')})`
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor
-  if (s.bgType === 'transparent') return 'repeating-conic-gradient(#3a3633 0 25%, #2a2724 0 50%) 0 0 / 10px 10px'
-  return 'linear-gradient(135deg, #6b645d, #2a2724)'
+  if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2447 0 25%, #1c1734 0 50%) 0 0 / 10px 10px'
+  return 'linear-gradient(135deg, #6b5aa8, #241d45)'
 }
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
