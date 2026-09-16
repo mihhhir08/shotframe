@@ -112,17 +112,18 @@ input, textarea { caret-color: var(--accent); }
 /* ---------- floating slabs ---------- */
 .slab {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 9%, var(--glass)), var(--glass) 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 17%, var(--glass)), var(--glass) 66%),
     var(--glass);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid var(--edge);
-  border-top-color: color-mix(in srgb, var(--glow-a) 26%, var(--edge-lit));
+  border-top-color: color-mix(in srgb, var(--glow-a) 38%, var(--edge-lit));
   box-shadow: var(--lift-3), inset 0 1px 0 rgba(255, 255, 255, 0.07);
   transition: border-top-color 700ms var(--ease), background 700ms var(--ease);
 }
 
 .bar {
+  animation: slab-down 520ms var(--settle) backwards;
   position: absolute; top: 14px; left: 14px; right: 14px; z-index: 30;
   display: flex; align-items: center; gap: 14px;
   height: 52px; padding: 0 8px 0 14px;
@@ -288,7 +289,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   pointer-events: none;
 }
 .dock > * { pointer-events: auto; }
-.toolbar { display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 14px; }
+.toolbar { display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 14px; animation: slab-up 560ms 120ms var(--settle) backwards; }
 .toolbar-item { display: contents; }
 .toolbar .sep, .toolopts .sep { width: 1px; height: 22px; margin: 0 6px; background: var(--hairline); }
 .tool {
@@ -331,6 +332,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- inspector ---------- */
 .panel {
+  animation: slab-right 560ms 60ms var(--settle) backwards;
   position: absolute; top: 80px; right: 14px; bottom: 16px; z-index: 20;
   width: 344px;
   display: grid; grid-template-columns: 78px 1fr;
@@ -352,12 +354,17 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 }
 .panel-tabs button:hover { color: var(--text); background: var(--glass-2); }
 .panel-tabs button.on { color: var(--accent); background: var(--accent-dim); }
-.panel-body { min-height: 0; overflow-y: auto; padding: 0 16px 22px; }
+.panel-body { min-height: 0; overflow-y: auto; padding: 0 16px 22px; animation: tab-in 300ms var(--settle); }
 .panel-head {
   position: sticky; top: 0; z-index: 1;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 16px 0 12px;
-  background: linear-gradient(var(--glass-solid) 72%, transparent);
+  /* same mix as .slab, or the header reads as an opaque box sitting on the panel */
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--glow-a) 9%, rgba(20, 19, 24, 0.92)) 68%,
+    transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .panel-head h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
 .group { display: flex; flex-direction: column; gap: 9px; padding: 14px 0 16px; border-top: 1px solid var(--hairline); }
@@ -568,6 +575,10 @@ kbd {
 .recording-bar i { display: block; width: 100%; height: 100%; background: var(--accent); transform-origin: left; transition: transform 100ms linear; }
 
 @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes slab-down { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+@keyframes slab-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes slab-right { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+@keyframes tab-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 @keyframes plate { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
 
 /* ---------- adapt ---------- */

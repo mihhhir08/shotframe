@@ -56,7 +56,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
         ))}
       </nav>
 
-      <div className="panel-body" role="tabpanel">
+      <div className="panel-body" role="tabpanel" key={active}>
         <header className="panel-head">
           <h2>{current[3]}</h2>
           <button className="btn quiet small" onClick={onReset} title="Reset every style setting"><Icon name="reset" size={13} /> Reset</button>
