@@ -13,15 +13,16 @@ export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export interface UserPreset { name: string; settings: Partial<Settings> }
 export type PanelTab = 'motion' | 'presets' | 'background' | 'canvas' | 'style' | 'frame' | '3d' | 'text'
 
-export const TABS: [PanelTab, IconName, string][] = [
-  ['motion', 'film', 'Motion'],
-  ['presets', 'sparkle', 'Presets'],
-  ['background', 'image', 'Background'],
-  ['canvas', 'layout', 'Canvas'],
-  ['style', 'style', 'Screenshot'],
-  ['frame', 'window', 'Frame'],
-  ['3d', 'cube', '3D & rotation'],
-  ['text', 'text', 'Text & watermark'],
+// Every tab says what it is: an icon alone makes people guess.
+export const TABS: [PanelTab, IconName, string, string][] = [
+  ['motion', 'film', 'Motion', 'Motion'],
+  ['presets', 'sparkle', 'Presets', 'Presets'],
+  ['background', 'image', 'Background', 'Background'],
+  ['canvas', 'layout', 'Canvas', 'Canvas & position'],
+  ['style', 'style', 'Shot', 'Screenshot style'],
+  ['frame', 'window', 'Frame', 'Window frame'],
+  ['3d', 'cube', '3D', '3D & rotation'],
+  ['text', 'text', 'Text', 'Text & watermark'],
 ]
 
 interface Props {
@@ -41,24 +42,27 @@ interface Props {
 export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset }: Props) {
   const tabs = TABS.filter(([id]) => motion || id !== 'motion')
   const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
+  // the stored tab can point at a tab this mode does not show (Motion, after a reload in Static)
+  const active = current[0]
   return (
-    <aside className="panel">
+    <aside className="panel slab">
       <nav className="panel-tabs" role="tablist" aria-label="Settings">
-        {tabs.map(([id, icon, label]) => (
-          <button key={id} role="tab" aria-selected={tab === id} aria-label={label} title={label}
-            className={tab === id ? 'on' : ''} onClick={() => onTab(id)}>
+        {tabs.map(([id, icon, short, label]) => (
+          <button key={id} role="tab" aria-selected={active === id} aria-label={label} title={label}
+            className={active === id ? 'on' : ''} onClick={() => onTab(id)}>
             <Icon name={icon} size={17} />
+            {short}
           </button>
         ))}
       </nav>
 
       <div className="panel-body" role="tabpanel">
         <header className="panel-head">
-          <h2>{current[2]}</h2>
-          <button className="btn ghost small" onClick={onReset} title="Reset every style setting"><Icon name="reset" size={13} /> Reset</button>
+          <h2>{current[3]}</h2>
+          <button className="btn quiet small" onClick={onReset} title="Reset every style setting"><Icon name="reset" size={13} /> Reset</button>
         </header>
 
-        {tab === 'motion' && motion && (
+        {active === 'motion' && motion && (
           <>
             <Group title="Animation">
               <div className="motion-grid">
@@ -76,10 +80,10 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
             </Group>
           </>
         )}
-        {tab === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
-        {tab === 'background' && <Background s={s} set={set} image={image} />}
+        {active === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
+        {active === 'background' && <Background s={s} set={set} image={image} />}
 
-        {tab === 'canvas' && (
+        {active === 'canvas' && (
           <>
             <Group title="Size">
               <select value={s.aspect} onChange={(e) => set({ aspect: e.target.value })} aria-label="Canvas size">
@@ -112,7 +116,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </>
         )}
 
-        {tab === 'style' && (
+        {active === 'style' && (
           <>
             <Group title="Corners">
               <Slider label="Radius" value={s.radius} min={0} max={80} onChange={(v) => set({ radius: v }, 'radius')} />
@@ -149,7 +153,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </>
         )}
 
-        {tab === 'frame' && (
+        {active === 'frame' && (
           <Group title="Window">
             <div className="chips">
               {FRAMES.map((f) => (
@@ -164,7 +168,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </Group>
         )}
 
-        {tab === '3d' && (
+        {active === '3d' && (
           <>
             <Group title="Angle">
               <div className="chips">
@@ -181,7 +185,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </>
         )}
 
-        {tab === 'text' && (
+        {active === 'text' && (
           <>
             <Group title="Caption">
               <textarea rows={2} value={s.caption} placeholder="Headline above or below" aria-label="Caption" onChange={(e) => set({ caption: e.target.value }, 'caption')} />

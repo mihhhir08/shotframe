@@ -15,6 +15,8 @@ interface Props {
   sizeLevel: number
   stroke: StrokeOpts
   motion: boolean
+  sample: boolean
+  onDismissSample: () => void
   onSelect: (id: string | null) => void
   onAdd: (a: Annotation) => void
   onUpdate: (a: Annotation, key?: string) => void
@@ -33,7 +35,7 @@ const FULL: Crop = { x: 0, y: 0, w: 1, h: 1 }
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 export const newId = () => Math.random().toString(36).slice(2, 10)
 
-export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motion, onSelect, onAdd, onUpdate, set }: Props) {
+export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motion, sample, onDismissSample, onSelect, onAdd, onUpdate, set }: Props) {
   const s = scene.settings
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -307,6 +309,12 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
               </div>
             )}
           </div>
+          )}
+          {sample && (
+            <div className="sample-tag">
+              This is a sample — press <kbd>{/Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘' : 'Ctrl+'}V</kbd> to use your own
+              <button onClick={onDismissSample} aria-label="Choose a file instead" title="Choose a file"><Icon name="image" size={14} /></button>
+            </div>
           )}
           {text && textPos && (
             <textarea

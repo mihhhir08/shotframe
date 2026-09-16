@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { curved, straighten, withBend } from './annotations.ts'
 import { makeCanvas } from './canvas.ts'
 import { Icon, type IconName } from './icons.tsx'
-import { loadFile, loadImage, sampleImage, type LoadedImage } from './image.ts'
+import { loadFile, loadImage, palette, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
-import { bgCss, Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
+import { Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type RenderCache, type Scene } from './render.ts'
 import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
-import { curved, straighten, withBend } from './annotations.ts'
 import { SIZES, Stage } from './Stage.tsx'
 
 interface Doc { settings: Settings; annotations: Annotation[] }
@@ -73,6 +73,8 @@ export default function App() {
   const s = doc.settings
 
   const [image, setImage] = useState<LoadedImage | null>(null)
+  const [isSample, setIsSample] = useState(true)
+  const [glow, setGlow] = useState(['#ff8f45', '#7a4bd1'])
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null)
   const [tool, setToolRaw] = useState<Tool>('select')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -90,6 +92,7 @@ export default function App() {
   const [videoSize, setVideoSize] = useState<number>(() => load('shotframe:videoSize', 1920))
   const [fps, setFps] = useState<number>(() => load('shotframe:fps', 30))
   const [recording, setRecording] = useState<number | null>(null)
+  const [firstRun, setFirstRun] = useState(() => !load('shotframe:seen', false))
   const [toast, setToast] = useState('')
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -133,24 +136,36 @@ export default function App() {
     return () => { live = false }
   }, [s.bgImage])
 
-  const openImage = useCallback((img: LoadedImage) => {
+  const openImage = useCallback((img: LoadedImage, sample = false) => {
     setImage(img)
+    setIsSample(sample)
+    // the room takes the colours of whatever you just brought in
+    try {
+      const p = palette(img.el)
+      setGlow([p[0], p[1] ?? p[0]])
+    } catch { /* tainted or tiny images keep the current light */ }
     update((d) => ({ settings: { ...d.settings, crop: null }, annotations: [] }))
     setSelectedId(null)
     setToolRaw('select')
   }, [update])
 
-  useEffect(() => {
-    if (location.hash === '#sample') openImage(sampleImage())
-  }, [openImage])
+  // The editor is never empty: it opens on a worked sample so the tool is visibly doing its job.
+  useEffect(() => { openImage(sampleImage(), true) }, [openImage])
 
   const openFile = useCallback(async (file: Blob) => {
     try {
       openImage(await loadFile(file))
+      setFirstRun(false)
+      save('shotframe:seen', true)
     } catch (e) {
       flash((e as Error).message)
     }
   }, [openImage])
+
+  const dismissFirstRun = () => {
+    setFirstRun(false)
+    save('shotframe:seen', true)
+  }
 
   const pasteButton = async () => {
     try {
@@ -334,7 +349,8 @@ export default function App() {
       else if (mod && k === 'o') { e.preventDefault(); fileRef.current?.click() }
       else if (mod || e.altKey) return
       else if ((k === 'backspace' || k === 'delete') && selectedId) { e.preventDefault(); removeSelected() }
-      else if (k === 'escape' || (k === 'enter' && tool === 'crop')) { setSelectedId(null); setTool('select') }
+      else if (k === 'escape') { if (firstRun) dismissFirstRun(); setSelectedId(null); setTool('select') }
+      else if (k === 'enter' && tool === 'crop') { setSelectedId(null); setTool('select') }
       else if (scene && mode === 'static') {
         const t = TOOLS.find((x) => x[3].toLowerCase() === k)
         if (t) setTool(t[0])
@@ -345,26 +361,37 @@ export default function App() {
   })
 
   const kind = selected?.type ?? tool
-  const showOpts = scene && (tool !== 'select' || selected)
+  const showOpts = scene && mode === 'static' && (tool !== 'select' || selected)
   const outW = layout ? Math.round(layout.W * exportPx) : 0
   const outH = layout ? Math.round(layout.H * exportPx) : 0
 
   return (
-    <div className="app">
-      <header className="top">
+    <div className="app" style={{ '--glow-a': glow[0], '--glow-b': glow[1] } as CSSProperties}>
+      <div className="ambient" />
+      <div className="room-floor" />
+
+      <header className="bar slab">
         <div className="brand">
-          <img src="/icon.svg" alt="" width={22} height={22} />
+          <img src="/icon.svg" alt="" width={24} height={24} />
           <span>Shotframe</span>
         </div>
-        <div className="top-group">
-          <button className="btn ghost" onClick={() => fileRef.current?.click()} title={`Open (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
-          <button className="btn ghost" onClick={pasteButton} title={`Paste (${MOD}V)`}><Icon name="copy" size={15} /> Paste</button>
+        <span className="bar-sep" />
+        <div className="bar-group file-actions">
+          <button className="btn quiet" onClick={() => fileRef.current?.click()} title={`Open an image (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
+          <button className="btn quiet" onClick={pasteButton} title={`Paste from clipboard (${MOD}V)`}><Icon name="copy" size={15} /> Paste</button>
         </div>
-        <div className="mode">
+
+        <div className="mode-wrap">
           <Seg value={mode} options={[['static', 'Static'], ['motion', 'Motion']]} onChange={(v) => setMode(v as 'static' | 'motion')} />
         </div>
-        <div className="top-export">
-          {mode === 'static' && <button className="btn" disabled={!scene} onClick={copy} title={`Copy (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>}
+
+        <div className="bar-right">
+          <div className="bar-group">
+            <button className="icon-btn" disabled={!canUndo} onClick={undo} aria-label="Undo" title={`Undo (${MOD}Z)`}><Icon name="undo" size={17} /></button>
+            <button className="icon-btn" disabled={!canRedo} onClick={redo} aria-label="Redo" title={`Redo (${MOD}⇧Z)`}><Icon name="redo" size={17} /></button>
+          </div>
+          <span className="bar-sep" />
+          {mode === 'static' && <button className="btn" disabled={!scene} onClick={copy} title={`Copy image (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>}
           <div className="split">
             <button className="btn primary" disabled={!scene || recording !== null} onClick={mode === 'static' ? download : exportVideo} title={`Export (${MOD}S)`}>
               <Icon name="download" size={15} /> Export
@@ -384,7 +411,7 @@ export default function App() {
                   <Seg value={String(scale)} options={SCALES.map((x) => [String(x), `${x}×`])} onChange={(v) => setScale(+v)} />
                 </div>
                 <div className="menu-foot">
-                  <span className="dims">{layout ? `${outW} × ${outH} px` : 'Open a screenshot first'}</span>
+                  <span className="dims">{layout ? `${outW} × ${outH} px` : ''}</span>
                   <button className="btn primary" disabled={!scene} onClick={download}><Icon name="download" size={14} /> Export</button>
                 </div>
               </>
@@ -409,23 +436,10 @@ export default function App() {
       </header>
 
       <main className="main">
-        {scene ? (
+        {scene && (
           <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke} motion={mode === 'motion'}
+            sample={isSample && !firstRun && mode === 'static'} onDismissSample={() => fileRef.current?.click()}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
-        ) : (
-          <div className="empty">
-            <div className="empty-card" style={{ background: bgCss(s) }}>
-              <div className="empty-inner">
-                <h1>Make any screenshot look good.</h1>
-                <p>Press <kbd>{MOD}V</kbd> to paste, or drop an image anywhere.</p>
-                <div className="row center">
-                  <button className="btn primary" onClick={() => fileRef.current?.click()}><Icon name="image" size={15} /> Choose file</button>
-                  <button className="btn" onClick={() => openImage(sampleImage())}><Icon name="sparkle" size={15} /> Try a sample</button>
-                </div>
-                <small>Your images never leave your device. Nothing is uploaded.</small>
-              </div>
-            </div>
-          </div>
         )}
 
         {recording !== null && (
@@ -439,11 +453,11 @@ export default function App() {
         {scene && mode === 'static' && (
           <div className="dock">
             {showOpts && (
-              <div className="toolopts">
+              <div className="toolopts slab">
                 {tool === 'crop' ? (
                   <>
-                    <span className="toolopts-label">Drag to crop</span>
-                    <button className="btn ghost small" disabled={!s.crop} onClick={() => set({ crop: null })}>Reset</button>
+                    <span className="toolopts-label">Drag on the image to crop</span>
+                    <button className="btn quiet small" disabled={!s.crop} onClick={() => set({ crop: null })}>Reset</button>
                     <button className="btn primary small" onClick={() => setTool('select')}><Icon name="check" size={14} /> Done</button>
                   </>
                 ) : (
@@ -473,29 +487,27 @@ export default function App() {
                       <button className={`icon-btn ${strokeOf(selected).dashed ? 'on' : ''}`} title="Dashed line" aria-pressed={strokeOf(selected).dashed}
                         onClick={() => applyStroke({ dashed: !strokeOf(selected).dashed })}><Icon name="dash" size={16} /></button>
                     )}
-                    {selected &&<button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
+                    {selected && <button className="icon-btn" onClick={removeSelected} aria-label="Delete annotation" title="Delete (⌫)"><Icon name="trash" size={16} /></button>}
                     {doc.annotations.length > 0 && (
-                      <button className="btn ghost small" onClick={() => { update((d) => ({ ...d, annotations: [] })); setSelectedId(null) }}>Clear all</button>
+                      <button className="btn quiet small" onClick={() => { update((d) => ({ ...d, annotations: [] })); setSelectedId(null) }}>Clear all</button>
                     )}
                   </>
                 )}
               </div>
             )}
-            <div className="toolbar" role="toolbar" aria-label="Tools">
+            <div className="toolbar slab" role="toolbar" aria-label="Tools">
               {TOOLS.map(([id, icon, label, key], i) => (
                 <span key={id} className="toolbar-item">
                   {(i === 2 || i === 9) && <span className="sep" />}
-                  <button className={`tool ${tool === id ? 'on' : ''}`} onClick={() => setTool(id)} aria-label={label} title={`${label} (${key})`}>
+                  <button className={`tool ${tool === id ? 'on' : ''}`} onClick={() => setTool(id)} aria-label={label} title={`${label}  ·  ${key}`}>
                     <Icon name={icon} />
                   </button>
                 </span>
               ))}
-              <span className="sep" />
-              <button className="tool" disabled={!canUndo} onClick={undo} aria-label="Undo" title={`Undo (${MOD}Z)`}><Icon name="undo" /></button>
-              <button className="tool" disabled={!canRedo} onClick={redo} aria-label="Redo" title={`Redo (${MOD}⇧Z)`}><Icon name="redo" /></button>
             </div>
           </div>
         )}
+
         {dragging && <div className="drop-hint"><span>Drop to open</span></div>}
       </main>
 
@@ -513,6 +525,20 @@ export default function App() {
         }}
         onReset={() => set({ ...DEFAULTS, crop: s.crop })}
       />
+
+      {firstRun && (
+        <div className="first-run" onClick={dismissFirstRun}>
+          <div className="first-run-card slab" onClick={(e) => e.stopPropagation()}>
+            <h1>Your screenshot, worth posting.</h1>
+            <p>Press <kbd>{MOD}V</kbd> to paste one, or drop it anywhere on the page. A sample is already loaded behind this, so you can play first.</p>
+            <div className="row center">
+              <button className="btn primary" onClick={() => fileRef.current?.click()}><Icon name="image" size={15} /> Choose a file</button>
+              <button className="btn" onClick={dismissFirstRun}><Icon name="sparkle" size={15} /> Explore the sample</button>
+            </div>
+            <small>Your images never leave your device. Nothing is uploaded.</small>
+          </div>
+        </div>
+      )}
 
       {toast && <div className="toast" role="status">{toast}</div>}
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => {
