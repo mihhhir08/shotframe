@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-15T00:00:00Z",
+  "title": "Design System: Shotframe",
+  "extensions": {
+    "colorMeta": {
+      "room": { "role": "neutral", "displayName": "Room", "canonical": "#08070a", "tonalRamp": ["#08070a", "#0d0c11", "#141319", "#1f1d25", "#332f3c", "#5b5668", "#8d8899", "#c6c2cf"] },
+      "room-2": { "role": "neutral", "displayName": "Room Deep", "canonical": "#0d0c11", "tonalRamp": ["#08070a", "#0d0c11", "#16151c", "#232029", "#37333f", "#5f5a6b", "#918c9c", "#c9c5d1"] },
+      "glass": { "role": "neutral", "displayName": "Smoked Glass", "canonical": "rgba(24, 23, 29, 0.72)", "tonalRamp": ["#0b0a0e", "#121116", "#18171d", "#22212a", "#34323e", "#585566", "#8a8798", "#c4c1cd"] },
+      "glass-solid": { "role": "neutral", "displayName": "Solid Glass", "canonical": "#17161c", "tonalRamp": ["#0a090c", "#111015", "#17161c", "#211f28", "#33313d", "#575463", "#898695", "#c3c1ca"] },
+      "glass-2": { "role": "neutral", "displayName": "Glass Film", "canonical": "rgba(255, 255, 255, 0.045)" },
+      "glass-3": { "role": "neutral", "displayName": "Glass Film Strong", "canonical": "rgba(255, 255, 255, 0.08)" },
+      "edge": { "role": "neutral", "displayName": "Edge", "canonical": "rgba(255, 255, 255, 0.09)" },
+      "edge-lit": { "role": "neutral", "displayName": "Lit Edge", "canonical": "rgba(255, 255, 255, 0.16)" },
+      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(255, 255, 255, 0.06)" },
+      "text": { "role": "neutral", "displayName": "Text", "canonical": "#f2f0ee", "tonalRamp": ["#1a1917", "#2e2c29", "#48453f", "#66625b", "#8a8580", "#b0aba5", "#d4d1cc", "#f2f0ee"] },
+      "muted": { "role": "neutral", "displayName": "Muted", "canonical": "#9a958f", "tonalRamp": ["#171614", "#2b2926", "#45423d", "#63605a", "#837f79", "#9a958f", "#c0bcb7", "#e4e1dd"] },
+      "faint": { "role": "neutral", "displayName": "Faint", "canonical": "#8a8580", "tonalRamp": ["#151413", "#282624", "#413e3a", "#5d5a55", "#7a7671", "#8a8580", "#b5b1ac", "#dedbd7"] },
+      "dim": { "role": "neutral", "displayName": "Dim (non-text)", "canonical": "#5a5550", "tonalRamp": ["#120f0d", "#221f1c", "#37332f", "#4c4843", "#5a5550", "#7e7a74", "#a8a49e", "#d6d3ce"] },
+      "accent": { "role": "primary", "displayName": "Amber", "canonical": "#ff8f45", "tonalRamp": ["#2a1203", "#4a2206", "#71350b", "#9c4a11", "#cb6320", "#ff8f45", "#ffb98a", "#ffe2cd"] },
+      "accent-hi": { "role": "primary", "displayName": "Amber Light", "canonical": "#ffab73", "tonalRamp": ["#2d1608", "#4e280e", "#743e18", "#9d5824", "#cc7940", "#ffab73", "#ffc9a5", "#ffe8d8"] },
+      "accent-dim": { "role": "primary", "displayName": "Amber Wash", "canonical": "rgba(255, 143, 69, 0.16)" },
+      "accent-ink": { "role": "primary", "displayName": "Amber Ink", "canonical": "#1a0c02" },
+      "glow-a": { "role": "secondary", "displayName": "Sampled Warm Glow", "canonical": "#ff8f45", "tonalRamp": ["#2a1203", "#4a2206", "#71350b", "#9c4a11", "#cb6320", "#ff8f45", "#ffb98a", "#ffe2cd"] },
+      "glow-b": { "role": "secondary", "displayName": "Sampled Cool Glow", "canonical": "#7a4bd1", "tonalRamp": ["#140a26", "#231340", "#351f5e", "#48297f", "#5f38a5", "#7a4bd1", "#a888e4", "#ddcdf6"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "First-run card headline. The only type above 15px in the product." },
+      "title": { "displayName": "Title", "purpose": "Inspector panel heading." },
+      "brand": { "displayName": "Brand", "purpose": "The Shotframe wordmark in the command bar." },
+      "body": { "displayName": "Body", "purpose": "Base interface size; hints and paragraph copy derive from it." },
+      "control": { "displayName": "Control", "purpose": "Segmented buttons, chips, small buttons, phone tab labels." },
+      "label": { "displayName": "Label", "purpose": "Group headings, menu labels, preset and motion captions." },
+      "numeral": { "displayName": "Numeral", "purpose": "Every value a user reads: dimensions, durations, percentages, keycaps, export meta. Always tabular." }
+    },
+    "shadows": [
+      { "name": "lift-1", "value": "0 1px 2px rgba(0, 0, 0, 0.5)", "purpose": "Small objects resting on a slab, e.g. the brand mark." },
+      { "name": "lift-2", "value": "0 8px 24px -8px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4)", "purpose": "Transient objects a short distance off the surface: sample badge, drop-hint pill, hovered preset swatch." },
+      { "name": "lift-3", "value": "0 24px 60px -18px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.45)", "purpose": "Every glass slab and the toast. The room's default float height." },
+      { "name": "plate", "value": "0 40px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.07)", "purpose": "The canvas plate only: deepest cast in the room plus a one-pixel light ring." },
+      { "name": "slab-inner-light", "value": "inset 0 1px 0 rgba(255, 255, 255, 0.07)", "purpose": "Paired with lift-3 on every slab; reads as light falling from above." },
+      { "name": "primary-button-light", "value": "inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 16px -6px rgba(255, 143, 69, 0.7)", "purpose": "The export button alone: lit top face and amber cast into the room." },
+      { "name": "tool-on-ring", "value": "inset 0 0 0 1px rgba(255, 143, 69, 0.35)", "purpose": "Active tool in the dock." },
+      { "name": "selected-ring", "value": "0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent)", "purpose": "Selected swatch, wallpaper or ink dot: a dark gap then an amber ring." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Default curve for colour, bed and atmosphere changes." },
+      { "name": "fast", "value": "140ms var(--ease)", "purpose": "Hover and state colour transitions on controls." },
+      { "name": "slow", "value": "260ms var(--ease)", "purpose": "Atmosphere: ambient opacity." },
+      { "name": "settle", "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The damped release. Control presses and slab entrances decelerate into rest and never bounce." },
+      { "name": "relight", "value": "700ms var(--ease)", "purpose": "Glow-dependent properties (slab tint, lit top edge, ambient and plate halo) when the sampled palette changes." },
+      { "name": "slab-down", "value": "520ms var(--settle) backwards", "purpose": "Command bar entrance from the top edge." },
+      { "name": "slab-right", "value": "560ms 60ms var(--settle) backwards", "purpose": "Inspector entrance from the right edge." },
+      { "name": "slab-up", "value": "560ms 120ms var(--settle) backwards", "purpose": "Toolbar entrance from the bottom edge." },
+      { "name": "pop", "value": "180ms var(--ease)", "purpose": "Transient surfaces only: menu, tool options, toast, sample badge, first-run card." },
+      { "name": "tab-in", "value": "300ms var(--settle)", "purpose": "Replays the inspector body on tab change." },
+      { "name": "press", "value": "60ms", "purpose": "Active-state compression on buttons and tools; released on --settle." }
+    ],
+    "breakpoints": [
+      { "name": "narrow", "value": "1180px" },
+      { "name": "phone", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Default control: a faint glass film bed on a slab, 34px tall with an inline SVG icon.",
+      "html": "<button class=\"ds-btn\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 9h11v11H9zM5 15H4V4h11v1\"/></svg> Copy</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px; border-radius: 9px; background: rgba(255,255,255,0.045); border: 1px solid transparent; color: #f2f0ee; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-btn:hover { background: rgba(255,255,255,0.08); } .ds-btn:focus-visible { outline: 2px solid #ff8f45; outline-offset: 2px; } .ds-btn:active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The action that finishes the job: Export. A lit amber face with an amber cast beneath it.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3v12M7 10l5 5 5-5M4 20h16\"/></svg> Export <span class=\"ds-btn-meta\">PNG 2×</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px; border-radius: 9px; border: 1px solid transparent; background: linear-gradient(180deg, #ffab73, #ff8f45); color: #1a0c02; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 16px -6px rgba(255,143,69,0.7); transition: filter 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { filter: brightness(1.06); } .ds-btn-primary:focus-visible { outline: 2px solid #ff8f45; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; } .ds-btn-meta { font-family: 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-size: 10.5px; font-weight: 500; opacity: 0.75; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Tool Button",
+      "kind": "button",
+      "refersTo": "tool",
+      "description": "Square icon control in the dock. Muted at rest; amber wash with an amber ring when active.",
+      "html": "<div class=\"ds-toolset\"><button class=\"ds-tool\" aria-label=\"Select\" title=\"Select  ·  V\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 3l14 8-6 1.5L10 19z\"/></svg></button><button class=\"ds-tool ds-tool-on\" aria-label=\"Arrow\" title=\"Arrow  ·  A\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 19L19 5M9 5h10v10\"/></svg></button></div>",
+      "css": ".ds-toolset { display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 14px; background: rgba(24,23,29,0.72); border: 1px solid rgba(255,255,255,0.09); border-top-color: rgba(255,255,255,0.16); box-shadow: 0 24px 60px -18px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); backdrop-filter: blur(20px) saturate(1.4); } .ds-tool { display: grid; place-items: center; width: 36px; height: 36px; border: 0; background: none; border-radius: 10px; color: #9a958f; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-tool:hover { background: rgba(255,255,255,0.045); color: #f2f0ee; } .ds-tool:focus-visible { outline: 2px solid #ff8f45; outline-offset: 2px; } .ds-tool:active { transform: scale(0.93); transition-duration: 60ms; } .ds-tool-on { background: rgba(255,143,69,0.16); color: #ff8f45; box-shadow: inset 0 0 0 1px rgba(255,143,69,0.35); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "A well cut into the slab: dark bed, one-pixel edge, amber on focus.",
+      "html": "<input class=\"ds-input\" type=\"text\" value=\"shotframe.app\" aria-label=\"URL\" />",
+      "css": ".ds-input { height: 34px; width: 220px; padding: 0 11px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; color: #f2f0ee; caret-color: #ff8f45; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; outline: none; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-input:hover { border-color: rgba(255,255,255,0.16); } .ds-input:focus { border-color: #ff8f45; background: rgba(0,0,0,0.4); }"
+    },
+    {
+      "name": "Field Scrubber",
+      "kind": "custom",
+      "refersTo": "field-scrubber",
+      "description": "Signature inspector control: the bar is the control. Label left, mono value right, amber wash filling to the current position behind them.",
+      "html": "<label class=\"ds-fs\"><span class=\"ds-fs-fill\" style=\"width: 46%\"></span><span class=\"ds-fs-label\">Padding</span><output class=\"ds-fs-out\">92</output></label>",
+      "css": ".ds-fs { position: relative; display: flex; align-items: center; justify-content: space-between; width: 280px; height: 34px; padding: 0 12px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; overflow: hidden; cursor: ew-resize; user-select: none; color: #f2f0ee; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-fs:hover { border-color: rgba(255,255,255,0.16); } .ds-fs:hover .ds-fs-fill { background: rgba(255,143,69,0.22); } .ds-fs-fill { position: absolute; top: 0; bottom: 0; left: 0; background: rgba(255,143,69,0.16); pointer-events: none; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 2px; background: #ff8f45; box-shadow: 0 0 10px rgba(255,143,69,0.7); } .ds-fs-label { position: relative; font-weight: 450; } .ds-fs-out { position: relative; font-family: 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-size: 11px; color: #9a958f; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Short exclusive sets (window frames, tilt presets). Selected turns amber on an amber wash.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">None</button><button class=\"ds-chip ds-chip-on\">macOS</button><button class=\"ds-chip\">Browser</button></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 6px; } .ds-chip { height: 30px; padding: 0 11px; border-radius: 8px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.09); color: #9a958f; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: color 140ms cubic-bezier(0.2,0.8,0.2,1), border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-chip:hover { color: #f2f0ee; border-color: rgba(255,255,255,0.16); } .ds-chip:focus-visible { outline: 2px solid #ff8f45; outline-offset: 2px; } .ds-chip-on { color: #ff8f45; border-color: rgba(255,143,69,0.55); background: rgba(255,143,69,0.16); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "button",
+      "description": "A single dark well; the selected item rises out of it on stronger glass film rather than colouring in.",
+      "html": "<div class=\"ds-seg\"><button class=\"ds-seg-btn ds-seg-on\">Static</button><button class=\"ds-seg-btn\">Motion</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 3px; background: rgba(0,0,0,0.28); border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; } .ds-seg-btn { height: 26px; padding: 0 12px; border: 0; border-radius: 6px; background: none; color: #9a958f; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-seg-btn:hover { color: #f2f0ee; } .ds-seg-on { background: rgba(255,255,255,0.08); color: #f2f0ee; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }"
+    },
+    {
+      "name": "Glass Slab",
+      "kind": "card",
+      "refersTo": "slab",
+      "description": "The material the room is built from: glow-tinted glass, backdrop blur, lit top edge, deep lift.",
+      "html": "<div class=\"ds-slab\"><strong class=\"ds-slab-title\">Canvas &amp; position</strong><p class=\"ds-slab-hint\">Pick an edge, or drag the screenshot on the canvas.</p></div>",
+      "css": ".ds-slab { width: 300px; padding: 16px; border-radius: 16px; background: linear-gradient(180deg, color-mix(in srgb, var(--glow-a, #ff8f45) 17%, rgba(24,23,29,0.72)), rgba(24,23,29,0.72) 66%), rgba(24,23,29,0.72); backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4); border: 1px solid rgba(255,255,255,0.09); border-top-color: color-mix(in srgb, var(--glow-a, #ff8f45) 38%, rgba(255,255,255,0.16)); box-shadow: 0 24px 60px -18px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); color: #f2f0ee; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; transition: border-top-color 700ms cubic-bezier(0.2,0.8,0.2,1), background 700ms cubic-bezier(0.2,0.8,0.2,1); } .ds-slab-title { display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.015em; } .ds-slab-hint { margin: 8px 0 0; color: #8a8580; font-size: 11.5px; line-height: 1.5; }"
+    },
+    {
+      "name": "Inspector Tab Rail",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Vertical rail in a recessed well; every tab carries an icon and a written word.",
+      "html": "<nav class=\"ds-tabs\"><button class=\"ds-tab ds-tab-on\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 4h16v16H4zM4 16l5-5 4 4 3-3 4 4M15.5 8.5h.01\"/></svg>Background</button><button class=\"ds-tab\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14\"/></svg>Canvas</button><button class=\"ds-tab\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 6V4h14v2M12 4v16M9 20h6\"/></svg>Text</button></nav>",
+      "css": ".ds-tabs { display: flex; flex-direction: column; gap: 2px; width: 78px; padding: 10px 8px; background: rgba(0,0,0,0.28); border-right: 1px solid rgba(255,255,255,0.06); } .ds-tab { display: grid; justify-items: center; gap: 5px; padding: 9px 2px 8px; border: 0; background: none; border-radius: 10px; color: #8a8580; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 10.5px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-tab:hover { color: #f2f0ee; background: rgba(255,255,255,0.045); } .ds-tab:focus-visible { outline: 2px solid #ff8f45; outline-offset: 2px; } .ds-tab-on { color: #ff8f45; background: rgba(255,143,69,0.16); }"
+    },
+    {
+      "name": "Canvas Plate",
+      "kind": "custom",
+      "refersTo": "slab",
+      "description": "The one lit object: deepest shadow in the room, a one-pixel light ring, and a blurred halo painted from the sampled image hues.",
+      "html": "<div class=\"ds-plate\"><div class=\"ds-plate-face\"></div><span class=\"ds-plate-tag\">Press <kbd class=\"ds-kbd\">⌘V</kbd> to paste your own</span></div>",
+      "css": ".ds-plate { position: relative; width: 300px; height: 190px; border-radius: 12px; box-shadow: 0 40px 90px -30px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.07); font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; } .ds-plate::before { content: ''; position: absolute; inset: -26% -16%; z-index: -1; pointer-events: none; background: radial-gradient(56% 56% at 30% 30%, var(--glow-a, #ff8f45), transparent 70%), radial-gradient(56% 56% at 72% 72%, var(--glow-b, #7a4bd1), transparent 72%); filter: blur(80px) saturate(1.7); opacity: 0.62; } .ds-plate-face { width: 100%; height: 100%; border-radius: 12px; background: repeating-conic-gradient(#232128 0 25%, #1a181e 0 50%) 0 0 / 16px 16px; } .ds-plate-tag { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); display: flex; align-items: center; gap: 9px; white-space: nowrap; padding: 7px 13px; border-radius: 99px; background: #17161c; border: 1px solid rgba(255,255,255,0.09); box-shadow: 0 8px 24px -8px rgba(0,0,0,0.65), 0 2px 6px rgba(0,0,0,0.4); color: #9a958f; font-size: 12px; } .ds-kbd { font-family: 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-size: 11.5px; font-weight: 500; padding: 3px 7px; border-radius: 6px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.09); border-bottom-color: rgba(0,0,0,0.6); color: #f2f0ee; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Dark Studio",
+    "overview": "Shotframe is a near-black room with the lights off and one object lit: the user's screenshot on its plate at the centre. Everything else in the room is smoked glass floating above that darkness — a command bar along the top, an inspector down the right, a tool bar at the bottom of the stage. Nothing is docked into a chrome frame, nothing is divided by a structural border; the slabs read as separate objects because light falls on their top edge and darkness pools between them.\n\nThe room takes its colour from the work. When an image loads, palette() samples it and publishes two hues onto --glow-a and --glow-b; those feed the ambient wash behind the plate, the glow the plate throws, the tint mixed into every glass slab, and the lit top edge that separates each slab from the dark. The interface is therefore never a fixed colour scheme — it is a room lit by the object in it, and it re-lights over 700ms whenever the object changes.\n\nDensity is high and quiet. Controls are small (34px tall, 13px base type), labels are always written out rather than left to icons, and every numeral is monospaced and tabular so a value never jitters while it is being dragged. The one saturated colour in the chrome is amber; it marks state and nothing else. This world explicitly refuses the docked-toolbar-plus-settings-form arrangement that every other screenshot tool ships.",
+    "keyCharacteristics": [
+      "Near-black room (#08070a) with floating smoked-glass slabs, never a docked chrome frame",
+      "Separation by light and darkness, not by structural borders",
+      "One amber accent, used only to mark state",
+      "Ambient light sampled at runtime from the user's own image",
+      "Archivo throughout, Spline Sans Mono for every numeral",
+      "Damped physical motion: decelerate into place, never bounce"
+    ],
+    "rules": [
+      { "name": "The One Lit Object Rule", "body": "The screenshot plate is the brightest thing on screen. No chrome surface may out-glow it; slabs stay at glass values and only the plate carries a halo.", "section": "colors" },
+      { "name": "The Borrowed Light Rule", "body": "Room colour is never authored per-surface. Anything that should feel lit reads --glow-a / --glow-b, which the image publishes at runtime. A new surface that wants warmth mixes the glow token in; it does not pick a hue.", "section": "colors" },
+      { "name": "The Amber-Is-State Rule", "body": "Amber means \"this is on, focused, selected or about to export\". Never use it for emphasis, decoration or hierarchy.", "section": "colors" },
+      { "name": "The Dim-Is-Not-Text Rule", "body": "--dim never carries a glyph. Text bottoms out at --faint.", "section": "colors" },
+      { "name": "The Numerals-Are-Mono Rule", "body": "Any digit a user reads as a value — dimensions, times, percentages, scale factors, keycaps — is set in Spline Sans Mono with font-variant-numeric: tabular-nums. Digits inside prose stay in Archivo.", "section": "typography" },
+      { "name": "The Say-What-It-Is Rule", "body": "Every control that can carry a word carries one. Inspector tabs ship an icon and a written label; tools carry an aria-label and a title with the shortcut. An icon alone makes people guess, and this world does not make people guess.", "section": "typography" },
+      { "name": "The Two-Faces Rule", "body": "Archivo and Spline Sans Mono are the complete type inventory. No third family, and no system-UI display face.", "section": "typography" },
+      { "name": "The Anchored-To-The-Work Rule", "body": "On phone, stacked surfaces position against --plate-h, the canvas's measured height, not against a guessed constant. Any new stacked surface reads the same variable.", "section": "layout" },
+      { "name": "The Room-Margin Rule", "body": "Floating surfaces sit 14px from the room's edges. 16px for the bottom of the two lower slabs. Nothing touches the wall.", "section": "layout" },
+      { "name": "The Light-Not-Borders Rule", "body": "Separation is achieved with a lit top edge (color-mix(--glow-a 38%, --edge-lit)), an inner highlight and shadow. A full-strength border on all four sides is not how this world separates things.", "section": "elevation" },
+      { "name": "The No-Hard-Offset Rule", "body": "Every shadow is soft, negative-spread and near-black. No hard offset shadow, no coloured glow except the amber cast under the export button and the blurred image-sampled ambience.", "section": "elevation" },
+      { "name": "The Radius-By-Role Rule", "body": "A new surface takes the radius of its role — slab 16, plate 12, control 9, tool 10, chip 8 — not a value picked to suit its size.", "section": "shapes" },
+      { "name": "The Settle Rule", "body": "Motion decelerates into rest and never overshoots. A bounce, a spring or an elastic curve is out of this world.", "section": "components" },
+      { "name": "The Entrance-From-Edge Rule", "body": "A slab enters from the edge it lives on, with a stagger. Nothing fades in from nowhere.", "section": "components" }
+    ],
+    "dos": [
+      "Do build any new floating surface as a .slab: glass fill with the glow mixed into its top, 20px backdrop blur, Lift 3, lit top border, 16px radius.",
+      "Do read --glow-a / --glow-b for anything that should look lit, so the surface re-lights with the user's image.",
+      "Do set every value, dimension, duration and keycap in Spline Sans Mono with tabular numerals.",
+      "Do give every control a written label, an aria-label, or both; tabs carry icon and word together.",
+      "Do keep amber for state — on, focused, selected, exporting.",
+      "Do take radius from role (slab 16px, plate 12px, control 9px, tool 10px, chip 8px).",
+      "Do press controls with the damped --settle release and honour prefers-reduced-motion.",
+      "Do anchor phone-stacked surfaces to --plate-h.",
+      "Do draw icons as inline SVG stroke paths on the 24-unit grid."
+    ],
+    "donts": [
+      "Don't separate two surfaces with a full-strength four-sided border; separate them with a lit top edge, an inner highlight and shadow.",
+      "Don't let any chrome surface out-glow the canvas plate.",
+      "Don't use --dim on text; --faint is the floor.",
+      "Don't use amber for emphasis, decoration or hierarchy.",
+      "Don't introduce a third type family or a system-UI display face into the chrome.",
+      "Don't add a hard offset shadow or a coloured glow beyond the export button's amber cast and the image-sampled ambience.",
+      "Don't ship an icon-only control without a label or accessible name.",
+      "Don't use a bouncing, springing or elastic curve.",
+      "Don't dock chrome into a solid frame or wrap settings in a form panel with structural rules — that is the arrangement this world exists to refuse."
+    ],
+    "acceptedDeviations": [
+      {
+        "name": "Full-bleed command bar",
+        "body": "The direction contract's FIRST VIEWPORT describes a glass command bar floating at top centre. The build ships .bar at left: 14px; right: 14px — a full-width slab respecting the room margin. Deliberate adaptation: the bar carries the wordmark, Open and Paste, the Static/Motion switch, undo and redo, Copy, and the Export split button with its meta string, and a centred pill cannot hold that payload at 1440px without crowding. Every other property of the world is kept, and the Static/Motion switch is absolutely centred within the bar so the contract's centred focal point survives inside a full-bleed container."
+      }
+    ]
+  }
+}
