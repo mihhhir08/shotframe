@@ -19,7 +19,7 @@ export const TABS: [PanelTab, IconName, string, string][] = [
   ['presets', 'sparkle', 'Presets', 'Presets'],
   ['background', 'image', 'Background', 'Background'],
   ['canvas', 'layout', 'Canvas', 'Canvas & position'],
-  ['style', 'style', 'Shot', 'Screenshot style'],
+  ['style', 'style', 'Style', 'Screenshot style'],
   ['frame', 'window', 'Frame', 'Window frame'],
   ['3d', 'cube', '3D', '3D & rotation'],
   ['text', 'text', 'Text', 'Text & watermark'],
@@ -58,7 +58,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
 
       <div className="panel-body" role="tabpanel" key={active}>
         <header className="panel-head">
-          <h2>{current[3]}</h2>
+          <h2>{current[2]}</h2>
           <button className="btn quiet small" onClick={onReset} title="Reset every style setting"><Icon name="reset" size={13} /> Reset</button>
         </header>
 

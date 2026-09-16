@@ -21,41 +21,44 @@
   color-scheme: dark;
 
   /* room */
-  --room: #08070a;
-  --room-2: #0d0c11;
+  --room: #06050e;
+  --room-2: #0a0817;
   /* glass slabs */
-  --glass: rgba(24, 23, 29, 0.72);
-  --glass-solid: #17161c;
-  --glass-2: rgba(255, 255, 255, 0.045);
-  --glass-3: rgba(255, 255, 255, 0.08);
-  --edge: rgba(255, 255, 255, 0.09);
-  --edge-lit: rgba(255, 255, 255, 0.16);
-  --hairline: rgba(255, 255, 255, 0.06);
+  --glass: rgba(26, 22, 46, 0.5);
+  --glass-solid: #171332;
+  --glass-2: rgba(255, 255, 255, 0.07);
+  --glass-3: rgba(255, 255, 255, 0.13);
+  --edge: rgba(255, 255, 255, 0.12);
+  --edge-lit: rgba(255, 255, 255, 0.34);
+  --hairline: rgba(255, 255, 255, 0.09);
   /* recessed wells: inputs, sliders, swatch beds — cut into the glass, not raised off it */
-  --well: rgba(0, 0, 0, 0.28);
-  --well-deep: rgba(0, 0, 0, 0.4);
+  /* on glass, a recessed field is a darker pane of the same glass, never a black hole */
+  --well: rgba(255, 255, 255, 0.06);
+  --well-deep: rgba(255, 255, 255, 0.11);
 
-  --text: #f2f0ee;
-  --muted: #9a958f;
-  --faint: #8a8580;
-  --dim: #5a5550; /* non-text only: the position-grid dot */
+  --text: #ffffff;
+  --muted: #b9b3d6;
+  --faint: #a49dc6;
+  --dim: #5d5880; /* non-text only: the position-grid dot */
 
-  --accent: #ff8f45;
-  --accent-hi: #ffab73;
-  --accent-dim: rgba(255, 143, 69, 0.16);
-  --accent-ink: #1a0c02;
+  --accent: #ff5fa2;
+  --accent-hi: #ff8a3d;
+  --accent-dim: rgba(255, 95, 162, 0.2);
+  --accent-ink: #20081a;
+  /* the accent is a light source, not a flat colour */
+  --accent-run: linear-gradient(120deg, #ff8a3d, #ff5fa2 55%, #a855f7);
 
   /* ambient light behind the canvas, re-tinted from the user's image */
   --glow-a: #ff8f45;
   --glow-b: #7a4bd1;
 
-  --r-control: 9px;
-  --r-slab: 16px;
-  --r-plate: 12px;
+  --r-control: 12px;
+  --r-slab: 24px;
+  --r-plate: 16px;
 
   --lift-1: 0 1px 2px rgba(0, 0, 0, 0.5);
   --lift-2: 0 8px 24px -8px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4);
-  --lift-3: 0 24px 60px -18px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.45);
+  --lift-3: 0 34px 80px -26px rgba(0, 0, 0, 0.88), 0 4px 14px rgba(0, 0, 0, 0.5);
 
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --fast: 140ms var(--ease);
@@ -95,45 +98,47 @@ input, textarea { caret-color: var(--accent); }
 
 /* light from the image itself, behind the canvas */
 .ambient {
-  position: absolute; inset: -14%;
+  position: absolute; inset: -26%;
   pointer-events: none;
   background:
-    radial-gradient(38% 34% at 34% 38%, var(--glow-a) 0%, transparent 68%),
-    radial-gradient(36% 38% at 62% 64%, var(--glow-b) 0%, transparent 70%);
-  opacity: 0.38;
-  filter: blur(70px) saturate(1.5);
+    radial-gradient(34% 30% at 26% 30%, var(--glow-a) 0%, transparent 70%),
+    radial-gradient(32% 34% at 70% 62%, var(--glow-b) 0%, transparent 72%),
+    radial-gradient(30% 26% at 52% 94%, #6d28d9 0%, transparent 70%);
+  opacity: 0.66;
+  filter: blur(100px) saturate(1.8);
   transition: opacity var(--slow), background 700ms var(--ease);
 }
 .room-floor {
   position: absolute; inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(70% 55% at 50% 42%, rgba(255, 255, 255, 0.05), transparent 70%),
-    linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+    radial-gradient(70% 55% at 50% 40%, rgba(255, 255, 255, 0.07), transparent 70%),
+    linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.42) 100%);
 }
 
 /* ---------- floating slabs ---------- */
 .slab {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 17%, var(--glass)), var(--glass) 66%),
-    var(--glass);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 42%, transparent),
+    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 14%, var(--glass)), var(--glass) 70%);
+  backdrop-filter: blur(34px) saturate(1.9);
+  -webkit-backdrop-filter: blur(34px) saturate(1.9);
   border: 1px solid var(--edge);
-  border-top-color: color-mix(in srgb, var(--glow-a) 38%, var(--edge-lit));
-  box-shadow: var(--lift-3), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  border-top-color: color-mix(in srgb, var(--glow-a) 34%, var(--edge-lit));
+  box-shadow: var(--lift-3), inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
   transition: border-top-color 700ms var(--ease), background 700ms var(--ease);
 }
 
 .bar {
   animation: slab-down 520ms var(--settle) backwards;
-  position: absolute; top: 14px; left: 14px; right: 14px; z-index: 30;
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30;
+  width: min(1180px, calc(100% - 32px));
   display: flex; align-items: center; gap: 14px;
-  height: 52px; padding: 0 8px 0 14px;
-  border-radius: var(--r-slab);
+  height: 58px; padding: 0 10px 0 18px;
+  border-radius: 29px;
 }
-.brand { display: flex; align-items: center; gap: 9px; font-weight: 600; letter-spacing: -0.015em; font-size: 14px; }
-.brand img { border-radius: 7px; box-shadow: var(--lift-1); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.03em; font-size: 19px; }
+.brand img { border-radius: 9px; box-shadow: var(--lift-1); width: 26px; height: 26px; }
 .bar-sep { width: 1px; height: 22px; background: var(--hairline); }
 .bar-group { display: flex; align-items: center; gap: 2px; }
 .bar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
@@ -153,9 +158,9 @@ input, textarea { caret-color: var(--accent); }
 .btn:not(:disabled):hover { background: var(--glass-3); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }
 .btn.primary {
-  background: linear-gradient(180deg, var(--accent-hi), var(--accent));
-  color: var(--accent-ink); font-weight: 600;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 6px 16px -6px rgba(255, 143, 69, 0.7);
+  background: var(--accent-run);
+  color: #fff; font-weight: 600; border-color: transparent;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset, 0 10px 26px -8px rgba(255, 95, 162, 0.65);
 }
 .btn.primary:not(:disabled):hover { filter: brightness(1.06); }
 .btn.quiet { background: transparent; color: var(--muted); }
@@ -193,8 +198,8 @@ select:hover, input:hover, textarea:hover { border-color: var(--edge-lit); }
 select:focus, input:focus, textarea:focus { border-color: var(--accent); background: var(--well-deep); }
 
 .split { display: flex; }
-.split > .btn:first-child { border-radius: var(--r-control) 0 0 var(--r-control); padding-right: 11px; }
-.split-arrow { border-radius: 0 var(--r-control) var(--r-control) 0 !important; padding: 0 9px !important; margin-left: 1px; }
+.split > .btn:first-child { border-radius: var(--r-control) 0 0 var(--r-control); padding-right: 12px; }
+.split-arrow { border-radius: 0 var(--r-control) var(--r-control) 0 !important; padding: 0 10px 0 6px !important; box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28), 0 10px 26px -8px rgba(255, 95, 162, 0.65); }
 .split-meta { font-family: var(--mono); font-size: 10.5px; font-weight: 500; opacity: 0.75; font-variant-numeric: tabular-nums; }
 
 .menu {
@@ -214,7 +219,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- stage ---------- */
 .main { position: absolute; inset: 0; }
-.stage { position: absolute; inset: 80px 372px 84px 14px; display: grid; place-items: center; }
+.stage { position: absolute; inset: 92px 376px 96px 20px; display: grid; place-items: center; }
 /* the plate throws its own light into the room */
 .stage-canvas {
   position: relative;
@@ -227,8 +232,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   position: absolute; inset: -26% -16%;
   z-index: -1; pointer-events: none;
   background: radial-gradient(56% 56% at 30% 30%, var(--glow-a), transparent 70%), radial-gradient(56% 56% at 72% 72%, var(--glow-b), transparent 72%);
-  filter: blur(80px) saturate(1.7);
-  opacity: 0.62;
+  filter: blur(95px) saturate(2);
+  opacity: 0.85;
   transition: background 700ms var(--ease);
 }
 .stage-canvas canvas { display: block; border-radius: var(--r-plate); }
@@ -287,23 +292,23 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- dock ---------- */
 .dock {
-  position: absolute; left: 14px; right: 372px; bottom: 16px; z-index: 20;
+  position: absolute; left: 20px; right: 376px; bottom: 18px; z-index: 20;
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   pointer-events: none;
 }
 .dock > * { pointer-events: auto; }
-.toolbar { display: flex; align-items: center; gap: 2px; padding: 6px; border-radius: 14px; animation: slab-up 560ms 120ms var(--settle) backwards; }
+.toolbar { display: flex; align-items: center; gap: 3px; padding: 8px; border-radius: 24px; animation: slab-up 560ms 120ms var(--settle) backwards; }
 .toolbar-item { display: contents; }
 .toolbar .sep, .toolopts .sep { width: 1px; height: 22px; margin: 0 6px; background: var(--hairline); }
 .tool {
   display: grid; place-items: center;
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 40px; height: 40px; border-radius: 15px;
   color: var(--muted);
   transition: background var(--fast), color var(--fast), transform var(--settle);
 }
 .tool:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
 .tool:not(:disabled):active { transform: scale(0.93); transition-duration: 60ms; }
-.tool.on { background: var(--accent-dim); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(255, 143, 69, 0.35); }
+.tool.on { background: var(--accent-run); color: #fff; box-shadow: 0 8px 20px -7px rgba(255, 95, 162, 0.75); }
 .toolopts {
   display: flex; align-items: center; gap: 10px;
   padding: 7px 9px; border-radius: 13px;
@@ -324,7 +329,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .ink.custom { background: conic-gradient(#ff5f45, #ffcc00, #34c759, #0a84ff, #af52de, #ff5f45); }
 .ink.custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-.timeline { display: flex; align-items: center; gap: 12px; padding: 7px 14px 7px 7px; border-radius: 14px; }
+.timeline { display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 26px; }
 .stage > .dock { left: 0; right: 0; bottom: -62px; }
 .timeline input[type='range'] { width: min(44vw, 400px); height: 18px; margin: 0; appearance: none; background: transparent; cursor: pointer; }
 .timeline input::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); }
@@ -336,8 +341,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 /* ---------- inspector ---------- */
 .panel {
   animation: slab-right 560ms 60ms var(--settle) backwards;
-  position: absolute; top: 80px; right: 14px; bottom: 16px; z-index: 20;
-  width: 344px;
+  position: absolute; top: 92px; right: 20px; bottom: 18px; z-index: 20;
+  width: 348px;
   display: grid; grid-template-columns: 78px 1fr;
   border-radius: var(--r-slab);
   overflow: hidden;
@@ -356,7 +361,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: background var(--fast), color var(--fast);
 }
 .panel-tabs button:hover { color: var(--text); background: var(--glass-2); }
-.panel-tabs button.on { color: var(--accent); background: var(--accent-dim); }
+.panel-tabs button.on { color: #fff; background: linear-gradient(120deg, rgba(255, 138, 61, 0.28), rgba(255, 95, 162, 0.32)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
 .panel-body { min-height: 0; overflow-y: auto; padding: 0 16px 22px; animation: tab-in 300ms var(--settle); }
 .panel-head {
   position: sticky; top: 0; z-index: 1;
@@ -364,12 +369,12 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   padding: 16px 0 12px;
   /* same mix as .slab, or the header reads as an opaque box sitting on the panel */
   background: linear-gradient(180deg,
-    color-mix(in srgb, var(--glow-a) 9%, rgba(20, 19, 24, 0.92)) 68%,
+    color-mix(in srgb, var(--glow-a) 12%, rgba(23, 19, 50, 0.82)) 66%,
     transparent);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
 }
-.panel-head h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
+.panel-head h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.03em; white-space: nowrap; }
 .group { display: flex; flex-direction: column; gap: 9px; padding: 14px 0 16px; border-top: 1px solid var(--hairline); }
 .panel-head + .group { border-top: 0; padding-top: 2px; }
 .group h3 { margin: 0 0 1px; font-size: 11px; font-weight: 500; color: var(--faint); }
@@ -393,9 +398,9 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 }
 .fs:hover { border-color: var(--edge-lit); }
 .fs:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-.fs-fill { position: absolute; top: 0; bottom: 0; background: var(--accent-dim); pointer-events: none; transition: background var(--fast); }
-.fs:hover .fs-fill { background: rgba(255, 143, 69, 0.22); }
-.fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 2px; background: var(--accent); box-shadow: 0 0 10px rgba(255, 143, 69, 0.7); }
+.fs-fill { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(255, 138, 61, 0.28), rgba(255, 95, 162, 0.4)); pointer-events: none; transition: filter var(--fast); }
+.fs:hover .fs-fill { filter: brightness(1.25); }
+.fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(255, 255, 255, 0.85); }
 .fs-fill.neg::after { right: auto; left: -1px; }
 .fs-label, .fs output { position: relative; pointer-events: none; }
 .fs-label { font-weight: 450; }
@@ -460,7 +465,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: color var(--fast), border-color var(--fast), background var(--fast);
 }
 .chip:hover { color: var(--text); border-color: var(--edge-lit); }
-.chip.on { color: var(--accent); border-color: rgba(255, 143, 69, 0.55); background: var(--accent-dim); }
+.chip.on { color: #fff; border-color: rgba(255, 95, 162, 0.6); background: var(--accent-dim); }
 
 .align-grid { display: grid; grid-template-columns: repeat(3, 26px); gap: 4px; flex: none; }
 .align-grid button {
@@ -536,12 +541,12 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   backdrop-filter: blur(3px);
 }
 .first-run-card {
-  width: min(520px, 100%); padding: 34px 36px 28px; text-align: center;
-  border-radius: 20px;
+  width: min(560px, 100%); padding: 44px 44px 34px; text-align: center;
+  border-radius: 30px;
   animation: pop 380ms var(--ease);
 }
-.first-run h1 { margin: 0 0 10px; font-size: 27px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; }
-.first-run p { margin: 0 0 22px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+.first-run h1 { margin: 0 0 12px; font-size: 40px; font-weight: 700; letter-spacing: -0.045em; line-height: 1.05; }
+.first-run p { margin: 0 0 24px; color: var(--muted); font-size: 15.5px; line-height: 1.55; }
 .first-run .row.center { gap: 10px; }
 .first-run small { display: block; margin-top: 20px; color: var(--faint); }
 kbd {
@@ -618,7 +623,7 @@ kbd {
      than the desktop one or it reads as a box laid on the panel */
   .panel-head {
     background: linear-gradient(180deg,
-      color-mix(in srgb, var(--glow-a) 9%, rgba(20, 19, 24, 0.6)) 64%,
+      color-mix(in srgb, var(--glow-a) 12%, rgba(23, 19, 50, 0.58)) 62%,
       transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
