@@ -11,6 +11,8 @@ colors:
   edge: "rgba(255, 255, 255, 0.09)"
   edge-lit: "rgba(255, 255, 255, 0.16)"
   hairline: "rgba(255, 255, 255, 0.06)"
+  well: "rgba(0, 0, 0, 0.28)"
+  well-deep: "rgba(0, 0, 0, 0.4)"
   text: "#f2f0ee"
   muted: "#9a958f"
   faint: "#8a8580"
@@ -25,6 +27,12 @@ typography:
   display:
     fontFamily: "Archivo, ui-sans-serif, system-ui, -apple-system, sans-serif"
     fontSize: "27px"
+    fontWeight: 600
+    lineHeight: 1.12
+    letterSpacing: "-0.03em"
+  display-mobile:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, -apple-system, sans-serif"
+    fontSize: "21px"
     fontWeight: 600
     lineHeight: 1.12
     letterSpacing: "-0.03em"
@@ -59,6 +67,12 @@ typography:
     fontFeature: "tabular-nums"
 rounded:
   control: "9px"
+  brand: "7px"
+  transient: "13px"
+  toast: "11px"
+  mark: "4px"
+  mark-sm: "3px"
+  mark-xs: "2px"
   slab: "16px"
   plate: "12px"
   tool: "10px"
@@ -208,6 +222,29 @@ accent, and two runtime glow hues borrowed from the user's image.
 - **Amber Ink** (`{colors.accent-ink}`): text on amber. The near-black brown that keeps
   primary-button and selection text legible against a saturated warm field.
 
+### Wells, Scrims and Shadow Blacks
+The room is lit from one place, so everything that recedes is black at an alpha, never a
+lighter grey. Two are tokens because they repeat; the rest are composited into a specific
+shadow, mask or scrim and are documented here so they read as system, not drift.
+- **Well** (`{colors.well}`, `rgba(0,0,0,0.28)`): every recessed field — inputs, selects,
+  textareas, field-sliders, segmented beds, swatch beds, the panel's tab rail.
+- **Well Deep** (`{colors.well-deep}`, `rgba(0,0,0,0.4)`): the same field while focused.
+- `rgba(0,0,0,0.3)` — the motion card's stage bed, one step deeper than a control well
+  because it frames a moving object.
+- `rgba(0,0,0,0.45)` / `0.5` / `0.6` / `0.75` / `0.9` — composited inside `--lift-1/2/3`,
+  the crop size chip, the annotation handle shadow, the plate's drop shadow. Depth comes
+  from stacking these, never from a lighter surface.
+- `rgba(0,0,0,0.55)` and `rgba(6,5,8,0.66)` — the recording scrim and the crop mask: the
+  two moments the room dims so one thing can be read.
+- `#000` — mask stops only (the phone tab row's fade), never a painted surface.
+
+### Annotation Ink (content, not chrome)
+Eight colours the user draws *with*. They belong to the artwork, not the interface, and are
+the one place saturated non-amber colour is allowed: `#ff3b30` `#ff9500` `#ffcc00`
+`#34c759` `#0a84ff` `#af52de` `#ffffff` `#111111`. The custom-colour button carries five of
+them (`#ff5f45` `#ffcc00` `#34c759` `#0a84ff` `#af52de`) as a conic gradient meaning "any
+colour". Chrome never adopts these; ink never adopts amber's state meaning.
+
 ### Secondary
 - **Sampled Warm Glow** (`{colors.glow-a}`): the first hue the palette sampler pulls from
   the loaded image. Defaults to amber before any image exists. Drives the ambient wash,
@@ -264,6 +301,10 @@ with `ui-monospace, SFMono-Regular, Menlo, monospace` behind it)
 Both faces load from `public/fonts` with `font-display: block`: the world's voice is not a
 third-party runtime dependency, and a swap from a system face on first paint would show
 the wrong face for a beat. Archivo runs with the `ss01` stylistic set on at the root.
+
+**Mobile display step:** the first-run headline drops from 27px to 21px under 900px. It is
+the one size that exists only at a breakpoint, and it is deliberate: 27px wraps to four
+lines in a phone-width card.
 
 **Character:** Archivo is a compact grotesque that stays legible at 11px and tightens
 handsomely with negative tracking at heading sizes, which suits an interface built almost
@@ -378,8 +419,17 @@ Borders are one pixel and exist to define a field's edge (`--edge`, rising to
 live canvas selection; solid 1.5px white with a 9999px black spread marks a crop.
 
 ### Named Rules
+Below the role scale sits a micro scale for marks rather than surfaces: 4px for the focus
+ring's own corner and the crop-box corner brackets, 3px for the preset swatch's inner
+sheet, the motion card's moving block and the lock/well caps, 2px for the slider fill cap
+and the position-grid dot. Two component radii sit off the role scale on purpose: 7px for
+the brand mark (it reads as an app icon, not a control) and 11px/13px for the toast and
+tool-options pill (transient surfaces, sized between a control and a slab).
+
+### Named Rules
 **The Radius-By-Role Rule.** A new surface takes the radius of its role — slab 16, plate
-12, control 9, tool 10, chip 8 — not a value picked to suit its size.
+12, control 9, tool 10, chip 8 — not a value picked to suit its size. Marks smaller than a
+control use the micro scale (4/3/2), never a rounded-down role value.
 
 ## Components
 
