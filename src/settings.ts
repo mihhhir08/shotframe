@@ -1,4 +1,4 @@
-export type BgType = 'wallpaper' | 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
+export type BgType = 'wallpaper' | 'pattern' | 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
 export type FrameType =
   | 'none' | 'macLight' | 'macDark' | 'windowsLight' | 'windowsDark'
   | 'browserLight' | 'browserDark' | 'glass'
@@ -8,6 +8,11 @@ export interface Crop { x: number; y: number; w: number; h: number } // 0..1 of 
 export interface Settings {
   bgType: BgType
   wallpaper: string
+  pattern: string
+  patternBack: string
+  patternFore: string
+  patternScale: number
+  patternAngle: number
   gradColors: string[]
   gradAngle: number
   gradRadial: boolean
@@ -146,6 +151,11 @@ export const FRAMES: { id: FrameType; label: string }[] = [
 export const DEFAULTS: Settings = {
   bgType: 'gradient',
   wallpaper: 'waves-dusk',
+  pattern: 'dots',
+  patternBack: '#101425',
+  patternFore: '#6d5dfc',
+  patternScale: 100,
+  patternAngle: 0,
   gradColors: GRADIENTS[0].colors,
   gradAngle: 135,
   gradRadial: false,

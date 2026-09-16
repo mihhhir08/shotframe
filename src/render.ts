@@ -3,7 +3,7 @@ import { blurred, makeCanvas, noiseTile, rgba } from './canvas.ts'
 import { computeLayout, type Layout } from './layout.ts'
 import type { Annotation, Settings } from './settings.ts'
 import { tilt } from './tilt.ts'
-import { wallpaper } from './wallpapers.ts'
+import { drawPattern, wallpaper, type PatternKind } from './wallpapers.ts'
 
 export interface Scene {
   settings: Settings
@@ -92,6 +92,9 @@ function drawBackground(ctx: CanvasRenderingContext2D, scene: Scene, L: Layout) 
   switch (s.bgType) {
     case 'wallpaper':
       ctx.drawImage(wallpaper(s.wallpaper, W, H), 0, 0)
+      break
+    case 'pattern':
+      drawPattern(ctx, W, H, s.pattern as PatternKind, s.patternBack, s.patternFore, s.patternScale, s.patternAngle)
       break
     case 'gradient': {
       let g: CanvasGradient

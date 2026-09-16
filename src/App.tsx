@@ -73,7 +73,6 @@ export default function App() {
   const s = doc.settings
 
   const [image, setImage] = useState<LoadedImage | null>(null)
-  const [isSample, setIsSample] = useState(true)
   const [glow, setGlow] = useState(['#ff8f45', '#7a4bd1'])
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null)
   const [tool, setToolRaw] = useState<Tool>('select')
@@ -92,7 +91,6 @@ export default function App() {
   const [videoSize, setVideoSize] = useState<number>(() => load('shotframe:videoSize', 1920))
   const [fps, setFps] = useState<number>(() => load('shotframe:fps', 30))
   const [recording, setRecording] = useState<number | null>(null)
-  const [firstRun, setFirstRun] = useState(() => !load('shotframe:seen', false))
   const [toast, setToast] = useState('')
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -136,9 +134,8 @@ export default function App() {
     return () => { live = false }
   }, [s.bgImage])
 
-  const openImage = useCallback((img: LoadedImage, sample = false) => {
+  const openImage = useCallback((img: LoadedImage) => {
     setImage(img)
-    setIsSample(sample)
     // the room takes the colours of whatever you just brought in
     try {
       const p = palette(img.el)
@@ -149,35 +146,19 @@ export default function App() {
     setToolRaw('select')
   }, [update])
 
-  // The editor is never empty: it opens on a worked sample so the tool is visibly doing its job.
-  useEffect(() => { openImage(sampleImage(), true) }, [openImage])
+  // #sample still loads the demo image for screenshots and tests; nothing in the UI offers it.
+  useEffect(() => {
+    if (location.hash === '#sample') openImage(sampleImage())
+  }, [openImage])
 
   const openFile = useCallback(async (file: Blob) => {
     try {
       openImage(await loadFile(file))
-      setFirstRun(false)
-      save('shotframe:seen', true)
     } catch (e) {
       flash((e as Error).message)
     }
   }, [openImage])
 
-  const dismissFirstRun = () => {
-    setFirstRun(false)
-    save('shotframe:seen', true)
-  }
-
-  const pasteButton = async () => {
-    try {
-      for (const item of await navigator.clipboard.read()) {
-        const type = item.types.find((t) => t.startsWith('image/'))
-        if (type) return openFile(await item.getType(type))
-      }
-      flash('No image on the clipboard')
-    } catch {
-      flash(`Press ${MOD}V to paste`)
-    }
-  }
 
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
@@ -349,7 +330,7 @@ export default function App() {
       else if (mod && k === 'o') { e.preventDefault(); fileRef.current?.click() }
       else if (mod || e.altKey) return
       else if ((k === 'backspace' || k === 'delete') && selectedId) { e.preventDefault(); removeSelected() }
-      else if (k === 'escape') { if (firstRun) dismissFirstRun(); setSelectedId(null); setTool('select') }
+      else if (k === 'escape') { setSelectedId(null); setTool('select') }
       else if (k === 'enter' && tool === 'crop') { setSelectedId(null); setTool('select') }
       else if (scene && mode === 'static') {
         const t = TOOLS.find((x) => x[3].toLowerCase() === k)
@@ -378,7 +359,6 @@ export default function App() {
         <span className="bar-sep" />
         <div className="bar-group file-actions">
           <button className="btn quiet" onClick={() => fileRef.current?.click()} title={`Open an image (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
-          <button className="btn quiet" onClick={pasteButton} title={`Paste from clipboard (${MOD}V)`}><Icon name="copy" size={15} /> Paste</button>
         </div>
 
         <div className="mode-wrap">
@@ -436,10 +416,20 @@ export default function App() {
       </header>
 
       <main className="main">
-        {scene && (
+        {scene ? (
           <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke} motion={mode === 'motion'}
-            sample={isSample && !firstRun && mode === 'static'} onDismissSample={() => fileRef.current?.click()}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
+        ) : (
+          <div className="empty">
+            <div className="empty-card slab">
+              <h1>Drop a screenshot in.</h1>
+              <p>Choose a file, or drag one anywhere on this page.</p>
+              <button className="btn primary big" onClick={() => fileRef.current?.click()}>
+                <Icon name="image" size={17} /> Choose a file
+              </button>
+              <small>Your images never leave your device. Nothing is uploaded.</small>
+            </div>
+          </div>
         )}
 
         {recording !== null && (
@@ -526,19 +516,6 @@ export default function App() {
         onReset={() => set({ ...DEFAULTS, crop: s.crop })}
       />
 
-      {firstRun && (
-        <div className="first-run" onClick={dismissFirstRun}>
-          <div className="first-run-card slab" onClick={(e) => e.stopPropagation()}>
-            <h1>Your screenshot, worth posting.</h1>
-            <p>Press <kbd>{MOD}V</kbd> to paste one, or drop it anywhere on the page. A sample is already loaded behind this, so you can play first.</p>
-            <div className="row center">
-              <button className="btn primary" onClick={() => fileRef.current?.click()}><Icon name="image" size={15} /> Choose a file</button>
-              <button className="btn" onClick={dismissFirstRun}><Icon name="sparkle" size={15} /> Explore the sample</button>
-            </div>
-            <small>Your images never leave your device. Nothing is uploaded.</small>
-          </div>
-        </div>
-      )}
 
       {toast && <div className="toast" role="status">{toast}</div>}
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => {

@@ -7,7 +7,7 @@ import {
   type BgType, type Corner, type Settings,
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
-import { WALLPAPERS, wallpaperThumb } from './wallpapers.ts'
+import { drawPattern, PATTERNS, WALLPAPERS, wallpaperThumb, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export interface UserPreset { name: string; settings: Partial<Settings> }
@@ -256,7 +256,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
   )
 }
 
-const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
+const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
 function Background({ s, set, image }: { s: Settings; set: SetSettings; image: LoadedImage | null }) {
   return (
@@ -275,6 +275,27 @@ function Background({ s, set, image }: { s: Settings; set: SetSettings; image: L
               </button>
             ))}
           </div>
+        </Group>
+      )}
+
+      {s.bgType === 'pattern' && (
+        <Group title="Pattern">
+          <div className="patterns">
+            {PATTERNS.map(([id, label]) => (
+              <button key={id} className={s.pattern === id ? 'on' : ''} title={label} aria-label={label}
+                onClick={() => set({ pattern: id })}>
+                <PatternThumb kind={id} back={s.patternBack} fore={s.patternFore} />
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="row">
+            <ColorInput value={s.patternBack} onChange={(v) => set({ patternBack: v }, 'patternBack')} />
+            <ColorInput value={s.patternFore} onChange={(v) => set({ patternFore: v }, 'patternFore')} />
+            <button className="btn wide" onClick={() => set({ patternBack: s.patternFore, patternFore: s.patternBack })}>Swap</button>
+          </div>
+          <Slider label="Scale" value={s.patternScale} min={30} max={260} unit="%" onChange={(v) => set({ patternScale: v }, 'patternScale')} />
+          <Slider label="Angle" value={s.patternAngle} min={0} max={90} unit="°" onChange={(v) => set({ patternAngle: v }, 'patternAngle')} />
         </Group>
       )}
 
@@ -382,8 +403,19 @@ export function bgCss(s: Settings) {
   if (s.bgType === 'gradient') return `linear-gradient(${s.gradAngle}deg, ${s.gradColors.join(',')})`
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor
+  if (s.bgType === 'pattern') return s.patternBack
   if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2447 0 25%, #1c1734 0 50%) 0 0 / 10px 10px'
   return 'linear-gradient(135deg, #6b5aa8, #241d45)'
+}
+
+function PatternThumb({ kind, back, fore }: { kind: PatternKind; back: string; fore: string }) {
+  const ref = (el: HTMLCanvasElement | null) => {
+    if (!el) return
+    el.width = 160
+    el.height = 100
+    drawPattern(el.getContext('2d')!, 160, 100, kind, back, fore, 100, 0)
+  }
+  return <canvas ref={ref} />
 }
 
 function Group({ title, children }: { title: string; children: ReactNode }) {
