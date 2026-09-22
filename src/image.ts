@@ -26,8 +26,19 @@ export function readAsDataURL(file: Blob): Promise<string> {
 
 export async function loadFile(file: Blob): Promise<LoadedImage> {
   if (!file.type.startsWith('image/')) throw new Error('That file is not an image')
-  const img = await loadImage(URL.createObjectURL(file))
-  return { el: img, w: img.naturalWidth, h: img.naturalHeight }
+  const url = URL.createObjectURL(file)
+  try {
+    const img = await loadImage(url)
+    return { el: img, w: img.naturalWidth, h: img.naturalHeight }
+  } catch {
+    // HEIC is the usual culprit: it comes out of Photos and no browser decodes it
+    const heic = /hei[cf]/i.test(file.type) || (file instanceof File && /\.hei[cf]$/i.test(file.name))
+    throw new Error(heic
+      ? 'Browsers cannot read HEIC. Export it as PNG or JPEG first.'
+      : 'Could not read that image. Try a PNG or JPEG.')
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 30000)
+  }
 }
 
 const hex = (r: number, g: number, b: number) => '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')

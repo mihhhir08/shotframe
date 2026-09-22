@@ -446,7 +446,7 @@ export default function App() {
         </div>
       </header>
 
-      {!narrow && scene && (bgOpen ? (
+      {!narrow && (bgOpen ? (
         <aside className="bg-panel slab">
           <header className="panel-head">
             <h2>Background</h2>
@@ -573,7 +573,7 @@ export default function App() {
 
 
       {toast && <div className="toast" role="status">{toast}</div>}
-      <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => {
+      <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/*" className="file-input" onChange={(e) => {
         const f = e.target.files?.[0]
         if (f) openFile(f)
         e.target.value = ''
