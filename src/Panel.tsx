@@ -1,4 +1,4 @@
-import { useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { Icon, type IconName } from './icons.tsx'
 import { edgeColor, palette, readAsDataURL, type LoadedImage } from './image.ts'
 import { alignPos, type Layout } from './layout.ts'
@@ -8,7 +8,7 @@ import {
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
 import { bgCanMove } from './render.ts'
-import { drawPattern, isAnimated, PATTERNS, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
+import { drawPattern, isAnimated, PATTERNS, scene as paintScene, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export type BgPick = Partial<Settings>
@@ -39,11 +39,13 @@ interface Props {
   onSavePreset: (name: string) => void
   onDeletePreset: (name: string) => void
   onReset: () => void
+  onAnimateBg: () => void
+  motionReady: boolean
   recent: BgPick[]
   onRecent: (p: BgPick) => void
 }
 
-export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, recent, onRecent }: Props) {
+export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, onAnimateBg, motionReady, recent, onRecent }: Props) {
   const tabs = TABS.filter(([id]) => motion || id !== 'motion')
   const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
   // the stored tab can point at a tab this mode does not show (Motion, after a reload in Static)
@@ -99,7 +101,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </>
         )}
         {active === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
-        {active === 'background' && <Background s={s} set={set} image={image} recent={recent} onRecent={onRecent} />}
+        {active === 'background' && <Background s={s} set={set} image={image} recent={recent} onRecent={onRecent} onAnimateBg={onAnimateBg} motionReady={motionReady} />}
 
         {active === 'canvas' && (
           <>
@@ -276,7 +278,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
 
 const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['theme', 'Theme'], ['texture', 'Texture'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
-function Background({ s, set, image, recent, onRecent }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void }) {
+function Background({ s, set, image, recent, onRecent, onAnimateBg, motionReady }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void; onAnimateBg: () => void; motionReady: boolean }) {
   // every background choice goes through this, so Recent stays honest
   const pick = (patch: BgPick, key?: string) => {
     set(patch, key)
@@ -307,20 +309,37 @@ function Background({ s, set, image, recent, onRecent }: { s: Settings; set: Set
             : [TEXTURES, 'texture' as const, 'Texture']
         return (
           <Group title={title}>
+            {bgCanMove(s) && (
+              <>
+                <Seg value={s.bgAnimate ? 'on' : 'off'} options={[['on', 'Playing'], ['off', 'Paused']]}
+                  onChange={(v) => set({ bgAnimate: v === 'on' })} />
+                {!motionReady && (
+                  <button className="btn wide" onClick={onAnimateBg}>
+                    <Icon name="film" size={14} /> Make a moving MP4
+                  </button>
+                )}
+                <p className="hint">
+                  This one plays in the preview. A PNG saves the frame you can see; for a moving file use the
+                  button above and export an MP4.
+                </p>
+              </>
+            )}
             <div className="wallpapers">
               {list.map((w) => (
                 <button key={w.id} className={s[key] === w.id ? 'on' : ''} onClick={() => pick({ bgType: s.bgType, [key]: w.id })}
                   title={isAnimated(w.id) ? `${w.name} — moves in Motion exports` : w.name}>
-                  <img src={sceneThumb(w.id)} alt="" />
+                  <SceneThumb id={w.id} />
                   {isAnimated(w.id) && <i className="moves"><Icon name="play" size={9} /> Moves</i>}
                   <span>{w.name}</span>
                 </button>
               ))}
             </div>
-            <p className="hint">
-              {list.filter((w) => isAnimated(w.id)).length} of these drift over time. They stay still in a PNG and
-              animate in a Motion export — switch to Motion at the top to watch one.
-            </p>
+            {!bgCanMove(s) && (
+              <p className="hint">
+                {list.filter((w) => isAnimated(w.id)).length} of these move — look for the <b>Moves</b> badge, or
+                hover one to watch it. This one holds still.
+              </p>
+            )}
           </Group>
         )
       })()}
@@ -455,6 +474,35 @@ export function bgCss(s: Settings) {
   if (s.bgType === 'pattern') return s.patternBack
   if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2447 0 25%, #1c1734 0 50%) 0 0 / 10px 10px'
   return 'linear-gradient(135deg, #6b5aa8, #241d45)'
+}
+
+// Hover an animated one and it plays, so "Moves" means something before you pick it.
+function SceneThumb({ id }: { id: string }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  const raf = useRef(0)
+  const paint = (t: number) => {
+    const c = ref.current
+    if (!c) return
+    c.getContext('2d')!.drawImage(paintScene(id, c.width, c.height, t), 0, 0)
+  }
+  useEffect(() => {
+    paint(0)
+    return () => cancelAnimationFrame(raf.current)
+  }, [id])
+  const play = () => {
+    if (!isAnimated(id)) return
+    const t0 = performance.now()
+    const loop = () => {
+      paint(((performance.now() - t0) / 5000) % 1)
+      raf.current = requestAnimationFrame(loop)
+    }
+    raf.current = requestAnimationFrame(loop)
+  }
+  const stop = () => {
+    cancelAnimationFrame(raf.current)
+    paint(0)
+  }
+  return <canvas ref={ref} width={200} height={125} onPointerEnter={play} onPointerLeave={stop} />
 }
 
 function PatternThumb({ kind, back, fore }: { kind: PatternKind; back: string; fore: string }) {

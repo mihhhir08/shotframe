@@ -4,7 +4,7 @@ import { canvasToImage, computeLayout, imageToCanvas } from './layout.ts'
 import type { SetSettings } from './Panel.tsx'
 import { Icon } from './icons.tsx'
 import { MOTIONS, motionPatch } from './motion.ts'
-import { render, type RenderCache, type Scene } from './render.ts'
+import { bgMoves, render, type RenderCache, type Scene } from './render.ts'
 import type { Annotation, Crop, StrokeOpts, Tool } from './settings.ts'
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   sizeLevel: number
   stroke: StrokeOpts
   motion: boolean
+  onBgTime?: (t: number) => void
   onSelect: (id: string | null) => void
   onAdd: (a: Annotation) => void
   onUpdate: (a: Annotation, key?: string) => void
@@ -33,7 +34,7 @@ const FULL: Crop = { x: 0, y: 0, w: 1, h: 1 }
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 export const newId = () => Math.random().toString(36).slice(2, 10)
 
-export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motion, onSelect, onAdd, onUpdate, set }: Props) {
+export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motion, onBgTime, onSelect, onAdd, onUpdate, set }: Props) {
   const s = scene.settings
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -93,8 +94,26 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
     return () => cancelAnimationFrame(raf)
   }, [motion, scene, px, fit, s])
 
+  // A movable background plays in the preview too, not only in Motion. The window layer is
+  // cached, so each frame only repaints the background and recomposites.
+  const playingBg = !motion && fit > 0 && bgMoves(s) && !text && !draft
   useEffect(() => {
-    if (!fit || motion) return
+    if (!playingBg) return
+    const cache: RenderCache = {}
+    const t0 = performance.now()
+    let raf = 0
+    const loop = () => {
+      const t = ((performance.now() - t0) / (Math.max(0.5, s.motionDuration) * 1000)) % 1
+      render(canvasRef.current!, scene, px, { flat, ignoreCrop: cropping, time: t }, cache)
+      onBgTime?.(t)
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(raf)
+  }, [playingBg, scene, px, flat, cropping, s.motionDuration, onBgTime])
+
+  useEffect(() => {
+    if (!fit || motion || playingBg) return
     const id = requestAnimationFrame(() => {
       let annotations = scene.annotations
       if (text?.id) annotations = annotations.filter((a) => a.id !== text.id)
@@ -102,7 +121,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
       render(canvasRef.current!, { ...scene, annotations }, px, { flat, ignoreCrop: cropping })
     })
     return () => cancelAnimationFrame(id)
-  }, [scene, draft, px, fit, flat, cropping, text?.id, motion])
+  }, [scene, draft, px, fit, flat, cropping, text?.id, motion, playingBg])
 
   useEffect(() => {
     setDraft(null)

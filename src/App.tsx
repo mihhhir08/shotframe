@@ -97,6 +97,7 @@ export default function App() {
   const fileRef = useRef<HTMLInputElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const toastTimer = useRef(0)
+  const bgTime = useRef(0) // frame the preview is showing, so a PNG exports what you see
 
   const flash = (msg: string) => {
     setToast(msg)
@@ -209,7 +210,7 @@ export default function App() {
 
   const exportBlob = (type: string) => new Promise<Blob>((resolve, reject) => {
     const c = document.createElement('canvas')
-    render(c, scene!, exportPx)
+    render(c, scene!, exportPx, { time: bgTime.current })
     let out = c
     if (type === 'image/jpeg') {
       const [flat, ctx] = makeCanvas(c.width, c.height)
@@ -418,7 +419,7 @@ export default function App() {
 
       <main className="main">
         {scene ? (
-          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke} motion={mode === 'motion'}
+          <Stage scene={scene} tool={tool} selectedId={selectedId} color={color} sizeLevel={sizeLevel} stroke={stroke} motion={mode === 'motion'} onBgTime={(t) => { bgTime.current = t }}
             onSelect={setSelectedId} onAdd={addAnnotation} onUpdate={updateAnnotation} set={set} />
         ) : (
           <div className="empty">
@@ -522,6 +523,14 @@ export default function App() {
           setPresets(next)
         }}
         onReset={() => set({ ...DEFAULTS, crop: s.crop })}
+        motionReady={mode === 'motion' && s.motion === 'still' && s.bgAnimate}
+        onAnimateBg={() => {
+          // one press: Motion on, background animating, screenshot held still
+          set({ bgAnimate: true, motion: 'still' })
+          setModeRaw('motion')
+          setSelectedId(null)
+          setToolRaw('select')
+        }}
       />
 
 

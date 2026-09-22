@@ -455,7 +455,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   transition: transform var(--fast), box-shadow var(--fast);
 }
-.wallpapers img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wallpapers img, .wallpapers canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .wallpapers span {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 16px 9px 6px; text-align: left;
