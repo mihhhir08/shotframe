@@ -356,6 +356,66 @@ export const TEXTURES: { id: string; name: string; draw: Draw }[] = [
   { id: 'tex-terrazzo', name: 'Terrazzo', draw: texture(['#eae6df', '#f6f4f0'], { mottle: 0.2, fleck: [['#c2410c', 90], ['#0f766e', 90], ['#1e293b', 110], ['#b45309', 70]], grain: 0.1, vign: 0.12 }) },
 ]
 
+
+// Flowing bands of silk, the look a desktop ships with. Ours, not theirs.
+function ribbons(stops: string[]): Draw {
+  return (ctx, W, H, rand, t = 0) => {
+    const n = noise2(rand)
+    const angle = 0.4 + rand() * 0.9
+    const freq = 2.2 + rand() * 1.4
+    field(ctx, W, H, (u, v) => {
+      const d = u * Math.cos(angle) + v * Math.sin(angle)
+      const warp = fbm(n, u * 0.9 + t * 0.35, v * 0.9, 4) * 3.4
+      // one wide fold carrying a narrower highlight, so the band has a lit edge
+      const fold = Math.sin(d * freq + warp + t * 1.4)
+      const sheen = Math.pow(Math.max(0, Math.sin(d * freq * 2 + warp * 1.2 + 0.7)), 6)
+      return 0.42 + 0.34 * fold + 0.3 * sheen
+    }, stops)
+    vignette(ctx, W, H, 0.3)
+    grain(ctx, W, H, 0.045)
+  }
+}
+
+// Fabric fanning out from one point, the way a bloom of cloth catches light.
+function folds(stops: string[]): Draw {
+  return (ctx, W, H, rand, t = 0) => {
+    const n = noise2(rand)
+    const fx = 0.3 + rand() * 0.4
+    const fy = 0.3 + rand() * 0.4
+    const blades = 4 + Math.floor(rand() * 3)
+    field(ctx, W, H, (u, v) => {
+      const dx = u - fx
+      const dy = (v - fy) * 0.8
+      const a = Math.atan2(dy, dx)
+      const r = Math.hypot(dx, dy)
+      const warp = fbm(n, u * 1.1, v * 1.1, 4) * 2.6
+      // folds are strongest just off the focus and die away toward the edges
+      const falloff = Math.min(1, r * 3.2) * Math.exp(-r * 1.5)
+      const fold = Math.sin(a * blades + warp + r * 3.4 + t * 1.1)
+      return 0.5 + 0.34 * fold * falloff + 0.3 * (1 - Math.min(1, r * 1.5))
+    }, stops)
+    vignette(ctx, W, H, 0.42)
+    grain(ctx, W, H, 0.05)
+  }
+}
+
+// Long soft curves stacked into the distance, shaded rather than outlined.
+function drape(stops: string[]): Draw {
+  return (ctx, W, H, rand, t = 0) => {
+    const n = noise2(rand)
+    const layers = 3.5 + rand() * 2
+    const tilt = 0.28 + rand() * 0.3
+    field(ctx, W, H, (u, v) => {
+      const bend = Math.sin(u * 2.1 + fbm(n, u * 1.1, v * 0.8 + t * 0.25, 3) * 1.8) * tilt
+      const band = (v + bend) * layers
+      const soft = band - Math.floor(band)
+      return Math.min(1, Math.max(0, (Math.floor(band) + soft * soft * (3 - 2 * soft)) / layers))
+    }, stops)
+    vignette(ctx, W, H, 0.3)
+    grain(ctx, W, H, 0.045)
+  }
+}
+
 export const WALLPAPERS: { id: string; name: string; draw: Draw }[] = [
   { id: 'fluid-dusk', name: 'Dusk', draw: fluid(['#150b30', '#3d1a6b', '#8e2f86', '#e2646a', '#ffb27a']) },
   { id: 'fluid-reef', name: 'Reef', draw: fluid(['#021a26', '#054e5c', '#0e9c8c', '#6fdcb0', '#d7f5df']) },
@@ -376,13 +436,25 @@ export const WALLPAPERS: { id: string; name: string; draw: Draw }[] = [
   { id: 'satin-pearl', name: 'Pearl', draw: satin(['#c9ccd6', '#eef0f4', '#9aa2b4', '#f6f7fa']) },
   { id: 'satin-onyx', name: 'Onyx', draw: satin(['#0b0b10', '#2a2b36', '#15161d', '#3c3e4d']) },
   { id: 'satin-jade', name: 'Jade', draw: satin(['#06231f', '#10564a', '#0a3b33', '#2f8f78']) },
+  { id: 'ribbons-amber', name: 'Silk amber', draw: ribbons(['#2a0b04', '#8a2f08', '#e0731c', '#ffc46b', '#fff0d4']) },
+  { id: 'ribbons-violet', name: 'Silk violet', draw: ribbons(['#150726', '#4a1d8f', '#9d4edd', '#e0aaff', '#f8edff']) },
+  { id: 'ribbons-ocean', name: 'Silk ocean', draw: ribbons(['#021226', '#0b3a73', '#2178c4', '#7ec8f2', '#e6f6ff']) },
+  { id: 'ribbons-rose', name: 'Silk rose', draw: ribbons(['#2a0715', '#8c1d47', '#d94f7a', '#f8a8bd', '#ffe9ef']) },
+  { id: 'folds-cobalt', name: 'Bloom cobalt', draw: folds(['#020a1e', '#0b2a6b', '#1d5fd1', '#6fa8ff', '#dbe9ff']) },
+  { id: 'folds-jade', name: 'Bloom jade', draw: folds(['#02120e', '#0a4436', '#149c72', '#63d9b0', '#dcfaef']) },
+  { id: 'folds-magenta', name: 'Bloom magenta', draw: folds(['#1a0418', '#6b0f4f', '#c42a8a', '#f581c4', '#ffe3f4']) },
+  { id: 'folds-slate', name: 'Bloom slate', draw: folds(['#06070c', '#1c2233', '#3d4a66', '#8fa0bf', '#e3e9f5']) },
+  { id: 'drape-sunset', name: 'Drape sunset', draw: drape(['#1b0520', '#6b1338', '#c4453f', '#f2924a', '#ffd9a0']) },
+  { id: 'drape-arctic', name: 'Drape arctic', draw: drape(['#030f1c', '#0d3350', '#2c6f9c', '#7fb6d8', '#e6f4fb']) },
+  { id: 'drape-moss', name: 'Drape moss', draw: drape(['#07150c', '#1b4423', '#3f7d34', '#8fbf6a', '#e4f2cf']) },
+  { id: 'drape-dune', name: 'Drape dune', draw: drape(['#1c1207', '#5c3a15', '#a9762f', '#dfb072', '#f8e6c7']) },
 ]
 
 export const SCENES = [...WALLPAPERS, ...THEMES, ...TEXTURES]
 
 // Backgrounds whose generator reads `t`. In Motion they drift; in a still export they are frozen.
 export const ANIMATED = new Set(
-  SCENES.filter((x) => /^(fluid|bloom|curtains|satin|theme)-/.test(x.id)).map((x) => x.id),
+  SCENES.filter((x) => /^(fluid|bloom|curtains|satin|theme|ribbons|folds|drape)-/.test(x.id)).map((x) => x.id),
 )
 export const isAnimated = (id: string) => ANIMATED.has(id)
 
