@@ -5,7 +5,7 @@ import { Icon, type IconName } from './icons.tsx'
 import { loadFile, loadImage, palette, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
 import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
-import { Panel, Seg, TABS, type BgPick, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
+import { Background, Panel, Seg, TABS, type BgPick, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type RenderCache, type Scene } from './render.ts'
 import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
 import { SIZES, Stage } from './Stage.tsx'
@@ -50,6 +50,17 @@ const stamp = () => new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '')
 const isMac = /Mac|iPhone|iPad/.test(navigator.userAgent)
 const MOD = isMac ? '⌘' : 'Ctrl+'
 
+function useMedia(query: string) {
+  const [hit, setHit] = useState(() => matchMedia(query).matches)
+  useEffect(() => {
+    const m = matchMedia(query)
+    const on = () => setHit(m.matches)
+    m.addEventListener('change', on)
+    return () => m.removeEventListener('change', on)
+  }, [query])
+  return hit
+}
+
 function useHistory(initial: Doc) {
   const [h, setH] = useState({ past: [] as Doc[], present: initial, future: [] as Doc[], key: '', t: 0 })
   const update = useCallback((fn: (d: Doc) => Doc, key = '') => setH((h) => {
@@ -88,6 +99,8 @@ export default function App() {
   })
   const [presets, setPresets] = useState<UserPreset[]>(() => load('shotframe:presets', []))
   const [recent, setRecent] = useState<BgPick[]>(() => load('shotframe:recent', []))
+  const narrow = useMedia('(max-width: 900px)')
+  const [bgOpen, setBgOpen] = useState<boolean>(() => load('shotframe:bgOpen', true))
   const [mode, setModeRaw] = useState<'static' | 'motion'>('static')
   const [videoSize, setVideoSize] = useState<number>(() => load('shotframe:videoSize', 1920))
   const [fps, setFps] = useState<number>(() => load('shotframe:fps', 30))
@@ -120,6 +133,7 @@ export default function App() {
   }, [s])
   useEffect(() => { save('shotframe:format', format); save('shotframe:scale', scale) }, [format, scale])
   useEffect(() => { save('shotframe:tab', tab) }, [tab])
+  useEffect(() => { save('shotframe:bgOpen', bgOpen) }, [bgOpen])
   useEffect(() => { save('shotframe:videoSize', videoSize); save('shotframe:fps', fps) }, [videoSize, fps])
 
   const setMode = (m: 'static' | 'motion') => {
@@ -343,13 +357,28 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  const addRecent = (p: BgPick) => {
+    const same = (a: BgPick, b: BgPick) => JSON.stringify(a) === JSON.stringify(b)
+    const next = [p, ...recent.filter((x) => !same(x, p))].slice(0, 12)
+    setRecent(next)
+    save('shotframe:recent', next)
+  }
+  const motionReady = mode === 'motion' && s.motion === 'still' && s.bgAnimate
+  const animateBg = () => {
+    // one press: Motion on, background animating, screenshot held still
+    set({ bgAnimate: true, motion: 'still' })
+    setModeRaw('motion')
+    setSelectedId(null)
+    setToolRaw('select')
+  }
+
   const kind = selected?.type ?? tool
   const showOpts = scene && mode === 'static' && (tool !== 'select' || selected)
   const outW = layout ? Math.round(layout.W * exportPx) : 0
   const outH = layout ? Math.round(layout.H * exportPx) : 0
 
   return (
-    <div className="app" style={{ '--glow-a': glow[0], '--glow-b': glow[1] } as CSSProperties}>
+    <div className="app" style={{ '--glow-a': glow[0], '--glow-b': glow[1], '--bg-left': !narrow && bgOpen ? '334px' : '76px' } as CSSProperties}>
       <div className="ambient" />
       <div className="room-floor" />
 
@@ -416,6 +445,25 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {!narrow && scene && (bgOpen ? (
+        <aside className="bg-panel slab">
+          <header className="panel-head">
+            <h2>Background</h2>
+            <button className="icon-btn" onClick={() => setBgOpen(false)} aria-label="Collapse backgrounds" title="Collapse">
+              <Icon name="chevron" size={16} />
+            </button>
+          </header>
+          <div className="bg-body">
+            <Background s={s} set={set} image={image} recent={recent} onRecent={addRecent} onAnimateBg={animateBg} motionReady={motionReady} />
+          </div>
+        </aside>
+      ) : (
+        <button className="bg-tab slab" onClick={() => setBgOpen(true)} title="Backgrounds" aria-label="Show backgrounds">
+          <Icon name="image" size={17} />
+          <span>Background</span>
+        </button>
+      ))}
 
       <main className="main">
         {scene ? (
@@ -505,12 +553,7 @@ export default function App() {
 
       <Panel tab={tab} onTab={setTab} motion={mode === 'motion'} s={s} set={set} layout={layout} image={image} presets={presets}
         recent={recent}
-        onRecent={(p) => {
-          const same = (a: BgPick, b: BgPick) => JSON.stringify(a) === JSON.stringify(b)
-          const next = [p, ...recent.filter((x) => !same(x, p))].slice(0, 12)
-          setRecent(next)
-          save('shotframe:recent', next)
-        }}
+        onRecent={addRecent}
         onSavePreset={(name) => {
           const { crop: _crop, ...style } = s
           const next = [...presets.filter((p) => p.name !== name), { name, settings: style }]
@@ -523,14 +566,9 @@ export default function App() {
           setPresets(next)
         }}
         onReset={() => set({ ...DEFAULTS, crop: s.crop })}
-        motionReady={mode === 'motion' && s.motion === 'still' && s.bgAnimate}
-        onAnimateBg={() => {
-          // one press: Motion on, background animating, screenshot held still
-          set({ bgAnimate: true, motion: 'still' })
-          setModeRaw('motion')
-          setSelectedId(null)
-          setToolRaw('select')
-        }}
+        motionReady={motionReady}
+        onAnimateBg={animateBg}
+        showBackground={narrow}
       />
 
 

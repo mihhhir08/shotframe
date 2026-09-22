@@ -31,6 +31,7 @@ interface Props {
   tab: PanelTab
   onTab: (t: PanelTab) => void
   motion: boolean
+  showBackground: boolean
   s: Settings
   set: SetSettings
   layout: Layout | null
@@ -45,8 +46,8 @@ interface Props {
   onRecent: (p: BgPick) => void
 }
 
-export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, onAnimateBg, motionReady, recent, onRecent }: Props) {
-  const tabs = TABS.filter(([id]) => motion || id !== 'motion')
+export function Panel({ tab, onTab, motion, showBackground, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, onAnimateBg, motionReady, recent, onRecent }: Props) {
+  const tabs = TABS.filter(([id]) => (motion || id !== 'motion') && (showBackground || id !== 'background'))
   const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
   // the stored tab can point at a tab this mode does not show (Motion, after a reload in Static)
   const active = current[0]
@@ -278,7 +279,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
 
 const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['theme', 'Theme'], ['texture', 'Texture'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
-function Background({ s, set, image, recent, onRecent, onAnimateBg, motionReady }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void; onAnimateBg: () => void; motionReady: boolean }) {
+export function Background({ s, set, image, recent, onRecent, onAnimateBg, motionReady }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void; onAnimateBg: () => void; motionReady: boolean }) {
   // every background choice goes through this, so Recent stays honest
   const pick = (patch: BgPick, key?: string) => {
     set(patch, key)

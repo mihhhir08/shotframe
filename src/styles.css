@@ -219,7 +219,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- stage ---------- */
 .main { position: absolute; inset: 0; }
-.stage { position: absolute; inset: 92px 376px 96px 20px; display: grid; place-items: center; }
+.stage { position: absolute; inset: 92px 376px 96px var(--bg-left, 20px); display: grid; place-items: center; transition: inset var(--slow); }
 /* the plate throws its own light into the room */
 .stage-canvas {
   position: relative;
@@ -292,7 +292,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- dock ---------- */
 .dock {
-  position: absolute; left: 20px; right: 376px; bottom: 18px; z-index: 20;
+  position: absolute; left: var(--bg-left, 20px); right: 376px; bottom: 18px; z-index: 20;
+  transition: left var(--slow);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   pointer-events: none;
 }
@@ -337,6 +338,34 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .timeline input::-moz-range-track { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.14); }
 .timeline input::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: var(--accent); }
 .time { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- background panel ---------- */
+.bg-panel {
+  position: absolute; top: 92px; left: 20px; bottom: 18px; z-index: 20;
+  width: 300px;
+  display: flex; flex-direction: column;
+  border-radius: var(--r-slab);
+  overflow: hidden;
+  animation: slab-left 520ms 40ms var(--settle) backwards;
+}
+.bg-panel .panel-head { padding: 16px 16px 12px; }
+.bg-body { min-height: 0; overflow-y: auto; padding: 0 16px 20px; }
+.bg-body .group:first-child { border-top: 0; padding-top: 2px; }
+.bg-panel .panel-head .icon-btn { transform: rotate(90deg); }
+
+.bg-tab {
+  position: absolute; top: 92px; left: 20px; z-index: 20;
+  display: grid; justify-items: center; gap: 8px;
+  width: 44px; padding: 12px 0 14px;
+  border-radius: 16px; color: var(--muted);
+  transition: color var(--fast);
+}
+.bg-tab:hover { color: var(--text); }
+.bg-tab span {
+  writing-mode: vertical-rl;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+}
+@keyframes slab-left { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: none; } }
 
 /* ---------- inspector ---------- */
 .panel {
@@ -564,7 +593,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- empty state ---------- */
 .empty {
-  position: absolute; inset: 92px 376px 96px 20px;
+  position: absolute; inset: 92px 376px 96px var(--bg-left, 20px);
   display: grid; place-items: center; padding: 24px;
 }
 .empty-card {
@@ -620,7 +649,8 @@ kbd {
 /* ---------- adapt ---------- */
 @media (max-width: 1180px) {
   .panel { width: 310px; }
-  .stage { inset: 80px 338px 84px 14px; }
+  .bg-panel { width: 264px; }
+  .stage { inset: 92px 338px 96px var(--bg-left, 20px); }
   .dock { right: 338px; }
   .split-meta { display: none; }
 }
@@ -631,6 +661,7 @@ kbd {
   /* a phone bar holds three things: what this is, which mode, and how to get the file out */
   .bar-group.file-actions, .bar-sep, .bar-right .bar-group, .bar-right > .btn { display: none; }
   /* hug the plate to the top of its box so nothing stacks below a dead band */
+  .bg-panel, .bg-tab { display: none; }
   .stage { inset: 72px 14px auto 14px; height: min(42dvh, 380px); place-items: start center; }
   .dock { right: 14px; bottom: auto; top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 38px); }
   .panel {
