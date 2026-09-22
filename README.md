@@ -8,7 +8,7 @@ Make screenshots look good. Runs entirely in the browser — images never leave 
 - **Style it:** presets and 101 built-in backgrounds — 19 wallpapers, 12 themes, 10 textures, 30 gradients, 24 mesh gradients and 6 adjustable patterns — plus your own image, a blurred copy of the screenshot, solid colours, transparency, a Recent row, grain, padding, inset with auto-balance, radius, shadow, border, macOS / browser / Windows / glass frames, 3D tilt, rotation, canvas sizes for X, LinkedIn, Instagram, Product Hunt and more, caption and watermark.
 - **Mark it up:** crop, arrow (straight or curved, one head, two or none, solid or dashed), box, ellipse, highlighter, text, numbered steps, pen, blur, pixelate, spotlight.
 - **Export:** PNG, JPEG or WebP at 0.5×–4×, copy to clipboard or download.
-- **Animated backgrounds:** wallpapers in the fluid, bloom, curtains and satin families, and every theme, drift over time. They are still in a PNG and moving in an MP4.
+- **Animated backgrounds:** 25 backgrounds drift over time, marked **Moves** in the picker. In Motion, the background and the screenshot animate independently — set the screenshot to **Still** for a moving background under a still shot, which is the usual look. Still in a PNG, moving in an MP4.
 - **Motion:** switch to Motion for an animated version — tilt in, zoom in, rise, slow push, float, swing or orbit — and export it as an MP4 at 720p–1440p, 30 or 60 fps.
 
 Your last style is remembered. Save your own presets from the Presets section.

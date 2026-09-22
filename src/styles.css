@@ -543,6 +543,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .motion-card.on .motion-stage { border-color: rgba(255, 143, 69, 0.55); background: var(--accent-dim); }
 .motion-stage i { width: 54%; height: 46%; border-radius: 3px; background: rgba(255, 255, 255, 0.28); }
 .motion-card.on .motion-stage i { background: var(--accent); }
+.m-still i { animation: none; }
 .m-tilt-in i { animation: m-tilt 3s var(--ease) infinite; }
 .m-zoom-in i { animation: m-zoom 3s var(--ease) infinite; }
 .m-rise i { animation: m-rise 3s var(--ease) infinite; }

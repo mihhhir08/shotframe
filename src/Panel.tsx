@@ -7,6 +7,7 @@ import {
   type BgType, type Corner, type Settings,
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
+import { bgCanMove } from './render.ts'
 import { drawPattern, isAnimated, PATTERNS, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
@@ -67,7 +68,18 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
 
         {active === 'motion' && motion && (
           <>
-            <Group title="Animation">
+            <Group title="Background">
+              {bgCanMove(s) ? (
+                <>
+                  <Seg value={s.bgAnimate ? 'on' : 'off'} options={[['on', 'Animate'], ['off', 'Hold still']]}
+                    onChange={(v) => set({ bgAnimate: v === 'on' })} />
+                  {s.bgAnimate && <Slider label="Speed" value={s.bgSpeed} min={25} max={300} unit="%" onChange={(v) => set({ bgSpeed: v }, 'bgSpeed')} />}
+                </>
+              ) : (
+                <p className="hint">This background holds still. Pick one marked <b>Moves</b> under Background to animate it.</p>
+              )}
+            </Group>
+            <Group title="Screenshot">
               <div className="motion-grid">
                 {MOTIONS.map((m) => (
                   <button key={m.id} className={`motion-card m-${m.id} ${s.motion === m.id ? 'on' : ''}`} onClick={() => set({ motion: m.id })}>
@@ -79,7 +91,10 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
             </Group>
             <Group title="Timing">
               <Slider label="Duration" value={s.motionDuration} min={2} max={12} step={0.5} unit="s" onChange={(v) => set({ motionDuration: v }, 'motionDuration')} />
-              <p className="hint">The animation starts from your current style and lands on it. Export an MP4 from the Export menu.</p>
+              <p className="hint">
+                Two things can move: the background and the screenshot. For a moving background under a still
+                screenshot — the usual look — choose <b>Still</b> above. Export an MP4 from the Export menu.
+              </p>
             </Group>
           </>
         )}

@@ -24,9 +24,13 @@ export interface RenderOpts {
 export const bgSceneId = (s: Settings) =>
   s.bgType === 'wallpaper' ? s.wallpaper : s.bgType === 'theme' ? s.theme : s.bgType === 'texture' ? s.texture : null
 
-export function bgMoves(s: Settings) {
+// Can this background move at all, and is it switched on?
+export function bgCanMove(s: Settings) {
   const id = bgSceneId(s)
   return !!id && isAnimated(id)
+}
+export function bgMoves(s: Settings) {
+  return bgCanMove(s) && s.bgAnimate
 }
 
 // Motion only changes scale/position/tilt/rotation, so the background and the framed
@@ -44,12 +48,13 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   const ctx = canvas.getContext('2d')!
   ctx.imageSmoothingQuality = 'high'
 
-  const moving = !!opts.time && bgMoves(s)
+  const t = (opts.time ?? 0) * (s.bgSpeed / 100)
+  const moving = opts.time !== undefined && bgMoves(s)
   if (cache?.bg && !moving) {
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.drawImage(cache.bg, 0, 0)
   } else {
-    drawBackground(ctx, scene, L, opts.time ?? 0)
+    drawBackground(ctx, scene, L, moving ? t : 0)
     if (cache && !moving) {
       const [copy, cctx] = makeCanvas(canvas.width, canvas.height)
       cctx.drawImage(canvas, 0, 0)

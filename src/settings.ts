@@ -59,6 +59,8 @@ export interface Settings {
 
   motion: string
   motionDuration: number
+  bgAnimate: boolean
+  bgSpeed: number
 }
 
 export type AnnotationType =
@@ -232,6 +234,8 @@ export const DEFAULTS: Settings = {
 
   motion: 'tilt-in',
   motionDuration: 4,
+  bgAnimate: true,
+  bgSpeed: 100,
 }
 
 export const STYLE_PRESETS: { name: string; patch: Partial<Settings> }[] = [

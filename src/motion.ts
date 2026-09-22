@@ -17,6 +17,11 @@ const TAU = Math.PI * 2
 
 export const MOTIONS: Motion[] = [
   {
+    // the background's own drift is the animation; the screenshot holds still
+    id: 'still', label: 'Still', loop: true,
+    at: () => ({}),
+  },
+  {
     id: 'tilt-in', label: 'Tilt in', loop: false,
     at: (t, s) => {
       const e = easeOut(clamp01(t / 0.65))
