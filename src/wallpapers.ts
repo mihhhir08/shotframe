@@ -329,12 +329,12 @@ function texture(base: string[], opts: {
 }
 
 export const THEMES: { id: string; name: string; draw: Draw }[] = [
-  { id: 'theme-sonoma', name: 'Sonoma', draw: theme(['#7a1f0a', '#c2410c', '#f59e0b', '#fde68a']) },
-  { id: 'theme-sequoia', name: 'Sequoia', draw: theme(['#2a1052', '#7e22ce', '#db2777', '#fbcfe8']) },
-  { id: 'theme-bigsur', name: 'Big Sur', draw: theme(['#0c2340', '#1d4ed8', '#38bdf8', '#e0f2fe']) },
-  { id: 'theme-monterey', name: 'Monterey', draw: theme(['#052e1c', '#15803d', '#4ade80', '#dcfce7']) },
-  { id: 'theme-ventura', name: 'Ventura', draw: theme(['#04061c', '#1e1b4b', '#4338ca', '#a5b4fc']) },
-  { id: 'theme-tahoe', name: 'Tahoe', draw: theme(['#042f2e', '#0f766e', '#2dd4bf', '#ccfbf1']) },
+  { id: 'theme-sonoma', name: 'Amber Sky', draw: theme(['#7a1f0a', '#c2410c', '#f59e0b', '#fde68a']) },
+  { id: 'theme-sequoia', name: 'Orchid Haze', draw: theme(['#2a1052', '#7e22ce', '#db2777', '#fbcfe8']) },
+  { id: 'theme-bigsur', name: 'Azure', draw: theme(['#0c2340', '#1d4ed8', '#38bdf8', '#e0f2fe']) },
+  { id: 'theme-monterey', name: 'Fern', draw: theme(['#052e1c', '#15803d', '#4ade80', '#dcfce7']) },
+  { id: 'theme-ventura', name: 'Indigo Night', draw: theme(['#04061c', '#1e1b4b', '#4338ca', '#a5b4fc']) },
+  { id: 'theme-tahoe', name: 'Teal Bay', draw: theme(['#042f2e', '#0f766e', '#2dd4bf', '#ccfbf1']) },
   { id: 'theme-sunset', name: 'Sunset', draw: theme(['#3b0764', '#be123c', '#fb923c', '#fed7aa']) },
   { id: 'theme-lavender', name: 'Lavender', draw: theme(['#312e81', '#7c3aed', '#c4b5fd', '#f5f3ff']) },
   { id: 'theme-mint', name: 'Mint', draw: theme(['#064e3b', '#10b981', '#a7f3d0', '#f0fdfa']) },

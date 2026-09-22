@@ -7,7 +7,7 @@ import {
   type BgType, type Corner, type Settings,
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
-import { drawPattern, PATTERNS, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
+import { drawPattern, isAnimated, PATTERNS, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export type BgPick = Partial<Settings>
@@ -294,12 +294,18 @@ function Background({ s, set, image, recent, onRecent }: { s: Settings; set: Set
           <Group title={title}>
             <div className="wallpapers">
               {list.map((w) => (
-                <button key={w.id} className={s[key] === w.id ? 'on' : ''} onClick={() => pick({ bgType: s.bgType, [key]: w.id })} title={w.name}>
+                <button key={w.id} className={s[key] === w.id ? 'on' : ''} onClick={() => pick({ bgType: s.bgType, [key]: w.id })}
+                  title={isAnimated(w.id) ? `${w.name} — moves in Motion exports` : w.name}>
                   <img src={sceneThumb(w.id)} alt="" />
+                  {isAnimated(w.id) && <i className="moves"><Icon name="play" size={9} /> Moves</i>}
                   <span>{w.name}</span>
                 </button>
               ))}
             </div>
+            <p className="hint">
+              {list.filter((w) => isAnimated(w.id)).length} of these drift over time. They stay still in a PNG and
+              animate in a Motion export — switch to Motion at the top to watch one.
+            </p>
           </Group>
         )
       })()}
