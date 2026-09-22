@@ -3,7 +3,7 @@ import { blurred, makeCanvas, noiseTile, rgba } from './canvas.ts'
 import { computeLayout, type Layout } from './layout.ts'
 import type { Annotation, Settings } from './settings.ts'
 import { tilt } from './tilt.ts'
-import { drawPattern, wallpaper, type PatternKind } from './wallpapers.ts'
+import { drawPattern, isAnimated, scene as bgScene, type PatternKind } from './wallpapers.ts'
 
 export interface Scene {
   settings: Settings
@@ -17,6 +17,16 @@ export interface Scene {
 export interface RenderOpts {
   flat?: boolean // skip rotate/tilt (used while annotating so clicks map 1:1)
   ignoreCrop?: boolean // show the whole image (used by the crop tool)
+  time?: number // 0..1 through a Motion cycle; drives animated backgrounds
+}
+
+// Which background id the settings are currently pointing at, if any.
+export const bgSceneId = (s: Settings) =>
+  s.bgType === 'wallpaper' ? s.wallpaper : s.bgType === 'theme' ? s.theme : s.bgType === 'texture' ? s.texture : null
+
+export function bgMoves(s: Settings) {
+  const id = bgSceneId(s)
+  return !!id && isAnimated(id)
 }
 
 // Motion only changes scale/position/tilt/rotation, so the background and the framed
@@ -34,12 +44,13 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   const ctx = canvas.getContext('2d')!
   ctx.imageSmoothingQuality = 'high'
 
-  if (cache?.bg) {
+  const moving = !!opts.time && bgMoves(s)
+  if (cache?.bg && !moving) {
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.drawImage(cache.bg, 0, 0)
   } else {
-    drawBackground(ctx, scene, L)
-    if (cache) {
+    drawBackground(ctx, scene, L, opts.time ?? 0)
+    if (cache && !moving) {
       const [copy, cctx] = makeCanvas(canvas.width, canvas.height)
       cctx.drawImage(canvas, 0, 0)
       cache.bg = copy
@@ -76,7 +87,7 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   return L
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D, scene: Scene, L: Layout) {
+function drawBackground(ctx: CanvasRenderingContext2D, scene: Scene, L: Layout, t = 0) {
   const s = scene.settings
   const { width: W, height: H } = ctx.canvas
   const px = W / L.W
@@ -91,7 +102,13 @@ function drawBackground(ctx: CanvasRenderingContext2D, scene: Scene, L: Layout) 
 
   switch (s.bgType) {
     case 'wallpaper':
-      ctx.drawImage(wallpaper(s.wallpaper, W, H), 0, 0)
+      ctx.drawImage(bgScene(s.wallpaper, W, H, t), 0, 0)
+      break
+    case 'theme':
+      ctx.drawImage(bgScene(s.theme, W, H, t), 0, 0)
+      break
+    case 'texture':
+      ctx.drawImage(bgScene(s.texture, W, H, t), 0, 0)
       break
     case 'pattern':
       drawPattern(ctx, W, H, s.pattern as PatternKind, s.patternBack, s.patternFore, s.patternScale, s.patternAngle)

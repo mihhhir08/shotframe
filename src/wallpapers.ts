@@ -1,7 +1,7 @@
 import { blurred, makeCanvas, noiseTile, rgba } from './canvas.ts'
 
 // Procedural wallpapers: drawn from code at any size, so nothing to download and no licensing.
-type Draw = (ctx: CanvasRenderingContext2D, W: number, H: number, rand: () => number) => void
+type Draw = (ctx: CanvasRenderingContext2D, W: number, H: number, rand: () => number, t?: number) => void
 
 function seeded(seed: number) {
   return () => {
@@ -107,13 +107,13 @@ function field(ctx: CanvasRenderingContext2D, W: number, H: number, shade: (u: n
 
 // Domain-warped flow: colour bends around itself like ink in water.
 function fluid(stops: string[]): Draw {
-  return (ctx, W, H, rand) => {
+  return (ctx, W, H, rand, t = 0) => {
     const n = noise2(rand)
     const sx = 2.2 + rand()
     const rot = rand() * 6.28
     field(ctx, W, H, (u, v) => {
-      const a = u * sx + Math.cos(rot)
-      const b = v * sx + Math.sin(rot)
+      const a = u * sx + Math.cos(rot) + t * 0.55
+      const b = v * sx + Math.sin(rot) - t * 0.33
       const wx = fbm(n, a + 1.7, b + 9.2, 3)
       const wy = fbm(n, a + 8.3, b + 2.8, 3)
       return (fbm(n, a + 3.4 * wx, b + 3.4 * wy) - 0.22) / 0.52
@@ -125,11 +125,11 @@ function fluid(stops: string[]): Draw {
 
 // One volumetric source in a deep room, with soft satellites.
 function bloom(base: string[], glow: string, orbs: string[]): Draw {
-  return (ctx, W, H, rand) => {
+  return (ctx, W, H, rand, t = 0) => {
     const n = noise2(rand)
     field(ctx, W, H, (u, v) => fbm(n, u * 1.6, v * 1.6, 3) * 0.6 + v * 0.35, base)
-    const cx = W * (0.24 + rand() * 0.5)
-    const cy = H * (0.18 + rand() * 0.34)
+    const cx = W * (0.24 + rand() * 0.5 + Math.sin(t * 6.28) * 0.05)
+    const cy = H * (0.18 + rand() * 0.34 + Math.cos(t * 6.28) * 0.04)
     const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.72)
     g.addColorStop(0, rgba(glow, 0.9))
     g.addColorStop(0.18, rgba(glow, 0.42))
@@ -176,7 +176,7 @@ function haze(stops: string[], sun: string): Draw {
 
 // Curtains of light over a starfield, warped rather than drawn.
 function curtains(base: string[], lights: string[]): Draw {
-  return (ctx, W, H, rand) => {
+  return (ctx, W, H, rand, t = 0) => {
     const n = noise2(rand)
     field(ctx, W, H, (u, v) => v * 0.8 + fbm(n, u * 1.2, v * 1.2, 2) * 0.3, base)
     for (let i = 0; i < 420; i++) {
@@ -194,7 +194,7 @@ function curtains(base: string[], lights: string[]): Draw {
       const base2 = h * (0.3 + k * 0.12 + rand() * 0.1)
       const amp = h * (0.08 + rand() * 0.1)
       const f = ((0.8 + rand()) * Math.PI * 2) / w
-      const p = rand() * 6.28
+      const p = rand() * 6.28 + t * 2.4
       for (let x = 0; x < w; x += 1) {
         const y = base2 + amp * Math.sin(f * x + p) + amp * 0.4 * Math.sin(f * 2.7 * x + p * 1.3)
         const len = h * (0.22 + 0.14 * Math.sin(x * f * 1.9 + p))
@@ -254,17 +254,107 @@ function nebula(base: string[], clouds: string[]): Draw {
 
 // Brushed light sweeping diagonally, the way satin catches a studio lamp.
 function satin(stops: string[]): Draw {
-  return (ctx, W, H, rand) => {
+  return (ctx, W, H, rand, t = 0) => {
     const n = noise2(rand)
     const angle = 0.5 + rand() * 0.8
     field(ctx, W, H, (u, v) => {
       const d = u * Math.cos(angle) + v * Math.sin(angle)
-      return 0.5 + 0.42 * Math.sin(d * 5.4 + fbm(n, u * 1.5, v * 1.5, 3) * 3.4)
+      return 0.5 + 0.42 * Math.sin(d * 5.4 + t * 2.2 + fbm(n, u * 1.5, v * 1.5, 3) * 3.4)
     }, stops)
     vignette(ctx, W, H, 0.34)
     grain(ctx, W, H, 0.06)
   }
 }
+
+
+// Soft, low-detail washes in the manner of a desktop theme: big shapes, no incident.
+function theme(stops: string[]): Draw {
+  return (ctx, W, H, rand, t = 0) => {
+    const n = noise2(rand)
+    const rot = rand() * 6.28
+    field(ctx, W, H, (u, v) => {
+      const a = u * 1.15 + Math.cos(rot) * 0.4 + t * 0.3
+      const b = v * 1.15 + Math.sin(rot) * 0.4 - t * 0.2
+      return (fbm(n, a, b, 2) - 0.28) / 0.44
+    }, stops)
+    vignette(ctx, W, H, 0.18)
+    grain(ctx, W, H, 0.03)
+  }
+}
+
+// Fine directional weave, used by the fabric textures.
+function weave(ctx: CanvasRenderingContext2D, W: number, H: number, color: string, alpha: number, spacing: number, angle: number) {
+  ctx.save()
+  ctx.globalAlpha = alpha
+  ctx.strokeStyle = color
+  ctx.lineWidth = Math.max(0.6, spacing * 0.22)
+  ctx.translate(W / 2, H / 2)
+  ctx.rotate(angle)
+  ctx.translate(-W, -H)
+  ctx.beginPath()
+  for (let y = 0; y < H * 3; y += spacing) {
+    ctx.moveTo(0, y)
+    ctx.lineTo(W * 3, y)
+  }
+  ctx.stroke()
+  ctx.restore()
+}
+
+// A material surface rather than a light: mottle, weave, fleck.
+function texture(base: string[], opts: {
+  mottle?: number; weaves?: [number, number][]; fleck?: [string, number][]; grain?: number; vign?: number
+} = {}): Draw {
+  return (ctx, W, H, rand) => {
+    const n = noise2(rand)
+    const depth = opts.mottle ?? 0.5
+    field(ctx, W, H, (u, v) => 0.5 + (fbm(n, u * 4.5, v * 4.5, 4) - 0.5) * depth * 2, base)
+    ;(opts.weaves ?? []).forEach(([angle, alpha]) => {
+      weave(ctx, W, H, '#000000', alpha, Math.max(2, H / 260), angle)
+      weave(ctx, W, H, '#ffffff', alpha * 0.7, Math.max(2, H / 260), angle)
+    })
+    ;(opts.fleck ?? []).forEach(([color, count]) => {
+      ctx.fillStyle = color
+      for (let i = 0; i < count; i++) {
+        const r = Math.max(0.6, H * (0.0008 + rand() * 0.0035))
+        ctx.globalAlpha = 0.25 + rand() * 0.55
+        ctx.beginPath()
+        ctx.ellipse(rand() * W, rand() * H, r, r * (0.5 + rand()), rand() * 3.14, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+    })
+    vignette(ctx, W, H, opts.vign ?? 0.22)
+    grain(ctx, W, H, opts.grain ?? 0.12)
+  }
+}
+
+export const THEMES: { id: string; name: string; draw: Draw }[] = [
+  { id: 'theme-sonoma', name: 'Sonoma', draw: theme(['#7a1f0a', '#c2410c', '#f59e0b', '#fde68a']) },
+  { id: 'theme-sequoia', name: 'Sequoia', draw: theme(['#2a1052', '#7e22ce', '#db2777', '#fbcfe8']) },
+  { id: 'theme-bigsur', name: 'Big Sur', draw: theme(['#0c2340', '#1d4ed8', '#38bdf8', '#e0f2fe']) },
+  { id: 'theme-monterey', name: 'Monterey', draw: theme(['#052e1c', '#15803d', '#4ade80', '#dcfce7']) },
+  { id: 'theme-ventura', name: 'Ventura', draw: theme(['#04061c', '#1e1b4b', '#4338ca', '#a5b4fc']) },
+  { id: 'theme-tahoe', name: 'Tahoe', draw: theme(['#042f2e', '#0f766e', '#2dd4bf', '#ccfbf1']) },
+  { id: 'theme-sunset', name: 'Sunset', draw: theme(['#3b0764', '#be123c', '#fb923c', '#fed7aa']) },
+  { id: 'theme-lavender', name: 'Lavender', draw: theme(['#312e81', '#7c3aed', '#c4b5fd', '#f5f3ff']) },
+  { id: 'theme-mint', name: 'Mint', draw: theme(['#064e3b', '#10b981', '#a7f3d0', '#f0fdfa']) },
+  { id: 'theme-slate', name: 'Slate', draw: theme(['#0b1220', '#334155', '#94a3b8', '#e2e8f0']) },
+  { id: 'theme-rose', name: 'Rose', draw: theme(['#4c0519', '#be185d', '#fb7185', '#ffe4e6']) },
+  { id: 'theme-sand', name: 'Sand', draw: theme(['#44290a', '#b45309', '#fbbf24', '#fef3c7']) },
+]
+
+export const TEXTURES: { id: string; name: string; draw: Draw }[] = [
+  { id: 'tex-paper', name: 'Paper', draw: texture(['#e8e1d4', '#f7f3ea', '#efe9dc'], { mottle: 0.35, grain: 0.16, vign: 0.14 }) },
+  { id: 'tex-linen', name: 'Linen', draw: texture(['#ddd6c6', '#eee8db'], { mottle: 0.25, weaves: [[0, 0.05], [1.5708, 0.05]], grain: 0.1 }) },
+  { id: 'tex-concrete', name: 'Concrete', draw: texture(['#57585c', '#8a8b90', '#6c6d72'], { mottle: 0.75, fleck: [['#2f3034', 500], ['#b9bac0', 260]], grain: 0.14, vign: 0.3 }) },
+  { id: 'tex-carbon', name: 'Carbon', draw: texture(['#0c0d10', '#22242a'], { mottle: 0.4, weaves: [[0.7854, 0.16], [-0.7854, 0.16]], grain: 0.08, vign: 0.34 }) },
+  { id: 'tex-brushed', name: 'Brushed', draw: texture(['#6b6e74', '#a9adb5', '#7e8189'], { mottle: 0.3, weaves: [[0, 0.1]], grain: 0.1, vign: 0.26 }) },
+  { id: 'tex-plaster', name: 'Plaster', draw: texture(['#dcd6cd', '#f2ede6'], { mottle: 0.5, fleck: [['#c6bfb4', 220]], grain: 0.13, vign: 0.16 }) },
+  { id: 'tex-denim', name: 'Denim', draw: texture(['#1e3a5f', '#2f5d8c'], { mottle: 0.4, weaves: [[0.5, 0.12], [-1.1, 0.07]], fleck: [['#cfe0f0', 300]], grain: 0.12, vign: 0.28 }) },
+  { id: 'tex-cork', name: 'Cork', draw: texture(['#9a6b3a', '#c99a63', '#a9773f'], { mottle: 0.8, fleck: [['#6b4623', 700], ['#e2c294', 300]], grain: 0.14, vign: 0.24 }) },
+  { id: 'tex-slate', name: 'Slate', draw: texture(['#1b1f25', '#343b45', '#23282f'], { mottle: 0.7, weaves: [[0.15, 0.06]], grain: 0.1, vign: 0.36 }) },
+  { id: 'tex-terrazzo', name: 'Terrazzo', draw: texture(['#eae6df', '#f6f4f0'], { mottle: 0.2, fleck: [['#c2410c', 90], ['#0f766e', 90], ['#1e293b', 110], ['#b45309', 70]], grain: 0.1, vign: 0.12 }) },
+]
 
 export const WALLPAPERS: { id: string; name: string; draw: Draw }[] = [
   { id: 'fluid-dusk', name: 'Dusk', draw: fluid(['#150b30', '#3d1a6b', '#8e2f86', '#e2646a', '#ffb27a']) },
@@ -288,23 +378,33 @@ export const WALLPAPERS: { id: string; name: string; draw: Draw }[] = [
   { id: 'satin-jade', name: 'Jade', draw: satin(['#06231f', '#10564a', '#0a3b33', '#2f8f78']) },
 ]
 
-function paint(id: string, W: number, H: number) {
-  const i = Math.max(0, WALLPAPERS.findIndex((w) => w.id === id))
+export const SCENES = [...WALLPAPERS, ...THEMES, ...TEXTURES]
+
+// Backgrounds whose generator reads `t`. In Motion they drift; in a still export they are frozen.
+export const ANIMATED = new Set(
+  SCENES.filter((x) => /^(fluid|bloom|curtains|satin|theme)-/.test(x.id)).map((x) => x.id),
+)
+export const isAnimated = (id: string) => ANIMATED.has(id)
+
+function paint(id: string, W: number, H: number, t = 0) {
+  const i = Math.max(0, SCENES.findIndex((w) => w.id === id))
   const [c, ctx] = makeCanvas(W, H)
-  WALLPAPERS[i].draw(ctx, c.width, c.height, seeded(i * 7919 + 17))
+  SCENES[i].draw(ctx, c.width, c.height, seeded(i * 7919 + 17), t)
   return c
 }
 
 // One cached size is enough: preview and export ask for the same size repeatedly.
 let last: { key: string; canvas: HTMLCanvasElement } | null = null
-export function wallpaper(id: string, W: number, H: number) {
+export function scene(id: string, W: number, H: number, t = 0) {
+  // an animated frame is never cached: every t is a different picture
+  if (t) return paint(id, W, H, t)
   const key = `${id}:${W}x${H}`
   if (last?.key !== key) last = { key, canvas: paint(id, W, H) }
   return last.canvas
 }
 
 const thumbs = new Map<string, string>()
-export function wallpaperThumb(id: string) {
+export function sceneThumb(id: string) {
   if (!thumbs.has(id)) thumbs.set(id, paint(id, 320, 200).toDataURL('image/jpeg', 0.85))
   return thumbs.get(id)!
 }

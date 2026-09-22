@@ -465,6 +465,10 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .wallpapers button:hover { transform: translateY(-2px); }
 .wallpapers button.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
 
+.wallpapers.recent { grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.wallpapers.recent button { aspect-ratio: 1; border-radius: 8px; }
+.recent-swatch { position: absolute; inset: 0; border-radius: inherit; }
+
 .stops { display: flex; gap: 7px; align-items: center; }
 .color {
   position: relative; display: block; flex: none;

@@ -5,9 +5,10 @@ Make screenshots look good. Runs entirely in the browser — images never leave 
 ## Use
 
 - **Open a screenshot:** choose a file, or drag one anywhere on the page. `⌘V` also pastes one straight from the clipboard, and `#sample` in the URL loads a demo image for testing.
-- **Style it:** presets, 19 built-in wallpapers, six adjustable patterns (dots, grid, lines, checks, rings, crosses), gradient / mesh / solid / image / blurred backgrounds, grain, padding, inset with auto-balance, radius, shadow, border, macOS / browser / Windows / glass frames, 3D tilt, rotation, canvas sizes for X, LinkedIn, Instagram, Product Hunt and more, caption and watermark.
+- **Style it:** presets and 101 built-in backgrounds — 19 wallpapers, 12 themes, 10 textures, 30 gradients, 24 mesh gradients and 6 adjustable patterns — plus your own image, a blurred copy of the screenshot, solid colours, transparency, a Recent row, grain, padding, inset with auto-balance, radius, shadow, border, macOS / browser / Windows / glass frames, 3D tilt, rotation, canvas sizes for X, LinkedIn, Instagram, Product Hunt and more, caption and watermark.
 - **Mark it up:** crop, arrow (straight or curved, one head, two or none, solid or dashed), box, ellipse, highlighter, text, numbered steps, pen, blur, pixelate, spotlight.
 - **Export:** PNG, JPEG or WebP at 0.5×–4×, copy to clipboard or download.
+- **Animated backgrounds:** wallpapers in the fluid, bloom, curtains and satin families, and every theme, drift over time. They are still in a PNG and moving in an MP4.
 - **Motion:** switch to Motion for an animated version — tilt in, zoom in, rise, slow push, float, swing or orbit — and export it as an MP4 at 720p–1440p, 30 or 60 fps.
 
 Your last style is remembered. Save your own presets from the Presets section.

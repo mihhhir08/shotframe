@@ -7,9 +7,10 @@ import {
   type BgType, type Corner, type Settings,
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
-import { drawPattern, PATTERNS, WALLPAPERS, wallpaperThumb, type PatternKind } from './wallpapers.ts'
+import { drawPattern, PATTERNS, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
+export type BgPick = Partial<Settings>
 export interface UserPreset { name: string; settings: Partial<Settings> }
 export type PanelTab = 'motion' | 'presets' | 'background' | 'canvas' | 'style' | 'frame' | '3d' | 'text'
 
@@ -37,9 +38,11 @@ interface Props {
   onSavePreset: (name: string) => void
   onDeletePreset: (name: string) => void
   onReset: () => void
+  recent: BgPick[]
+  onRecent: (p: BgPick) => void
 }
 
-export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset }: Props) {
+export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, recent, onRecent }: Props) {
   const tabs = TABS.filter(([id]) => motion || id !== 'motion')
   const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
   // the stored tab can point at a tab this mode does not show (Motion, after a reload in Static)
@@ -81,7 +84,7 @@ export function Panel({ tab, onTab, motion, s, set, layout, image, presets, onSa
           </>
         )}
         {active === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
-        {active === 'background' && <Background s={s} set={set} image={image} />}
+        {active === 'background' && <Background s={s} set={set} image={image} recent={recent} onRecent={onRecent} />}
 
         {active === 'canvas' && (
           <>
@@ -256,34 +259,57 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
   )
 }
 
-const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
+const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['theme', 'Theme'], ['texture', 'Texture'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
-function Background({ s, set, image }: { s: Settings; set: SetSettings; image: LoadedImage | null }) {
+function Background({ s, set, image, recent, onRecent }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void }) {
+  // every background choice goes through this, so Recent stays honest
+  const pick = (patch: BgPick, key?: string) => {
+    set(patch, key)
+    onRecent({ bgType: s.bgType, ...patch })
+  }
   return (
     <>
-      <Group title="Type">
-        <Seg value={s.bgType} options={BG_TABS} onChange={(v) => set({ bgType: v as BgType })} wrap />
-      </Group>
-
-      {s.bgType === 'wallpaper' && (
-        <Group title="Wallpaper">
-          <div className="wallpapers">
-            {WALLPAPERS.map((w) => (
-              <button key={w.id} className={s.wallpaper === w.id ? 'on' : ''} onClick={() => set({ wallpaper: w.id })} title={w.name}>
-                <img src={wallpaperThumb(w.id)} alt="" />
-                <span>{w.name}</span>
+      {recent.length > 0 && (
+        <Group title="Recent">
+          <div className="wallpapers recent">
+            {recent.map((p, i) => (
+              <button key={i} onClick={() => set(p)} title="Use this again">
+                <span className="recent-swatch" style={{ background: bgCss({ ...s, ...p } as Settings) }} />
               </button>
             ))}
           </div>
         </Group>
       )}
+      <Group title="Type">
+        <Seg value={s.bgType} options={BG_TABS} onChange={(v) => set({ bgType: v as BgType })} wrap />
+      </Group>
+
+      {(s.bgType === 'wallpaper' || s.bgType === 'theme' || s.bgType === 'texture') && (() => {
+        const [list, key, title] = s.bgType === 'wallpaper'
+          ? [WALLPAPERS, 'wallpaper' as const, 'Wallpaper']
+          : s.bgType === 'theme'
+            ? [THEMES, 'theme' as const, 'Theme']
+            : [TEXTURES, 'texture' as const, 'Texture']
+        return (
+          <Group title={title}>
+            <div className="wallpapers">
+              {list.map((w) => (
+                <button key={w.id} className={s[key] === w.id ? 'on' : ''} onClick={() => pick({ bgType: s.bgType, [key]: w.id })} title={w.name}>
+                  <img src={sceneThumb(w.id)} alt="" />
+                  <span>{w.name}</span>
+                </button>
+              ))}
+            </div>
+          </Group>
+        )
+      })()}
 
       {s.bgType === 'pattern' && (
         <Group title="Pattern">
           <div className="patterns">
             {PATTERNS.map(([id, label]) => (
               <button key={id} className={s.pattern === id ? 'on' : ''} title={label} aria-label={label}
-                onClick={() => set({ pattern: id })}>
+                onClick={() => pick({ bgType: 'pattern', pattern: id })}>
                 <PatternThumb kind={id} back={s.patternBack} fore={s.patternFore} />
                 <span>{label}</span>
               </button>
@@ -306,7 +332,7 @@ function Background({ s, set, image }: { s: Settings; set: SetSettings; image: L
               <button key={g.name} title={g.name} aria-label={g.name}
                 className={same(s.gradColors, g.colors) ? 'on' : ''}
                 style={{ background: `linear-gradient(${g.angle}deg, ${g.colors.join(',')})` }}
-                onClick={() => set({ gradColors: g.colors, gradAngle: g.angle })} />
+                onClick={() => pick({ bgType: 'gradient', gradColors: g.colors, gradAngle: g.angle, noise: g.noise ?? 0 })} />
             ))}
           </div>
           <div className="stops">
@@ -333,7 +359,7 @@ function Background({ s, set, image }: { s: Settings; set: SetSettings; image: L
           <div className="swatches">
             {MESHES.map((m) => (
               <button key={m.name} title={m.name} aria-label={m.name} className={same(s.meshColors, m.colors) ? 'on' : ''}
-                style={{ background: meshCss(m.colors) }} onClick={() => set({ meshColors: m.colors })} />
+                style={{ background: meshCss(m.colors) }} onClick={() => pick({ bgType: 'mesh', meshColors: m.colors })} />
             ))}
           </div>
           <div className="stops">
@@ -348,7 +374,7 @@ function Background({ s, set, image }: { s: Settings; set: SetSettings; image: L
         <Group title="Colour">
           <div className="swatches">
             {SOLIDS.map((c) => (
-              <button key={c} aria-label={c} className={s.solidColor === c ? 'on' : ''} style={{ background: c }} onClick={() => set({ solidColor: c })} />
+              <button key={c} aria-label={c} className={s.solidColor === c ? 'on' : ''} style={{ background: c }} onClick={() => pick({ bgType: 'solid', solidColor: c })} />
             ))}
             <ColorInput value={s.solidColor} onChange={(v) => set({ solidColor: v }, 'solidColor')} />
           </div>
@@ -399,7 +425,9 @@ const meshCss = (c: string[]) =>
   `radial-gradient(at 12% 18%, ${c[1]} 0, transparent 60%), radial-gradient(at 88% 14%, ${c[2]} 0, transparent 60%), radial-gradient(at 85% 88%, ${c[3]} 0, transparent 60%), radial-gradient(at 18% 82%, ${c[4]} 0, transparent 60%), ${c[0]}`
 
 export function bgCss(s: Settings) {
-  if (s.bgType === 'wallpaper') return `center / cover url(${wallpaperThumb(s.wallpaper)})`
+  if (s.bgType === 'wallpaper') return `center / cover url(${sceneThumb(s.wallpaper)})`
+  if (s.bgType === 'theme') return `center / cover url(${sceneThumb(s.theme)})`
+  if (s.bgType === 'texture') return `center / cover url(${sceneThumb(s.texture)})`
   if (s.bgType === 'gradient') return `linear-gradient(${s.gradAngle}deg, ${s.gradColors.join(',')})`
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor

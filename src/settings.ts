@@ -1,4 +1,4 @@
-export type BgType = 'wallpaper' | 'pattern' | 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
+export type BgType = 'wallpaper' | 'theme' | 'texture' | 'pattern' | 'gradient' | 'mesh' | 'solid' | 'image' | 'blurred' | 'transparent'
 export type FrameType =
   | 'none' | 'macLight' | 'macDark' | 'windowsLight' | 'windowsDark'
   | 'browserLight' | 'browserDark' | 'glass'
@@ -8,6 +8,8 @@ export interface Crop { x: number; y: number; w: number; h: number } // 0..1 of 
 export interface Settings {
   bgType: BgType
   wallpaper: string
+  theme: string
+  texture: string
   pattern: string
   patternBack: string
   patternFore: string
@@ -85,7 +87,7 @@ export interface Annotation {
 export type ArrowHeads = 'end' | 'both' | 'none'
 export interface StrokeOpts { curve: boolean; heads: ArrowHeads; dashed: boolean }
 
-export const GRADIENTS: { name: string; colors: string[]; angle: number }[] = [
+export const GRADIENTS: { name: string; colors: string[]; angle: number; noise?: number }[] = [
   { name: 'Ember', colors: ['#ffb347', '#e8541e', '#7a1f3d'], angle: 135 },
   { name: 'Peach', colors: ['#ffecd2', '#fcb69f'], angle: 135 },
   { name: 'Sky', colors: ['#89f7fe', '#66a6ff'], angle: 135 },
@@ -104,6 +106,18 @@ export const GRADIENTS: { name: string; colors: string[]; angle: number }[] = [
   { name: 'Noir', colors: ['#000000', '#434343'], angle: 160 },
   { name: 'Cream', colors: ['#fdfbfb', '#ebedee'], angle: 135 },
   { name: 'Hyper', colors: ['#f72585', '#7209b7', '#3a0ca3'], angle: 120 },
+  { name: 'Dawn', colors: ['#ff9a8b', '#ff6a88', '#ff99ac'], angle: 135 },
+  { name: 'Tide', colors: ['#2b5876', '#4e4376'], angle: 160 },
+  { name: 'Citrus', colors: ['#fddb92', '#d1fdff'], angle: 135 },
+  { name: 'Velvet', colors: ['#42275a', '#734b6d'], angle: 150 },
+  { name: 'Cobalt', colors: ['#1cb5e0', '#000046'], angle: 160 },
+  { name: 'Clay', colors: ['#d7a17a', '#8c5a3b'], angle: 135 },
+  { name: 'Iris', colors: ['#7f7fd5', '#86a8e7', '#91eae4'], angle: 120 },
+  { name: 'Graphite', colors: ['#3c4048', '#1c1e22'], angle: 160, noise: 10 },
+  { name: 'Dust', colors: ['#e6dace', '#b9a88f'], angle: 135, noise: 14 },
+  { name: 'Static', colors: ['#2b3a67', '#8a5cf6', '#f0abfc'], angle: 130, noise: 12 },
+  { name: 'Film', colors: ['#1a1512', '#4a3b2e', '#a07e56'], angle: 150, noise: 16 },
+  { name: 'Pollen', colors: ['#f6d365', '#fda085'], angle: 135, noise: 9 },
 ]
 
 export const MESHES: { name: string; colors: string[] }[] = [
@@ -115,6 +129,22 @@ export const MESHES: { name: string; colors: string[] }[] = [
   { name: 'Citrus', colors: ['#fefce8', '#fde047', '#fb923c', '#4ade80', '#fef08a'] },
   { name: 'Rust', colors: ['#1c0f0a', '#ea580c', '#b91c1c', '#f59e0b', '#44403c'] },
   { name: 'Frost', colors: ['#eff6ff', '#bfdbfe', '#e0e7ff', '#a5f3fc', '#f5f5f4'] },
+  { name: 'Orchid', colors: ['#1a0b2e', '#a855f7', '#ec4899', '#38bdf8', '#fde68a'] },
+  { name: 'Peach', colors: ['#fff1e6', '#ffb4a2', '#e5989b', '#ffcb69', '#ffd6a5'] },
+  { name: 'Forest', colors: ['#071b12', '#166534', '#65a30d', '#0e7490', '#bbf7d0'] },
+  { name: 'Dusk', colors: ['#120a24', '#4c1d95', '#be185d', '#f97316', '#fcd34d'] },
+  { name: 'Marine', colors: ['#031b2e', '#0369a1', '#0ea5e9', '#22d3ee', '#e0f2fe'] },
+  { name: 'Sorbet', colors: ['#fff7f0', '#fca5a5', '#fdba74', '#a7f3d0', '#c7d2fe'] },
+  { name: 'Grape', colors: ['#1e0a2e', '#6d28d9', '#c026d3', '#7c3aed', '#f0abfc'] },
+  { name: 'Ash', colors: ['#111214', '#3f3f46', '#71717a', '#a1a1aa', '#e4e4e7'] },
+  { name: 'Coral', colors: ['#2a0a18', '#9f1239', '#fb7185', '#fdba74', '#fff1f2'] },
+  { name: 'Aqua', colors: ['#042f2e', '#0d9488', '#5eead4', '#a5f3fc', '#ecfeff'] },
+  { name: 'Butter', colors: ['#fffbeb', '#fde68a', '#fcd34d', '#fbbf24', '#fef3c7'] },
+  { name: 'Indigo', colors: ['#020617', '#1e293b', '#4338ca', '#6366f1', '#c7d2fe'] },
+  { name: 'Melon', colors: ['#fff0f3', '#ffccd5', '#ffb3c1', '#c9f2c7', '#aceca1'] },
+  { name: 'Cocoa', colors: ['#1c1210', '#4a2c20', '#8d5b3f', '#c89f79', '#f0e0cf'] },
+  { name: 'Neon', colors: ['#05010f', '#3b0764', '#a21caf', '#22d3ee', '#bef264'] },
+  { name: 'Stone', colors: ['#f5f5f4', '#e7e5e4', '#d6d3d1', '#a8a29e', '#fafaf9'] },
 ]
 
 export const SOLIDS = ['#ffffff', '#f5f5f4', '#e7e5e4', '#0e0d0c', '#1e293b', '#fde68a', '#fecaca', '#bbf7d0', '#bfdbfe', '#e9d5ff']
@@ -150,7 +180,9 @@ export const FRAMES: { id: FrameType; label: string }[] = [
 
 export const DEFAULTS: Settings = {
   bgType: 'gradient',
-  wallpaper: 'waves-dusk',
+  wallpaper: 'fluid-dusk',
+  theme: 'theme-sequoia',
+  texture: 'tex-paper',
   pattern: 'dots',
   patternBack: '#101425',
   patternFore: '#6d5dfc',

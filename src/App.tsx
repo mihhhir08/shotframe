@@ -5,7 +5,7 @@ import { Icon, type IconName } from './icons.tsx'
 import { loadFile, loadImage, palette, sampleImage, type LoadedImage } from './image.ts'
 import { computeLayout } from './layout.ts'
 import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
-import { Panel, Seg, TABS, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
+import { Panel, Seg, TABS, type BgPick, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type RenderCache, type Scene } from './render.ts'
 import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
 import { SIZES, Stage } from './Stage.tsx'
@@ -87,6 +87,7 @@ export default function App() {
     return TABS.some((x) => x[0] === t) ? t : 'background'
   })
   const [presets, setPresets] = useState<UserPreset[]>(() => load('shotframe:presets', []))
+  const [recent, setRecent] = useState<BgPick[]>(() => load('shotframe:recent', []))
   const [mode, setModeRaw] = useState<'static' | 'motion'>('static')
   const [videoSize, setVideoSize] = useState<number>(() => load('shotframe:videoSize', 1920))
   const [fps, setFps] = useState<number>(() => load('shotframe:fps', 30))
@@ -258,7 +259,7 @@ export default function App() {
     const work = document.createElement('canvas')
     const cache: RenderCache = {}
     const frame = (t: number) => {
-      render(work, { ...scene, settings: { ...s, ...motionPatch(s.motion, t, s) } }, px, {}, cache)
+      render(work, { ...scene, settings: { ...s, ...motionPatch(s.motion, t, s) } }, px, { time: t }, cache)
       octx.drawImage(work, 0, 0, out.width, out.height)
     }
     frame(0)
@@ -502,6 +503,13 @@ export default function App() {
       </main>
 
       <Panel tab={tab} onTab={setTab} motion={mode === 'motion'} s={s} set={set} layout={layout} image={image} presets={presets}
+        recent={recent}
+        onRecent={(p) => {
+          const same = (a: BgPick, b: BgPick) => JSON.stringify(a) === JSON.stringify(b)
+          const next = [p, ...recent.filter((x) => !same(x, p))].slice(0, 12)
+          setRecent(next)
+          save('shotframe:recent', next)
+        }}
         onSavePreset={(name) => {
           const { crop: _crop, ...style } = s
           const next = [...presets.filter((p) => p.name !== name), { name, settings: style }]

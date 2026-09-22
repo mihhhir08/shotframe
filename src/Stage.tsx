@@ -85,7 +85,7 @@ export function Stage({ scene, tool, selectedId, color, sizeLevel, stroke, motio
       last = now
       if (tRef.current === drawn) return
       drawn = tRef.current
-      render(canvasRef.current!, { ...scene, settings: { ...s, ...motionPatch(s.motion, tRef.current, s) } }, px, {}, cache)
+      render(canvasRef.current!, { ...scene, settings: { ...s, ...motionPatch(s.motion, tRef.current, s) } }, px, { time: tRef.current }, cache)
       if (scrubRef.current) scrubRef.current.value = String(Math.round(tRef.current * 1000))
       if (timeRef.current) timeRef.current.textContent = `${(tRef.current * s.motionDuration).toFixed(1)}s / ${s.motionDuration}s`
     }
