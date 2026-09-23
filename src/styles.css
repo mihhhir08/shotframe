@@ -410,7 +410,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   margin: 0 0 1px; font-size: 11px; font-weight: 500; color: var(--faint);
   display: flex; align-items: center; justify-content: space-between; min-height: 18px;
 }
-.icon-btn.small { width: 24px; height: 24px; border-radius: 7px; }
+.icon-btn.small { width: 24px; height: 24px; border-radius: 8px; }
 
 .hint { color: var(--faint); font-size: 11.5px; line-height: 1.5; }
 .row { display: flex; gap: 8px; align-items: center; }
