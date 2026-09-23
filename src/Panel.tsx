@@ -308,8 +308,12 @@ export function Background({ s, set, image, recent, onRecent, onAnimateBg, motio
           : s.bgType === 'theme'
             ? [THEMES, 'theme' as const, 'Theme']
             : [TEXTURES, 'texture' as const, 'Texture']
+        const shuffle = () => {
+          const next = list[Math.floor(Math.random() * list.length)]
+          pick({ bgType: s.bgType, [key]: next.id })
+        }
         return (
-          <Group title={title}>
+          <Group title={title} action={<button className="icon-btn small" onClick={shuffle} title="Pick one at random" aria-label="Shuffle"><Icon name="sparkle" size={15} /></button>}>
             {bgCanMove(s) && (
               <>
                 <Seg value={s.bgAnimate ? 'on' : 'off'} options={[['on', 'Playing'], ['off', 'Paused']]}
@@ -516,10 +520,10 @@ function PatternThumb({ kind, back, fore }: { kind: PatternKind; back: string; f
   return <canvas ref={ref} />
 }
 
-function Group({ title, children }: { title: string; children: ReactNode }) {
+function Group({ title, children, action }: { title: string; children: ReactNode; action?: ReactNode }) {
   return (
     <section className="group">
-      <h3>{title}</h3>
+      <h3>{title}{action}</h3>
       {children}
     </section>
   )
