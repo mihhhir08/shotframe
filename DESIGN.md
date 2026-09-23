@@ -386,17 +386,28 @@ third family in the chrome.
 
 ## Layout
 
-A fixed full-viewport room (`100dvh`, no page scroll) with three floating chrome objects
+A fixed full-viewport room (`100dvh`, no page scroll) with four floating chrome objects
 and one centred stage.
 
 **Desktop.** The command bar is a centred pill 16px from the top, `min(1180px, 100% − 32px)`
-wide, 58px tall. The inspector floats at `top: 92px; right: 20px; bottom: 18px`, 348px
-wide, split into a 78px tab rail and a scrolling body. The stage occupies
-`inset: 92px 376px 96px 20px` and centres the plate inside it. The tool dock is
-bottom-centred within the stage's horizontal band (`left: 20px; right: 376px; bottom: 18px`),
-stacking the tool pill, its options pill and the timeline as separate floating objects.
+wide, 58px tall. Two panels face each other across the stage: the background panel at
+`top: 92px; left: 20px; bottom: 18px`, 300px wide, and the inspector at
+`top: 92px; right: 20px; bottom: 18px`, 348px wide, split into a 78px tab rail and a
+scrolling body. The stage occupies `inset: 88px 376px 88px var(--bg-left)` and centres the
+plate inside it. The tool dock is bottom-centred within the stage's horizontal band.
 
-**1180px and below.** The inspector narrows to 310px; the stage and dock follow it in; the
+**`--bg-left` is the layout's one moving part.** It is 334px while the background panel is
+open and 76px once it folds to its 44px spine, and the stage, the empty state and the dock
+all measure from it, so one variable moves three things in step. The fold is a deliberate
+trade the user makes: two panels leave 666px of canvas at 1440px, one leaves 924px. The
+state persists, and Command-B toggles it.
+
+**One panel per side, never two on one.** Backgrounds earn their own side because there are
+113 of them and browsing is a long task; everything else is short and lives in the tabbed
+inspector. A new long-browse surface takes a side; a new short one takes a tab.
+
+**1180px and below.** The background panel narrows to 264px, the inspector to 310px; the
+stage and dock follow them in; the
 export button's mono meta string drops.
 
 **900px and below (phone).** Chrome restacks vertically: the bar shrinks to 48px and keeps
