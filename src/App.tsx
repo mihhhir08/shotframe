@@ -344,6 +344,7 @@ export default function App() {
       else if (mod && k === 'c') { if (scene && !getSelection()?.toString()) { e.preventDefault(); copy() } }
       else if (mod && k === 's') { e.preventDefault(); if (mode === 'static') download(); else exportVideo() }
       else if (mod && k === 'o') { e.preventDefault(); fileRef.current?.click() }
+      else if (mod && k === 'b') { e.preventDefault(); setBgOpen((v) => !v) }
       else if (mod || e.altKey) return
       else if ((k === 'backspace' || k === 'delete') && selectedId) { e.preventDefault(); removeSelected() }
       else if (k === 'escape') { setSelectedId(null); setTool('select') }
@@ -450,7 +451,7 @@ export default function App() {
         <aside className="bg-panel slab">
           <header className="panel-head">
             <h2>Background</h2>
-            <button className="icon-btn" onClick={() => setBgOpen(false)} aria-label="Collapse backgrounds" title="Collapse">
+            <button className="icon-btn" onClick={() => setBgOpen(false)} aria-label="Collapse backgrounds" title={`Collapse (${MOD}B)`}>
               <Icon name="chevron" size={16} />
             </button>
           </header>
@@ -459,7 +460,7 @@ export default function App() {
           </div>
         </aside>
       ) : (
-        <button className="bg-tab slab" onClick={() => setBgOpen(true)} title="Backgrounds" aria-label="Show backgrounds">
+        <button className="bg-tab slab" onClick={() => setBgOpen(true)} title={`Backgrounds (${MOD}B)`} aria-label="Show backgrounds">
           <Icon name="image" size={17} />
           <span>Background</span>
         </button>
