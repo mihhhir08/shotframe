@@ -233,6 +233,7 @@ export default function App() {
       ctx.drawImage(c, 0, 0)
       out = flat
     }
+    if (!c.width || !c.height) return reject(new Error('Nothing to export'))
     out.toBlob((b) => (b ? resolve(b) : reject(new Error('Export failed'))), type, 0.93)
   })
 
@@ -247,8 +248,13 @@ export default function App() {
   const download = async () => {
     if (!scene) return
     menuRef.current?.hidePopover?.()
-    saveBlob(await exportBlob(`image/${format}`), format === 'jpeg' ? 'jpg' : format)
-    flash('Image saved')
+    try {
+      saveBlob(await exportBlob(`image/${format}`), format === 'jpeg' ? 'jpg' : format)
+      flash('Image saved')
+    } catch {
+      // the usual cause is a canvas past the browser's size limit
+      flash(scale > 1 ? `Export failed at ${scale}×. Try a smaller scale.` : 'Export failed.')
+    }
   }
 
   const copy = async () => {
@@ -279,7 +285,13 @@ export default function App() {
     }
     frame(0)
     setRecording(0)
-    const rec = new MediaRecorder(out.captureStream(fps), { mimeType: mime, videoBitsPerSecond: videoSize >= 2560 ? 24e6 : 12e6 })
+    let rec: MediaRecorder
+    try {
+      rec = new MediaRecorder(out.captureStream(fps), { mimeType: mime, videoBitsPerSecond: videoSize >= 2560 ? 24e6 : 12e6 })
+    } catch {
+      setRecording(null)
+      return flash('This browser refused to record at that size. Try 720p.')
+    }
     const chunks: Blob[] = []
     rec.ondataavailable = (e) => e.data.size && chunks.push(e.data)
     const stopped = new Promise((r) => (rec.onstop = r))
