@@ -466,13 +466,18 @@ function paint(id: string, W: number, H: number, t = 0) {
 }
 
 // One cached size is enough: preview and export ask for the same size repeatedly.
-let last: { key: string; canvas: HTMLCanvasElement } | null = null
+// Four renders deep, so flipping between a handful of backgrounds does not repaint each time.
+const cache = new Map<string, HTMLCanvasElement>()
 export function scene(id: string, W: number, H: number, t = 0) {
   // an animated frame is never cached: every t is a different picture
   if (t) return paint(id, W, H, t)
   const key = `${id}:${W}x${H}`
-  if (last?.key !== key) last = { key, canvas: paint(id, W, H) }
-  return last.canvas
+  const hit = cache.get(key)
+  if (hit) return hit
+  const canvas = paint(id, W, H)
+  cache.set(key, canvas)
+  if (cache.size > 4) cache.delete(cache.keys().next().value!)
+  return canvas
 }
 
 const thumbs = new Map<string, string>()
