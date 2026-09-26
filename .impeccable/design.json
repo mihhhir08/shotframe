@@ -4,47 +4,312 @@
   "title": "Design System: Shotframe",
   "extensions": {
     "colorMeta": {
-      "room": { "role": "neutral", "displayName": "Graphite Room", "canonical": "#131314", "tonalRamp": ["#0a0a0b", "#131314", "#1a1a1c", "#232325", "#3a3a3d", "#5c5c60", "#8a8a8e", "#f0f0f1"] },
-      "glass": { "role": "neutral", "displayName": "Slab", "canonical": "#1a1a1c", "tonalRamp": ["#0d0d0e", "#131314", "#1a1a1c", "#242426", "#3c3c3f", "#606064", "#9a9a9e", "#ededee"] },
-      "text": { "role": "neutral", "displayName": "Paper White", "canonical": "#f0f0f1", "tonalRamp": ["#26262a", "#3a3a3d", "#5c5c60", "#8a8a8e", "#a0a0a4", "#c6c6c9", "#f0f0f1", "#ffffff"] },
-      "accent": { "role": "primary", "displayName": "Paper White (the accent is the text colour)", "canonical": "#f0f0f1", "tonalRamp": ["#26262a", "#3a3a3d", "#5c5c60", "#8a8a8e", "#a0a0a4", "#c6c6c9", "#f0f0f1", "#ffffff"] },
-      "accent-ink": { "role": "primary", "displayName": "Room Ink", "canonical": "#131314", "tonalRamp": ["#0a0a0b", "#131314", "#1a1a1c", "#232325", "#3a3a3d", "#5c5c60", "#8a8a8e", "#f0f0f1"] },
-      "muted": { "role": "neutral", "displayName": "Muted Label", "canonical": "#a0a0a4", "tonalRamp": ["#1a1a1c", "#2c2c2f", "#454549", "#5c5c60", "#7a7a7e", "#a0a0a4", "#c8c8cb", "#efeff0"] },
-      "faint": { "role": "neutral", "displayName": "Faint Head", "canonical": "#8a8a8e", "tonalRamp": ["#17171a", "#26262a", "#3c3c40", "#525256", "#6e6e72", "#8a8a8e", "#b6b6b9", "#e8e8ea"] },
-      "dim": { "role": "neutral", "displayName": "Dim Mark", "canonical": "#5c5c60", "tonalRamp": ["#121214", "#1e1e21", "#2e2e32", "#414145", "#5c5c60", "#828286", "#adadb1", "#e2e2e4"] },
-      "ink-red": { "role": "tertiary", "displayName": "Annotation Red", "canonical": "#ff3b30", "tonalRamp": ["#3b0a06", "#5e120c", "#8a1b12", "#b8281c", "#e03328", "#ff3b30", "#ff8a83", "#ffd9d6"] },
-      "ink-blue": { "role": "tertiary", "displayName": "Annotation Blue", "canonical": "#0a84ff", "tonalRamp": ["#04203f", "#063362", "#09488c", "#0b5fb8", "#0a72dd", "#0a84ff", "#6fb6ff", "#d3e8ff"] }
+      "room": {
+        "role": "neutral",
+        "displayName": "Graphite Room",
+        "canonical": "#131314",
+        "tonalRamp": [
+          "#0a0a0b",
+          "#131314",
+          "#1a1a1c",
+          "#232325",
+          "#3a3a3d",
+          "#5c5c60",
+          "#8a8a8e",
+          "#f0f0f1"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Slab",
+        "canonical": "#1a1a1c",
+        "tonalRamp": [
+          "#0d0d0e",
+          "#131314",
+          "#1a1a1c",
+          "#242426",
+          "#3c3c3f",
+          "#606064",
+          "#9a9a9e",
+          "#ededee"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#f0f0f1",
+        "tonalRamp": [
+          "#26262a",
+          "#3a3a3d",
+          "#5c5c60",
+          "#8a8a8e",
+          "#a0a0a4",
+          "#c6c6c9",
+          "#f0f0f1",
+          "#ffffff"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Paper White (the accent is the text colour)",
+        "canonical": "#f0f0f1",
+        "tonalRamp": [
+          "#26262a",
+          "#3a3a3d",
+          "#5c5c60",
+          "#8a8a8e",
+          "#a0a0a4",
+          "#c6c6c9",
+          "#f0f0f1",
+          "#ffffff"
+        ]
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "Room Ink",
+        "canonical": "#131314",
+        "tonalRamp": [
+          "#0a0a0b",
+          "#131314",
+          "#1a1a1c",
+          "#232325",
+          "#3a3a3d",
+          "#5c5c60",
+          "#8a8a8e",
+          "#f0f0f1"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Label",
+        "canonical": "#a0a0a4",
+        "tonalRamp": [
+          "#1a1a1c",
+          "#2c2c2f",
+          "#454549",
+          "#5c5c60",
+          "#7a7a7e",
+          "#a0a0a4",
+          "#c8c8cb",
+          "#efeff0"
+        ]
+      },
+      "faint": {
+        "role": "neutral",
+        "displayName": "Faint Head",
+        "canonical": "#8a8a8e",
+        "tonalRamp": [
+          "#17171a",
+          "#26262a",
+          "#3c3c40",
+          "#525256",
+          "#6e6e72",
+          "#8a8a8e",
+          "#b6b6b9",
+          "#e8e8ea"
+        ]
+      },
+      "dim": {
+        "role": "neutral",
+        "displayName": "Dim Mark",
+        "canonical": "#5c5c60",
+        "tonalRamp": [
+          "#121214",
+          "#1e1e21",
+          "#2e2e32",
+          "#414145",
+          "#5c5c60",
+          "#828286",
+          "#adadb1",
+          "#e2e2e4"
+        ]
+      },
+      "ink-red": {
+        "role": "tertiary",
+        "displayName": "Annotation Red",
+        "canonical": "#ff3b30",
+        "tonalRamp": [
+          "#3b0a06",
+          "#5e120c",
+          "#8a1b12",
+          "#b8281c",
+          "#e03328",
+          "#ff3b30",
+          "#ff8a83",
+          "#ffd9d6"
+        ]
+      },
+      "ink-blue": {
+        "role": "tertiary",
+        "displayName": "Annotation Blue",
+        "canonical": "#0a84ff",
+        "tonalRamp": [
+          "#04203f",
+          "#063362",
+          "#09488c",
+          "#0b5fb8",
+          "#0a72dd",
+          "#0a84ff",
+          "#6fb6ff",
+          "#d3e8ff"
+        ]
+      },
+      "scrim-readout": {
+        "role": "neutral",
+        "displayName": "Readout Scrim",
+        "canonical": "rgba(0, 0, 0, 0.75)",
+        "tonalRamp": [
+          "rgba(0,0,0,0.18)",
+          "rgba(0,0,0,0.3)",
+          "rgba(0,0,0,0.35)",
+          "rgba(0,0,0,0.4)",
+          "rgba(0,0,0,0.45)",
+          "rgba(0,0,0,0.5)",
+          "rgba(0,0,0,0.6)",
+          "rgba(0,0,0,0.75)"
+        ]
+      },
+      "checker-a": {
+        "role": "neutral",
+        "displayName": "Transparency Chequer",
+        "canonical": "#232326",
+        "tonalRamp": [
+          "#0d0d0e",
+          "#131314",
+          "#1a1a1d",
+          "#232326",
+          "#2a2a2d",
+          "#3a3a3e",
+          "#5c5c60",
+          "#a0a0a4"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "The empty-state headline only. 21px on phones." },
-      "headline": { "displayName": "Headline", "purpose": "Empty-state paragraph and the single big call to action." },
-      "brand": { "displayName": "Brand", "purpose": "The wordmark in the 46px command bar. One step above body; deliberately not a display size." },
-      "body": { "displayName": "Body", "purpose": "Root size. Every control label, menu row and field value." },
-      "control": { "displayName": "Control", "purpose": "Small buttons, segmented items, chips, the sample badge." },
-      "panel-head": { "displayName": "Panel Head", "purpose": "Small caps panel title in --faint. Hierarchy from tracking, not size." },
-      "group-head": { "displayName": "Group Head", "purpose": "Small caps group heading in --dim, the one place --dim carries a glyph." },
-      "tab": { "displayName": "Tab Label", "purpose": "Inspector rail labels and tile captions. Every rail icon carries its word." },
-      "numeral": { "displayName": "Numeral", "purpose": "Every user-facing number: dimensions, timecodes, slider outputs, keycaps." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "The empty-state headline only."
+      },
+      "display-compact": {
+        "displayName": "Display Compact",
+        "purpose": "The same headline below 900px. The one step the ramp takes on phones."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Empty-state paragraph and the single big call to action."
+      },
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "The wordmark in the 46px command bar. One step above body; deliberately not a display size."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Root size. Every control label, menu row and field value."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Small buttons, segmented items, chips, the sample badge."
+      },
+      "panel-head": {
+        "displayName": "Panel Head",
+        "purpose": "Small caps panel title in --faint. Hierarchy from tracking, not size."
+      },
+      "group-head": {
+        "displayName": "Group Head",
+        "purpose": "Small caps group heading in --dim, the one place --dim carries a glyph."
+      },
+      "tab": {
+        "displayName": "Tab Label",
+        "purpose": "Inspector rail labels and tile captions. Every rail icon carries its word."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Every user-facing number: dimensions, timecodes, slider outputs, keycaps."
+      }
     },
     "shadows": [
-      { "name": "lift-1", "value": "none", "purpose": "The default. Docked chrome, groups, wells: depth is a hairline, not a shadow." },
-      { "name": "lift-2", "value": "0 1px 2px rgba(0, 0, 0, 0.4)", "purpose": "Contact shadow for something resting just above its neighbour: sample badge, hovered preset, drop pill." },
-      { "name": "lift-3", "value": "0 2px 8px rgba(0, 0, 0, 0.35)", "purpose": "The deepest shadow in the system. Menu popover, toast, stage plate." },
-      { "name": "plate-ring", "value": "0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.35)", "purpose": "The stage plate: a hairline ring so the image has an edge against any background." },
-      { "name": "selection-ring", "value": "0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent)", "purpose": "Chosen swatch, wallpaper, pattern or ink. A cut, not a halo: the inner stop is the slab colour." }
+      {
+        "name": "lift-1",
+        "value": "none",
+        "purpose": "The default. Docked chrome, groups, wells: depth is a hairline, not a shadow."
+      },
+      {
+        "name": "lift-2",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.4)",
+        "purpose": "Contact shadow for something resting just above its neighbour: sample badge, hovered preset, drop pill."
+      },
+      {
+        "name": "lift-3",
+        "value": "0 2px 8px rgba(0, 0, 0, 0.35)",
+        "purpose": "The deepest shadow in the system. Menu popover, toast, stage plate."
+      },
+      {
+        "name": "knob",
+        "value": "0 2px 6px rgba(0, 0, 0, 0.5)",
+        "purpose": "Round grab targets over the image: the timeline thumb (0.5) and crop handles (0.6). The only shadow allowed on a control."
+      },
+      {
+        "name": "card-hover",
+        "value": "0 4px 10px rgba(0, 0, 0, 0.45)",
+        "purpose": "A preset thumbnail lifting 2px under the cursor, paired with lift-2."
+      },
+      {
+        "name": "plate-ring",
+        "value": "0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.35)",
+        "purpose": "The stage plate: a hairline ring so the image has an edge against any background."
+      },
+      {
+        "name": "selection-ring",
+        "value": "0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent)",
+        "purpose": "Chosen swatch, wallpaper, pattern or ink. A cut, not a halo: the inner stop is the slab colour."
+      }
     ],
     "motion": [
-      { "name": "ease", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Default easing." },
-      { "name": "fast", "value": "140ms var(--ease)", "purpose": "Hover, colour and border state changes." },
-      { "name": "slow", "value": "260ms var(--ease)", "purpose": "Stage and dock inset changes when the background panel opens or collapses." },
-      { "name": "settle", "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Press-release on tools and buttons: damped, decelerating, never bouncing." },
-      { "name": "pop", "value": "180ms var(--ease) — opacity 0 + translateY(6px) scale(0.99)", "purpose": "Things that genuinely appear: menu, toast, tool-option tray, empty card." },
-      { "name": "tab-in", "value": "300ms var(--settle) — opacity 0 + translateY(5px)", "purpose": "Inspector body on tab change. The only entrance left in the panels." },
-      { "name": "reduced-motion", "value": "animation-duration: 0.01ms; transition-duration: 0.01ms", "purpose": "prefers-reduced-motion collapses all motion." }
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Default easing."
+      },
+      {
+        "name": "fast",
+        "value": "140ms var(--ease)",
+        "purpose": "Hover, colour and border state changes."
+      },
+      {
+        "name": "slow",
+        "value": "260ms var(--ease)",
+        "purpose": "Stage and dock inset changes when the background panel opens or collapses."
+      },
+      {
+        "name": "settle",
+        "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Press-release on tools and buttons: damped, decelerating, never bouncing."
+      },
+      {
+        "name": "pop",
+        "value": "180ms var(--ease) — opacity 0 + translateY(6px) scale(0.99)",
+        "purpose": "Things that genuinely appear: menu, toast, tool-option tray, empty card."
+      },
+      {
+        "name": "tab-in",
+        "value": "300ms var(--settle) — opacity 0 + translateY(5px)",
+        "purpose": "Inspector body on tab change. The only entrance left in the panels."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation-duration: 0.01ms; transition-duration: 0.01ms",
+        "purpose": "prefers-reduced-motion collapses all motion."
+      }
     ],
     "breakpoints": [
-      { "name": "compact", "value": "1180px" },
-      { "name": "phone", "value": "900px" }
+      {
+        "name": "compact",
+        "value": "1180px"
+      },
+      {
+        "name": "phone",
+        "value": "900px"
+      }
     ]
   },
   "components": [
@@ -141,21 +406,91 @@
       "Small-caps labelling, tabular numerals, no icon-only tab."
     ],
     "rules": [
-      { "name": "The One Lit Object Rule", "body": "The screenshot plate is the only saturated, only genuinely lit thing on screen. If a new chrome surface needs colour to be understood, the surface is wrong, not the palette.", "section": "colors" },
-      { "name": "The Colourless Chrome Rule", "body": "No hue enters the interface. Every chrome value is graphite or white-alpha. State is expressed by lightness (4% → 7% → full white), never by hue.", "section": "colors" },
-      { "name": "The Accent-Is-Light Rule", "body": "\"Selected\", \"focused\", \"on\" and \"primary\" all read as the text colour at full strength on a room-ink ground. There is no second accent to reach for, and a gradient accent is not available.", "section": "colors" },
-      { "name": "The Dim-Is-Not-Body Rule", "body": "--dim never sets body text. Readable text bottoms out at --faint; --dim is reserved for the group-heading small caps and non-text marks.", "section": "colors" },
-      { "name": "The Small-Caps Head Rule", "body": "Headings inside chrome are not larger, they are smaller and spaced: 11px/0.07em uppercase in --faint for a panel, 10px/0.08em uppercase in --dim for a group. Hierarchy comes from tracking and colour, not from size.", "section": "typography" },
-      { "name": "The Tabular Numeral Rule", "body": "Every numeral a user reads is Spline Sans Mono with font-variant-numeric: tabular-nums, so a value never jitters as it changes.", "section": "typography" },
-      { "name": "The Two Faces Rule", "body": "Archivo for language, Spline Sans Mono for number. There is no third face, and no system-UI display face; the one system stack that remains is inside the canvas text tool, where it matches what the exported image will render.", "section": "typography" },
-      { "name": "The Labelled Tab Rule", "body": "No tab and no rail item ships icon-only. The inspector rail is 78px wide precisely so every icon carries its word underneath (10.5px), and it becomes a scrolling row of icon+word pairs below 900px.", "section": "typography" },
-      { "name": "The Docked Chrome Rule", "body": "Chrome meets the window edge. A panel that touches an edge has square corners on that side and a single hairline on its inner side; it does not inset itself, round itself away from the frame, or cast a shadow onto the room. Only the tool dock floats.", "section": "layout" },
-      { "name": "The Hairline Separation Rule", "body": "Regions are separated by exactly one 1px hairline. Never two adjacent borders, never a blur, never a gradient scrim standing in for an edge.", "section": "layout" },
-      { "name": "The Real Height Rule", "body": "The phone layout anchors to --plate-h, the canvas's measured height, not to a guessed offset, so nothing stacks below a dead band.", "section": "layout" },
-      { "name": "The Flat-By-Default Rule", "body": "A new surface gets --lift-1 (none) unless it overlays content the user was already looking at. Shadow is permission to cover, not decoration.", "section": "elevation" },
-      { "name": "The No Atmosphere Rule", "body": "No backdrop-filter on chrome, no ambient glow layer, no room tint sampled from the user's image. The room is a fixed neutral; the image lights nothing but itself.", "section": "elevation" },
-      { "name": "The Two Radius Families Rule", "body": "If it touches the window frame, it is square there and ≤10px inside. If it floats over the stage, it is ≥13px and usually a capsule. Nothing in between.", "section": "shapes" },
-      { "name": "The Point-Of-View Rule", "body": "A picker opens on a point of view, not an inventory. The default view is a curated subset chosen by the house; the full list is always exactly one click away and never the first thing shown.", "section": "components" }
+      {
+        "name": "The One Lit Object Rule",
+        "body": "The screenshot plate is the only saturated, only genuinely lit thing on screen. If a new chrome surface needs colour to be understood, the surface is wrong, not the palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Colourless Chrome Rule",
+        "body": "No hue enters the interface. Every chrome value is graphite or white-alpha. State is expressed by lightness (4% → 7% → full white), never by hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Accent-Is-Light Rule",
+        "body": "\"Selected\", \"focused\", \"on\" and \"primary\" all read as the text colour at full strength on a room-ink ground. There is no second accent to reach for, and a gradient accent is not available.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dim-Is-Not-Body Rule",
+        "body": "--dim never sets body text. Readable text bottoms out at --faint; --dim is reserved for the group-heading small caps and non-text marks.",
+        "section": "colors"
+      },
+      {
+        "name": "The Black-Is-For-Image Rule",
+        "body": "Black scrims exist only where chrome sits on top of the user's picture. Inside the panels, separation is a hairline and contrast is white-alpha; a panel never darkens itself with black.",
+        "section": "colors"
+      },
+      {
+        "name": "The Small-Caps Head Rule",
+        "body": "Headings inside chrome are not larger, they are smaller and spaced: 11px/0.07em uppercase in --faint for a panel, 10px/0.08em uppercase in --dim for a group. Hierarchy comes from tracking and colour, not from size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Numeral Rule",
+        "body": "Every numeral a user reads is Spline Sans Mono with font-variant-numeric: tabular-nums, so a value never jitters as it changes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Faces Rule",
+        "body": "Archivo for language, Spline Sans Mono for number. There is no third face, and no system-UI display face; the one system stack that remains is inside the canvas text tool, where it matches what the exported image will render.",
+        "section": "typography"
+      },
+      {
+        "name": "The Labelled Tab Rule",
+        "body": "No tab and no rail item ships icon-only. The inspector rail is 78px wide precisely so every icon carries its word underneath (10.5px), and it becomes a scrolling row of icon+word pairs below 900px.",
+        "section": "typography"
+      },
+      {
+        "name": "The Docked Chrome Rule",
+        "body": "Chrome meets the window edge. A panel that touches an edge has square corners on that side and a single hairline on its inner side; it does not inset itself, round itself away from the frame, or cast a shadow onto the room. Only the tool dock floats.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hairline Separation Rule",
+        "body": "Regions are separated by exactly one 1px hairline. Never two adjacent borders, never a blur, never a gradient scrim standing in for an edge.",
+        "section": "layout"
+      },
+      {
+        "name": "The Real Height Rule",
+        "body": "The phone layout anchors to --plate-h, the canvas's measured height, not to a guessed offset, so nothing stacks below a dead band.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "A new surface gets --lift-1 (none) unless it overlays content the user was already looking at. Shadow is permission to cover, not decoration.",
+        "section": "elevation"
+      },
+      {
+        "name": "The No Atmosphere Rule",
+        "body": "No backdrop-filter on chrome, no ambient glow layer, no room tint sampled from the user's image. The room is a fixed neutral; the image lights nothing but itself.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Two Radius Families Rule",
+        "body": "The ladder breaks at 10. If it touches the window frame, it is square there and ≤10px inside. If it floats over the stage, it is ≥11px, and anything holding a row of controls is a capsule (24-26px). Nothing borrows the other family’s corner.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Point-Of-View Rule",
+        "body": "A picker opens on a point of view, not an inventory. The default view is a curated subset chosen by the house; the full list is always exactly one click away and never the first thing shown.",
+        "section": "components"
+      },
+      {
+        "name": "The Micro-Rung Rule",
+        "body": "2/3/4px belong to marks and canvas furniture — track, dot, handle, progress bar, focus ring. A surface never takes a micro rung; the smallest surface corner in the system is 5px.",
+        "section": "shapes"
+      }
     ],
     "dos": [
       "Do dock new chrome to a window edge: square corners on the edge side, one 1px --edge hairline on the inner side, no shadow.",
@@ -166,6 +501,8 @@
       "Do recess anything editable into a --well and raise nothing.",
       "Do ship every rail item and tab with a visible word beside its icon.",
       "Do open any long list on a curated subset with \"Show all N\" behind a quiet button.",
+      "Do reach for a black scrim only where chrome sits over the user's image (30% for a field, 60% for a caption, 75% for a readout), and keep it pure neutral black.",
+      "Do keep 2/3/4px corners for marks and canvas furniture and 5px as the smallest surface corner.",
       "Do keep --lift-1 (none) as the default elevation and justify anything heavier by the surface actually covering content."
     ],
     "donts": [
@@ -176,6 +513,8 @@
       "Don't exceed 0 2px 8px of shadow, or use a shadow to imply a border.",
       "Don't put body text in --dim.",
       "Don't add a third typeface, or set an interface heading larger than 14px.",
+      "Don't darken a panel with black; panels separate by hairline and contrast by white-alpha.",
+      "Don't give a floating surface a docked corner, or a docked surface a capsule.",
       "Don't double a separator: one hairline between two regions, never a border on both."
     ]
   }

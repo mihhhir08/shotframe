@@ -3,7 +3,6 @@ name: Shotframe
 description: One neutral graphite room, chrome docked to the window edges in hairlines, and the screenshot as the only saturated thing on screen.
 colors:
   room: "#131314"
-  room-2: "#101011"
   glass: "#1a1a1c"
   glass-solid: "#1a1a1c"
   glass-2: "rgba(255, 255, 255, 0.04)"
@@ -21,6 +20,20 @@ colors:
   accent-hi: "#ffffff"
   accent-dim: "rgba(255, 255, 255, 0.1)"
   accent-ink: "#131314"
+  scrim-hair: "rgba(0, 0, 0, 0.18)"
+  scrim-soft: "rgba(0, 0, 0, 0.3)"
+  shadow-lifted: "rgba(0, 0, 0, 0.35)"
+  shadow-contact: "rgba(0, 0, 0, 0.4)"
+  shadow-card: "rgba(0, 0, 0, 0.45)"
+  shadow-knob: "rgba(0, 0, 0, 0.5)"
+  scrim-caption: "rgba(0, 0, 0, 0.6)"
+  scrim-readout: "rgba(0, 0, 0, 0.75)"
+  mask-stop: "#000"
+  checker-a: "#232326"
+  checker-b: "#1a1a1d"
+  placeholder-a: "#3a3a3e"
+  placeholder-b: "#1f1f22"
+  preset-paper: "#fbfaf9"
   ink-red: "#ff3b30"
   ink-orange: "#ff9500"
   ink-amber: "#ffcc00"
@@ -33,6 +46,12 @@ typography:
   display:
     fontFamily: "Archivo, ui-sans-serif, system-ui, -apple-system, sans-serif"
     fontSize: "40px"
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: "-0.045em"
+  display-compact:
+    fontFamily: "Archivo, ui-sans-serif, system-ui, -apple-system, sans-serif"
+    fontSize: "21px"
     fontWeight: 700
     lineHeight: 1.05
     letterSpacing: "-0.045em"
@@ -87,15 +106,26 @@ typography:
     letterSpacing: "normal"
     fontFeature: "tabular-nums"
 rounded:
+  square: "0"
+  tick: "2px"
+  nib: "3px"
+  focus: "4px"
   mark: "5px"
   xs: "6px"
   control: "7px"
   plate: "8px"
+  swatch: "9px"
   slab: "10px"
+  toast: "11px"
+  pill-sm: "12px"
+  tray: "13px"
   dock-item: "15px"
+  hint-frame: "20px"
   dock: "24px"
+  timeline: "26px"
+  card: "30px"
   pill: "99px"
-  square: "0"
+  round: "50%"
 spacing:
   hair: "2px"
   xs: "4px"
@@ -273,6 +303,25 @@ the only saturated values in the system are the annotation inks the user draws w
 - **Dim** (`dim`): non-text only — the position-grid dot and a group heading's uppercase
   label, which is the one place it carries a glyph, at 10px/0.08em.
 
+### Scrims and Shadow Blacks
+Depth over the user's image, and the shadow blacks the tokens are mixed from, are pure
+neutral black at fixed opacities. They are component-level values, not surface colours:
+never paint a chrome surface with one.
+- **Hairline scrim** (18%): the inset divider between the two halves of a split button.
+- **Soft scrim** (30%): the on-canvas text editor's field while typing.
+- **Shadow blacks** (35% / 40% / 45% / 50%): the two elevation tokens, the preset card's
+  hover shadow (`0 4px 10px`), and the timeline and crop knobs (`0 2px 6px`).
+- **Caption scrim** (60%): the gradient under a background tile's name, the crop handle's
+  drop shadow, and the pressed underside of a keycap.
+- **Readout scrim** (75%): the crop-size pill, so a number stays legible over any image.
+- **Mask stop** (`#000` at 86% of a linear-gradient): not a colour — the fade mask on the
+  phone tab rail, where the black end means "opaque here".
+- **Crop surround** (`0 0 0 9999px`): the whole canvas outside a crop, held at two thirds.
+
+**The Black-Is-For-Image Rule.** Black scrims exist only where chrome sits on top of the
+user's picture. Inside the panels, separation is a hairline and contrast is white-alpha;
+a panel never darkens itself with black.
+
 ### Annotation Ink (content, not chrome)
 Eight fixed inks for the drawing tools: red, orange, amber, green, blue, violet, white,
 black. These live on the user's image, never on the interface. A custom-colour well sits
@@ -308,9 +357,13 @@ are self-hosted with `font-display: block`, because the world's voice should not
 faces on first paint or depend on a third-party runtime.
 
 ### Hierarchy
-- **Display** (700, 40px, 1.05, -0.045em): the empty-state headline only; 21px on phones.
-- **Headline** (400, 15.5px, 1.55): the empty-state paragraph and the big primary button
-  (15px) — the only type above body size inside the app.
+- **Display** (700, 40px, 1.05, -0.045em): the empty-state headline only.
+- **Display compact** (700, 21px, same tracking): the same headline below 900px. The one
+  step the ramp takes on phones — everything else keeps its desktop size, because the
+  panels are already at instrument density.
+- **Headline** (400, 15.5px, 1.55): the empty-state paragraph. Its 15px sibling sets the
+  big primary button and the drop-target pill — the only type above body size inside the
+  app proper.
 - **Brand** (500, 14px, -0.005em): the wordmark in the command bar. One step above body,
   the smallest increment that still reads as a title; deliberately not a display size,
   because the bar is 46px tall and the brand must not outweigh the work.
@@ -396,6 +449,10 @@ dock's children — receive a shadow, and the largest of them is 8px of blur.
 - **Lifted** (`--lift-3: 0 2px 8px rgba(0,0,0,0.35)`): the menu popover, the toast, and
   the stage plate. The stage plate pairs it with a 1px white ring
   (`0 0 0 1px rgba(255,255,255,0.08)`) so the image has an edge against any background.
+- **Knob** (`0 2px 6px rgba(0,0,0,0.5)` on the timeline thumb, `0.6` on a crop handle): the
+  only shadow allowed on a control, and only on a round grab target sitting over the image.
+- **Card hover** (`0 4px 10px rgba(0,0,0,0.45)`, paired with `--lift-2` on the preset
+  swatch): a thumbnail lifting 2px under the cursor.
 - **Selection ring** (`0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent)`): the
   chosen swatch, wallpaper, pattern or ink. A ring, not a glow: the inner stop is the
   slab colour so the ring reads as a cut, not a halo.
@@ -410,29 +467,44 @@ nothing but itself.
 
 ## Shapes
 
-Two radius families, chosen by whether the surface is docked or floating.
+One radius ladder, split at 10px by whether the surface is docked or floating.
 
-**Docked chrome is square at the frame and tight inside it.** The command bar, background
-panel and inspector are `border-radius: 0`. Inside them the ramp is small: 5px for the
-brand mark (a 20px square that must read as a mark, not a pill, at the smallest scale in
-the app), 6px for a segmented item or a small grid cell, 7px for a control
-(`--r-control`: buttons, inputs, fields, chips at 8px, swatches at 8px), 8px for the
-stage plate (`--r-plate`), 10px for a slab-like overlay (`--r-slab`: menus, the collapsed
-background tab's outer corners, panel-tab items).
+**Docked chrome is square at the frame and tight inside it** (0 → 10px). The command bar,
+background panel and inspector are `border-radius: 0`; the collapsed background tab rounds
+only its outer pair (10px). Inside them:
 
-**Floating chrome is soft.** The tool dock is a 24px capsule holding 15px tool buttons;
-tool options sit at 13px; the timeline is a 26px capsule; the empty card is 30px; the
-big primary button is 15px. Badges and scroll thumbs are full pills (99px).
+- **2px** (`tick`): the slider track and the position-grid dot — marks, not surfaces.
+- **3px** (`nib`): the crop tool's mid handle, the preset and motion thumbnails' plate
+  proxies, the recording progress bar.
+- **4px** (`focus`): the global focus ring's own corner and the on-canvas text editor.
+- **5px** (`mark`): the brand mark, a 20px square that must still read as a mark rather
+  than a dot at the smallest scale in the app.
+- **6px** (`xs`): segmented items, align-grid cells, the selection box, the crop-size pill,
+  keycaps.
+- **7px** (`control`): the default control corner — buttons, inputs, fields, colour wells.
+- **8px** (`plate`): the stage plate, chips, swatches, the 24px small icon button.
+- **9px** (`swatch`) and **10px** (`slab`): preset thumbnails; then menus, pattern and
+  wallpaper tiles, motion cards and inspector tab items.
+
+**Floating chrome is soft** (11px → capsule). 11px the toast, 12px the drop pill, 13px the
+tool-options tray, 15px the tools inside the dock and the big primary button, 20px the
+drop-target frame, 24px the tool dock capsule, 26px the timeline capsule, 30px the empty
+card. Badges, scroll thumbs and the sample tag are full pills (99px); handles, ink dots and
+round dismiss buttons are circles (50%).
 
 Borders are 1px `--edge` on slabs and wells, 1px `--hairline` for internal dividers.
 Selection on a media tile is a ring, not a border-colour change. Dashed 1.5px `--accent`
 marks a live interaction on the canvas (selection box, text editor); 2px dashed marks a
-drop target.
+drop target; the crop frame is 1.5px solid white with 3px corner brackets.
 
 ### Named Rules
-**The Two Radius Families Rule.** If it touches the window frame, it is square there and
-≤10px inside. If it floats over the stage, it is ≥13px and usually a capsule. Nothing in
-between.
+**The Two Radius Families Rule.** The ladder breaks at 10. If it touches the window frame,
+it is square there and ≤10px inside. If it floats over the stage, it is ≥11px, and anything
+holding a row of controls is a capsule (24-26px). Nothing borrows the other family's corner.
+
+**The Micro-Rung Rule.** 2/3/4px belong to marks and canvas furniture — track, dot, handle,
+progress bar, focus ring. A surface never takes a micro rung; the smallest surface corner in
+the system is 5px.
 
 ## Components
 
@@ -533,6 +605,10 @@ text with a mono keycap and a dismiss. It fades in 300ms after the plate (`pop`,
 - **Do** recess anything editable into a `--well` and raise nothing.
 - **Do** ship every rail item and tab with a visible word beside its icon.
 - **Do** open any long list on a curated subset with "Show all N" behind a quiet button.
+- **Do** reach for a black scrim only where chrome sits over the user's image (30% for a
+  field, 60% for a caption, 75% for a readout), and keep it pure neutral black.
+- **Do** keep 2/3/4px corners for marks and canvas furniture and 5px as the smallest
+  surface corner.
 - **Do** keep `--lift-1` (none) as the default elevation and justify anything heavier by
   the surface actually covering content.
 
@@ -547,18 +623,40 @@ text with a mono keycap and a dismiss. It fades in 300ms after the plate (`pop`,
 - **Don't** exceed `0 2px 8px` of shadow, or use a shadow to imply a border.
 - **Don't** put body text in `--dim`.
 - **Don't** add a third typeface, or set an interface heading larger than 14px.
+- **Don't** darken a panel with black; panels separate by hairline and contrast by
+  white-alpha.
+- **Don't** give a floating surface a docked corner, or a docked surface a capsule.
 - **Don't** double a separator: one hairline between two regions, never a border on both.
 
 ## Accepted Deviations
 
-- **Transparency checkerboard** (`.checker`, `#221c3f` / `#16122c`): a violet-tinted
-  chequer left from the previous world, sitting behind transparent exports. It is the one
-  hued value left in the app shell. Treat it as debt, not as a token: a new surface must
-  not reach for it, and it should resolve to a neutral pair.
-- **`-webkit-backdrop-filter: blur(6px)`** on the "Moves" badge and `backdrop-filter:
-  blur(8px)` on the recording scrim: both sit over the user's image, not over chrome, so
-  they do not break the no-atmosphere rule — but they are the only blurs in the build and
-  should not spread.
-- **Legacy token names** (`--glass`, `--glass-2`, `--glass-3`, `--edge-lit`): the material
-  they were named for is gone. `--edge-lit` is now identical to `--edge`. Names kept to
-  avoid a churn rename; read them as "slab", "raise 4%", "raise 7%" and "edge".
+- **Three tinted near-blacks remain.** The crop surround (`rgba(6,5,8,0.66)`), the recording
+  scrim (`rgba(8,7,10,0.8)`) and the "Moves" badge (`rgba(8,6,16,0.72)`) are violet-leaning
+  blacks left from the previous world. All three sit over the user's image rather than over
+  chrome, and at 66-80% the cast is nearly invisible — but they are not neutral, and the
+  Colourless Chrome rule does not have an exception for them. Recorded as debt, not as
+  tokens: resolve them to the neutral scrim scale (0.66 → a 60-75% pure black). A new
+  surface must not copy these values.
+- **Two blurs remain.** `-webkit-backdrop-filter: blur(6px)` on the "Moves" badge and
+  `backdrop-filter: blur(8px)` on the recording scrim. Both are over the image, not over
+  chrome, so they do not break the no-atmosphere rule — but they are the only blurs in the
+  build and must not spread to a panel.
+- **`#fbfaf9`** on the preset thumbnail's plate proxy: a warm off-white standing in for a
+  screenshot. Harmless as content, but it is the one warm value in the shell; `--text`
+  would do the same job.
+- **Legacy token names — decision: rename, and it is cheap.** `--glass`, `--glass-solid`,
+  `--glass-2`, `--glass-3` and `--edge-lit` are named for a material the build no longer
+  uses. `--glass` and `--glass-solid` hold the identical value (#1a1a1c) and `--edge-lit`
+  is now identical to `--edge`, so two of the five are pure duplicates. Total usage is 32
+  references across `styles.css` and the three components — a single find-and-replace, no
+  behaviour change: `--glass`/`--glass-solid` → `--surface`, `--glass-2` → `--raise-1`,
+  `--glass-3` → `--raise-2`, `--edge-lit` deleted in favour of `--edge`. Do it in one
+  commit; until then read the old names as surface / raise-1 / raise-2 / edge. **This
+  question is settled — do not re-open it, just execute the rename.**
+- **Two dead declarations.** `--room-2` (#101011) and `--accent-run` (#f0f0f1) are declared
+  in `:root` and referenced nowhere. They are not part of the system and are not tokens;
+  delete them with the rename.
+- **Resolved since the previous document:** the violet transparency chequer is now graphite
+  (#232326 / #1a1a1d in the app shell, #2a2a2d / #1f1f22 in the panel swatch), the
+  image-background placeholder is a graphite gradient (#3a3a3e → #1f1f22), and the custom-ink
+  wheel opens on `#ff3b30`, so it starts from a documented ink.
