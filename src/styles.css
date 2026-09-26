@@ -1,4 +1,4 @@
-/* Graphite: colourless chrome docked to the edges, hairlines instead of glass,
+/* Graphite: colourless chrome docked to the edges, hairlines instead of blur,
    and the screenshot as the only saturated thing on screen. */
 
 /* Self-hosted: the world's voice should not be a third-party runtime dependency,
@@ -23,13 +23,11 @@
 
   /* room — one neutral, no chroma anywhere in the chrome */
   --room: #131314;
-  /* surfaces are opaque; separation comes from a hairline, not from blur */
-  --glass: #1a1a1c;
-  --glass-solid: #1a1a1c;
-  --glass-2: rgba(255, 255, 255, 0.04);
-  --glass-3: rgba(255, 255, 255, 0.07);
+  /* opaque surfaces; separation is a hairline, never blur */
+  --surface: #1a1a1c;
+  --raise-1: rgba(255, 255, 255, 0.04);
+  --raise-2: rgba(255, 255, 255, 0.07);
   --edge: rgba(255, 255, 255, 0.08);
-  --edge-lit: rgba(255, 255, 255, 0.08);
   --hairline: rgba(255, 255, 255, 0.06);
   /* recessed wells: inputs, sliders, swatch beds — cut into the glass, not raised off it */
   /* on glass, a recessed field is a darker pane of the same glass, never a black hole */
@@ -95,7 +93,7 @@ input, textarea { caret-color: var(--accent); }
 
 /* ---------- floating slabs ---------- */
 .slab {
-  background: var(--glass);
+  background: var(--surface);
   border: 1px solid var(--edge);
 }
 
@@ -119,12 +117,12 @@ input, textarea { caret-color: var(--accent); }
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   height: 34px; padding: 0 13px;
   border-radius: var(--r-control);
-  background: var(--glass-2);
+  background: var(--raise-1);
   border: 1px solid transparent;
   font-weight: 500; white-space: nowrap;
   transition: background var(--fast), color var(--fast), transform var(--settle), box-shadow var(--fast);
 }
-.btn:not(:disabled):hover { background: var(--glass-3); }
+.btn:not(:disabled):hover { background: var(--raise-2); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }
 .btn.primary {
   background: var(--accent);
@@ -132,7 +130,7 @@ input, textarea { caret-color: var(--accent); }
 }
 .btn.primary:not(:disabled):hover { background: var(--accent-hi); }
 .btn.quiet { background: transparent; color: var(--muted); }
-.btn.quiet:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
+.btn.quiet:not(:disabled):hover { background: var(--raise-1); color: var(--text); }
 .btn.small { height: 28px; padding: 0 10px; font-size: 12px; }
 .btn.wide { width: 100%; }
 .btn.file { position: relative; overflow: hidden; }
@@ -144,7 +142,7 @@ input, textarea { caret-color: var(--accent); }
   color: var(--muted);
   transition: background var(--fast), color var(--fast);
 }
-.icon-btn:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
+.icon-btn:not(:disabled):hover { background: var(--raise-1); color: var(--text); }
 .icon-btn.on { background: var(--accent-dim); color: var(--accent); }
 
 select, input[type='text'], input[type='number'], textarea {
@@ -162,7 +160,7 @@ select {
   background-repeat: no-repeat; background-position: right 11px center;
 }
 textarea { height: auto; padding: 9px 11px; resize: vertical; line-height: 1.45; }
-select:hover, input:hover, textarea:hover { border-color: var(--edge-lit); }
+select:hover, input:hover, textarea:hover { border-color: var(--edge); }
 select:focus, input:focus, textarea:focus { border-color: var(--accent); background: var(--well-deep); }
 
 .split { display: flex; }
@@ -175,8 +173,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   width: 330px; padding: 16px;
   flex-direction: column; gap: 14px;
   color: var(--text);
-  background: var(--glass-solid);
-  border: 1px solid var(--edge); border-top-color: var(--edge-lit);
+  background: var(--surface);
+  border: 1px solid var(--edge); border-top-color: var(--edge);
   border-radius: var(--r-slab);
   box-shadow: var(--lift-3);
 }
@@ -240,13 +238,13 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%);
   display: flex; align-items: center; gap: 9px; white-space: nowrap;
   padding: 7px 8px 7px 13px; border-radius: 99px;
-  background: var(--glass-solid); border: 1px solid var(--edge);
+  background: var(--surface); border: 1px solid var(--edge);
   box-shadow: var(--lift-2); color: var(--muted); font-size: 12px;
   animation: pop 400ms 300ms var(--ease) backwards;
 }
 .sample-tag kbd { margin: 0 1px; }
 .sample-tag button { color: var(--faint); display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; }
-.sample-tag button:hover { color: var(--text); background: var(--glass-2); }
+.sample-tag button:hover { color: var(--text); background: var(--raise-1); }
 
 /* ---------- dock ---------- */
 .dock {
@@ -265,7 +263,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   color: var(--muted);
   transition: background var(--fast), color var(--fast), transform var(--settle);
 }
-.tool:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
+.tool:not(:disabled):hover { background: var(--raise-1); color: var(--text); }
 .tool:not(:disabled):active { transform: scale(0.93); transition-duration: 60ms; }
 .tool.on { background: var(--accent); color: var(--accent-ink); }
 .toolopts {
@@ -284,7 +282,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: transform var(--fast), box-shadow var(--fast);
 }
 .ink:hover { transform: scale(1.15); }
-.ink.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
+.ink.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
 .ink.custom { background: conic-gradient(#ff3b30, #ffcc00, #34c759, #0a84ff, #af52de, #ff3b30); }
 .ink.custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
@@ -345,15 +343,15 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   color: var(--faint); font-size: 10.5px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em;
   transition: background var(--fast), color var(--fast);
 }
-.panel-tabs button:hover { color: var(--text); background: var(--glass-2); }
-.panel-tabs button.on { color: var(--text); background: var(--glass-3); box-shadow: inset 0 0 0 1px var(--edge); }
+.panel-tabs button:hover { color: var(--text); background: var(--raise-1); }
+.panel-tabs button.on { color: var(--text); background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--edge); }
 .panel-body { min-height: 0; overflow-y: auto; padding: 0 16px 24px; animation: tab-in 300ms var(--settle); }
 .panel-head {
   position: sticky; top: 0; z-index: 1;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 16px 0 12px;
   /* same mix as .slab, or the header reads as an opaque box sitting on the panel */
-  background: linear-gradient(180deg, var(--glass) 72%, transparent);
+  background: linear-gradient(180deg, var(--surface) 72%, transparent);
 }
 .panel-head h2 {
   margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
@@ -385,9 +383,9 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   overflow: hidden; cursor: ew-resize; user-select: none;
   transition: border-color var(--fast), background var(--fast);
 }
-.fs:hover { border-color: var(--edge-lit); }
+.fs:hover { border-color: var(--edge); }
 .fs:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-.fs-fill { position: absolute; top: 0; bottom: 0; background: var(--glass-3); pointer-events: none; transition: filter var(--fast); }
+.fs-fill { position: absolute; top: 0; bottom: 0; background: var(--raise-2); pointer-events: none; transition: filter var(--fast); }
 .fs:hover .fs-fill { filter: brightness(1.25); }
 .fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(255, 255, 255, 0.85); }
 .fs-fill.neg::after { right: auto; left: -1px; }
@@ -409,7 +407,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: background var(--fast), color var(--fast);
 }
 .seg button:hover { color: var(--text); }
-.seg button.on { background: var(--glass-3); color: var(--text); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+.seg button.on { background: var(--raise-2); color: var(--text); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08); }
 .seg.wrap { display: grid; grid-template-columns: repeat(3, 1fr); }
 .seg.wrap button { width: 100%; }
 .seg.wrap button:last-child:nth-child(3n - 2) { grid-column: span 3; }
@@ -422,7 +420,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: transform var(--fast), box-shadow var(--fast);
 }
 .swatches button:hover { transform: scale(1.08); }
-.swatches button.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
+.swatches button.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
 
 .patterns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .patterns button {
@@ -438,7 +436,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 .patterns button:hover { color: var(--text); }
 .patterns button:hover canvas { transform: translateY(-2px); }
 .patterns button.on { color: var(--text); }
-.patterns button.on canvas { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
+.patterns button.on canvas { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
 
 .wallpapers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
 .wallpapers button {
@@ -461,7 +459,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   background: rgba(0, 0, 0, 0.72); color: #fff; -webkit-backdrop-filter: blur(6px);
 }
 .wallpapers button:hover { transform: translateY(-2px); }
-.wallpapers button.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
+.wallpapers button.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
 
 .wallpapers.recent { grid-template-columns: repeat(6, 1fr); gap: 7px; }
 .wallpapers.recent button { aspect-ratio: 1; border-radius: 8px; }
@@ -482,8 +480,8 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   font-size: 12px; font-weight: 500; color: var(--muted);
   transition: color var(--fast), border-color var(--fast), background var(--fast);
 }
-.chip:hover { color: var(--text); border-color: var(--edge-lit); }
-.chip.on { color: var(--text); border-color: var(--edge-lit); background: var(--glass-3); }
+.chip:hover { color: var(--text); border-color: var(--edge); }
+.chip.on { color: var(--text); border-color: var(--edge); background: var(--raise-2); }
 
 .align-grid { display: grid; grid-template-columns: repeat(3, 26px); gap: 4px; flex: none; }
 .align-grid button {
@@ -516,7 +514,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   position: absolute; top: -5px; right: -5px;
   display: none; place-items: center;
   width: 19px; height: 19px; border-radius: 50%;
-  background: var(--glass-solid); border: 1px solid var(--edge); color: var(--muted);
+  background: var(--surface); border: 1px solid var(--edge); color: var(--muted);
 }
 .preset.user:hover .preset-del { display: grid; }
 
@@ -530,7 +528,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   overflow: hidden; perspective: 260px;
   transition: border-color var(--fast), background var(--fast);
 }
-.motion-card.on .motion-stage { border-color: var(--edge-lit); background: var(--glass-3); }
+.motion-card.on .motion-stage { border-color: var(--edge); background: var(--raise-2); }
 .motion-stage i { width: 54%; height: 46%; border-radius: 3px; background: rgba(255, 255, 255, 0.28); }
 .motion-card.on .motion-stage i { background: var(--accent); }
 .m-still i { animation: none; }
@@ -647,7 +645,7 @@ kbd {
   /* the phone sheet is glass over the room, so the sticky header has to be lighter
      than the desktop one or it reads as a box laid on the panel */
   .panel-head {
-    background: linear-gradient(180deg, var(--glass) 72%, transparent);
+    background: linear-gradient(180deg, var(--surface) 72%, transparent);
   }
   .menu { inset: 70px 10px auto 10px; width: auto; }
   .toolbar { overflow-x: auto; max-width: calc(100vw - 28px); }
