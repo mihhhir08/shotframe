@@ -46,6 +46,7 @@ const save = (key: string, value: unknown) => {
     return false
   }
 }
+const FILE_INPUT_ID = 'shotframe-file'
 const stamp = () => new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '')
 const isMac = /Mac|iPhone|iPad/.test(navigator.userAgent)
 const MOD = isMac ? '⌘' : 'Ctrl+'
@@ -342,7 +343,8 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable]')) return
+      const t = e.target as HTMLElement
+      if (t.closest('textarea, select, [contenteditable]') || t.matches('input:not([type=file])')) return
       const mod = e.metaKey || e.ctrlKey
       const k = e.key.toLowerCase()
       if (mod && k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo() }
@@ -394,7 +396,10 @@ export default function App() {
         </div>
         <span className="bar-sep" />
         <div className="bar-group file-actions">
-          <button className="btn quiet" onClick={() => fileRef.current?.click()} title={`Open an image (${MOD}O)`}><Icon name="image" size={15} /> Open</button>
+          <label className="btn quiet" htmlFor={FILE_INPUT_ID} tabIndex={0} title={`Open an image (${MOD}O)`}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click() } }}>
+            <Icon name="image" size={15} /> Open
+          </label>
         </div>
 
         <div className="mode-wrap">
@@ -479,9 +484,10 @@ export default function App() {
             <div className="empty-card slab">
               <h1>Drop a screenshot in.</h1>
               <p>Choose a file, or drag one anywhere on this page.</p>
-              <button className="btn primary big" onClick={() => fileRef.current?.click()}>
+              <label className="btn primary big" htmlFor={FILE_INPUT_ID} tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click() } }}>
                 <Icon name="image" size={17} /> Choose a file
-              </button>
+              </label>
               <small>Your images never leave your device. Nothing is uploaded.</small>
             </div>
           </div>
@@ -578,10 +584,11 @@ export default function App() {
 
 
       {toast && <div className="toast" role="status">{toast}</div>}
-      <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/*" className="file-input" onChange={(e) => {
+      <input ref={fileRef} id={FILE_INPUT_ID} type="file" accept="image/*" className="file-input" onChange={(e) => {
         const f = e.target.files?.[0]
         if (f) openFile(f)
         e.target.value = ''
+        e.target.blur() // otherwise the input keeps focus and eats the next shortcut
       }} />
     </div>
   )

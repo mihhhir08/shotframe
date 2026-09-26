@@ -25,12 +25,18 @@ export function readAsDataURL(file: Blob): Promise<string> {
 }
 
 export async function loadFile(file: Blob): Promise<LoadedImage> {
-  if (!file.type.startsWith('image/')) throw new Error('That file is not an image')
+  // Finder can hand over a file with an empty type; trust the decoder over the label
+  if (file.type && !file.type.startsWith('image/')) throw new Error('That file is not an image')
   const url = URL.createObjectURL(file)
   try {
     const img = await loadImage(url)
     return { el: img, w: img.naturalWidth, h: img.naturalHeight }
   } catch {
+    try {
+      // some WebKit builds refuse a blob URL in an <img>; the bytes inline always work
+      const img = await loadImage(await readAsDataURL(file))
+      return { el: img, w: img.naturalWidth, h: img.naturalHeight }
+    } catch { /* fall through to the message below */ }
     // HEIC is the usual culprit: it comes out of Photos and no browser decodes it
     const heic = /hei[cf]/i.test(file.type) || (file instanceof File && /\.hei[cf]$/i.test(file.name))
     throw new Error(heic

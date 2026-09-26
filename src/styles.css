@@ -552,9 +552,11 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* visually hidden, but still clickable by script — `hidden` breaks the picker in Safari */
 .file-input {
-  position: absolute; width: 1px; height: 1px;
-  opacity: 0; pointer-events: none; left: -9999px;
+  position: absolute; left: 0; bottom: 0;
+  width: 1px; height: 1px;
+  opacity: 0;
 }
+label.btn { cursor: pointer; }
 
 /* ---------- empty state ---------- */
 .empty {
