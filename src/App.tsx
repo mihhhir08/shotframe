@@ -84,7 +84,6 @@ export default function App() {
   const s = doc.settings
 
   const [image, setImage] = useState<LoadedImage | null>(null)
-  const [glow, setGlow] = useState(['#ff8f45', '#7a4bd1'])
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null)
   const [tool, setToolRaw] = useState<Tool>('select')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -152,11 +151,6 @@ export default function App() {
 
   const openImage = useCallback((img: LoadedImage) => {
     setImage(img)
-    // the room takes the colours of whatever you just brought in
-    try {
-      const p = palette(img.el)
-      setGlow([p[0], p[1] ?? p[0]])
-    } catch { /* tainted or tiny images keep the current light */ }
     update((d) => ({ settings: { ...d.settings, crop: null }, annotations: [] }))
     setSelectedId(null)
     setToolRaw('select')
@@ -391,9 +385,7 @@ export default function App() {
   const outH = layout ? Math.round(layout.H * exportPx) : 0
 
   return (
-    <div className="app" style={{ '--glow-a': glow[0], '--glow-b': glow[1], '--bg-left': !narrow && bgOpen ? '334px' : '76px' } as CSSProperties}>
-      <div className="ambient" />
-      <div className="room-floor" />
+    <div className="app" style={{ '--bg-left': !narrow && bgOpen ? '300px' : '44px' } as CSSProperties}>
 
       <header className="bar slab">
         <div className="brand">

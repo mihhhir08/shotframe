@@ -8,7 +8,7 @@ import {
 } from './settings.ts'
 import { MOTIONS } from './motion.ts'
 import { bgCanMove } from './render.ts'
-import { drawPattern, isAnimated, PATTERNS, scene as paintScene, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
+import { drawPattern, FEATURED, isAnimated, PATTERNS, scene as paintScene, sceneThumb, TEXTURES, THEMES, WALLPAPERS, type PatternKind } from './wallpapers.ts'
 
 export type SetSettings = (patch: Partial<Settings>, key?: string) => void
 export type BgPick = Partial<Settings>
@@ -280,6 +280,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
 const BG_TABS: [BgType, string][] = [['wallpaper', 'Wallpaper'], ['theme', 'Theme'], ['texture', 'Texture'], ['pattern', 'Pattern'], ['gradient', 'Gradient'], ['mesh', 'Mesh'], ['solid', 'Solid'], ['image', 'Image'], ['blurred', 'Blur'], ['transparent', 'None']]
 
 export function Background({ s, set, image, recent, onRecent, onAnimateBg, motionReady }: { s: Settings; set: SetSettings; image: LoadedImage | null; recent: BgPick[]; onRecent: (p: BgPick) => void; onAnimateBg: () => void; motionReady: boolean }) {
+  const [showAll, setShowAll] = useState(false)
   // every background choice goes through this, so Recent stays honest
   const pick = (patch: BgPick, key?: string) => {
     set(patch, key)
@@ -312,6 +313,9 @@ export function Background({ s, set, image, recent, onRecent, onAnimateBg, motio
           const next = list[Math.floor(Math.random() * list.length)]
           pick({ bgType: s.bgType, [key]: next.id })
         }
+        // open on the curated set; the current pick is always shown even when it is not in it
+        const featured = list.filter((w) => FEATURED.has(w.id) || s[key] === w.id)
+        const shown = showAll || featured.length === list.length ? list : featured
         return (
           <Group title={title} action={<button className="icon-btn small" onClick={shuffle} title="Pick one at random" aria-label="Shuffle"><Icon name="sparkle" size={15} /></button>}>
             {bgCanMove(s) && (
@@ -330,7 +334,7 @@ export function Background({ s, set, image, recent, onRecent, onAnimateBg, motio
               </>
             )}
             <div className="wallpapers">
-              {list.map((w) => (
+              {shown.map((w) => (
                 <button key={w.id} className={s[key] === w.id ? 'on' : ''} onClick={() => pick({ bgType: s.bgType, [key]: w.id })}
                   title={isAnimated(w.id) ? `${w.name} — moves in Motion exports` : w.name}>
                   <SceneThumb id={w.id} />
@@ -339,6 +343,11 @@ export function Background({ s, set, image, recent, onRecent, onAnimateBg, motio
                 </button>
               ))}
             </div>
+            {featured.length < list.length && (
+              <button className="btn quiet wide small" onClick={() => setShowAll(!showAll)}>
+                {showAll ? `Show the ${featured.length} picks` : `Show all ${list.length}`}
+              </button>
+            )}
             {!bgCanMove(s) && (
               <p className="hint">
                 {list.filter((w) => isAnimated(w.id)).length} of these move — look for the <b>Moves</b> badge, or

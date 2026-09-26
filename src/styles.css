@@ -1,4 +1,5 @@
-/* Studio glass: a dark room, floating smoked-glass slabs, one lit object (the screenshot). */
+/* Graphite: colourless chrome docked to the edges, hairlines instead of glass,
+   and the screenshot as the only saturated thing on screen. */
 
 /* Self-hosted: the world's voice should not be a third-party runtime dependency,
    and swap-from-system on first paint shows the wrong face for a beat. */
@@ -20,45 +21,43 @@
 :root {
   color-scheme: dark;
 
-  /* room */
-  --room: #06050e;
-  --room-2: #0a0817;
-  /* glass slabs */
-  --glass: rgba(26, 22, 46, 0.5);
-  --glass-solid: #171332;
-  --glass-2: rgba(255, 255, 255, 0.07);
-  --glass-3: rgba(255, 255, 255, 0.13);
-  --edge: rgba(255, 255, 255, 0.12);
-  --edge-lit: rgba(255, 255, 255, 0.34);
-  --hairline: rgba(255, 255, 255, 0.09);
+  /* room — one neutral, no chroma anywhere in the chrome */
+  --room: #131314;
+  --room-2: #101011;
+  /* surfaces are opaque; separation comes from a hairline, not from blur */
+  --glass: #1a1a1c;
+  --glass-solid: #1a1a1c;
+  --glass-2: rgba(255, 255, 255, 0.04);
+  --glass-3: rgba(255, 255, 255, 0.07);
+  --edge: rgba(255, 255, 255, 0.08);
+  --edge-lit: rgba(255, 255, 255, 0.08);
+  --hairline: rgba(255, 255, 255, 0.06);
   /* recessed wells: inputs, sliders, swatch beds — cut into the glass, not raised off it */
   /* on glass, a recessed field is a darker pane of the same glass, never a black hole */
   --well: rgba(255, 255, 255, 0.06);
   --well-deep: rgba(255, 255, 255, 0.11);
 
-  --text: #ffffff;
-  --muted: #b9b3d6;
-  --faint: #a49dc6;
-  --dim: #5d5880; /* non-text only: the position-grid dot */
+  --text: #f0f0f1;
+  --muted: #a0a0a4;
+  --faint: #8a8a8e;
+  --dim: #5c5c60; /* non-text only: the position-grid dot */
 
-  --accent: #ff5fa2;
-  --accent-hi: #ff8a3d;
-  --accent-dim: rgba(255, 95, 162, 0.2);
-  --accent-ink: #20081a;
+  /* the interface has no colour of its own: selection is light, the screenshot is the colour */
+  --accent: #f0f0f1;
+  --accent-hi: #ffffff;
+  --accent-dim: rgba(255, 255, 255, 0.1);
+  --accent-ink: #131314;
   /* the accent is a light source, not a flat colour */
-  --accent-run: linear-gradient(120deg, #ff8a3d, #ff5fa2 55%, #a855f7);
+  --accent-run: #f0f0f1;
 
-  /* ambient light behind the canvas, re-tinted from the user's image */
-  --glow-a: #ff8f45;
-  --glow-b: #7a4bd1;
 
-  --r-control: 12px;
-  --r-slab: 24px;
-  --r-plate: 16px;
+  --r-control: 7px;
+  --r-slab: 10px;
+  --r-plate: 8px;
 
-  --lift-1: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --lift-2: 0 8px 24px -8px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4);
-  --lift-3: 0 34px 80px -26px rgba(0, 0, 0, 0.88), 0 4px 14px rgba(0, 0, 0, 0.5);
+  --lift-1: none;
+  --lift-2: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --lift-3: 0 2px 8px rgba(0, 0, 0, 0.35);
 
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --fast: 140ms var(--ease);
@@ -96,49 +95,22 @@ input, textarea { caret-color: var(--accent); }
 /* ---------- the room ---------- */
 .app { position: relative; height: 100dvh; overflow: hidden; background: var(--room); }
 
-/* light from the image itself, behind the canvas */
-.ambient {
-  position: absolute; inset: -26%;
-  pointer-events: none;
-  background:
-    radial-gradient(34% 30% at 26% 30%, var(--glow-a) 0%, transparent 70%),
-    radial-gradient(32% 34% at 70% 62%, var(--glow-b) 0%, transparent 72%),
-    radial-gradient(30% 26% at 52% 94%, #6d28d9 0%, transparent 70%);
-  opacity: 0.66;
-  filter: blur(100px) saturate(1.8);
-  transition: opacity var(--slow), background 700ms var(--ease);
-}
-.room-floor {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(70% 55% at 50% 40%, rgba(255, 255, 255, 0.07), transparent 70%),
-    linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.42) 100%);
-}
 
 /* ---------- floating slabs ---------- */
 .slab {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 42%, transparent),
-    linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 14%, var(--glass)), var(--glass) 70%);
-  backdrop-filter: blur(34px) saturate(1.9);
-  -webkit-backdrop-filter: blur(34px) saturate(1.9);
+  background: var(--glass);
   border: 1px solid var(--edge);
-  border-top-color: color-mix(in srgb, var(--glow-a) 34%, var(--edge-lit));
-  box-shadow: var(--lift-3), inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-  transition: border-top-color 700ms var(--ease), background 700ms var(--ease);
 }
 
 .bar {
-  animation: slab-down 520ms var(--settle) backwards;
-  position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30;
-  width: min(1180px, calc(100% - 32px));
+  position: absolute; top: 0; left: 0; right: 0; z-index: 30;
   display: flex; align-items: center; gap: 14px;
-  height: 58px; padding: 0 10px 0 18px;
-  border-radius: 29px;
+  height: 46px; padding: 0 10px 0 14px;
+  border-width: 0 0 1px;
+  border-radius: 0;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.03em; font-size: 19px; }
-.brand img { border-radius: 9px; box-shadow: var(--lift-1); width: 26px; height: 26px; }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 500; letter-spacing: -0.005em; font-size: 14px; }
+.brand img { border-radius: 5px; width: 20px; height: 20px; }
 .bar-sep { width: 1px; height: 22px; background: var(--hairline); }
 .bar-group { display: flex; align-items: center; gap: 2px; }
 .bar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
@@ -158,11 +130,10 @@ input, textarea { caret-color: var(--accent); }
 .btn:not(:disabled):hover { background: var(--glass-3); }
 .btn:not(:disabled):active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }
 .btn.primary {
-  background: var(--accent-run);
-  color: #fff; font-weight: 600; border-color: transparent;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset, 0 10px 26px -8px rgba(255, 95, 162, 0.65);
+  background: var(--accent);
+  color: var(--accent-ink); font-weight: 600; border-color: transparent;
 }
-.btn.primary:not(:disabled):hover { filter: brightness(1.06); }
+.btn.primary:not(:disabled):hover { background: var(--accent-hi); }
 .btn.quiet { background: transparent; color: var(--muted); }
 .btn.quiet:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
 .btn.small { height: 28px; padding: 0 10px; font-size: 12px; }
@@ -199,7 +170,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 .split { display: flex; }
 .split > .btn:first-child { border-radius: var(--r-control) 0 0 var(--r-control); padding-right: 12px; }
-.split-arrow { border-radius: 0 var(--r-control) var(--r-control) 0 !important; padding: 0 10px 0 6px !important; box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28), 0 10px 26px -8px rgba(255, 95, 162, 0.65); }
+.split-arrow { border-radius: 0 var(--r-control) var(--r-control) 0 !important; padding: 0 10px 0 6px !important; box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.18); }
 .split-meta { font-family: var(--mono); font-size: 10.5px; font-weight: 500; opacity: 0.75; font-variant-numeric: tabular-nums; }
 
 .menu {
@@ -219,22 +190,12 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- stage ---------- */
 .main { position: absolute; inset: 0; }
-.stage { position: absolute; inset: 88px 376px 88px var(--bg-left, 20px); display: grid; place-items: center; transition: inset var(--slow); }
+.stage { position: absolute; inset: 46px 348px 0 var(--bg-left, 0px); display: grid; place-items: center; transition: inset var(--slow); }
 /* the plate throws its own light into the room */
 .stage-canvas {
   position: relative;
   border-radius: var(--r-plate);
-  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.07);
-  animation: plate 400ms var(--ease);
-}
-.stage-canvas::before {
-  content: '';
-  position: absolute; inset: -26% -16%;
-  z-index: -1; pointer-events: none;
-  background: radial-gradient(56% 56% at 30% 30%, var(--glow-a), transparent 70%), radial-gradient(56% 56% at 72% 72%, var(--glow-b), transparent 72%);
-  filter: blur(95px) saturate(2);
-  opacity: 0.85;
-  transition: background 700ms var(--ease);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), var(--lift-3);
 }
 .stage-canvas canvas { display: block; border-radius: var(--r-plate); }
 .checker { background: repeating-conic-gradient(#221c3f 0 25%, #16122c 0 50%) 0 0 / 16px 16px; }
@@ -292,7 +253,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- dock ---------- */
 .dock {
-  position: absolute; left: var(--bg-left, 20px); right: 376px; bottom: 14px; z-index: 20;
+  position: absolute; left: var(--bg-left, 0px); right: 348px; bottom: 14px; z-index: 20;
   transition: left var(--slow);
   display: flex; flex-direction: column; align-items: center; gap: 10px;
   pointer-events: none;
@@ -309,7 +270,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 }
 .tool:not(:disabled):hover { background: var(--glass-2); color: var(--text); }
 .tool:not(:disabled):active { transform: scale(0.93); transition-duration: 60ms; }
-.tool.on { background: var(--accent-run); color: #fff; box-shadow: 0 8px 20px -7px rgba(255, 95, 162, 0.75); }
+.tool.on { background: var(--accent); color: var(--accent-ink); }
 .toolopts {
   display: flex; align-items: center; gap: 10px;
   padding: 7px 9px; border-radius: 13px;
@@ -341,12 +302,11 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- background panel ---------- */
 .bg-panel {
-  position: absolute; top: 92px; left: 20px; bottom: 18px; z-index: 20;
+  position: absolute; top: 46px; left: 0; bottom: 0; z-index: 20;
   width: 300px;
   display: flex; flex-direction: column;
-  border-radius: var(--r-slab);
+  border-radius: 0; border-width: 0 1px 0 0;
   overflow: hidden;
-  animation: slab-left 520ms 40ms var(--settle) backwards;
 }
 .bg-panel .panel-head { padding: 16px 16px 12px; }
 .bg-body { min-height: 0; overflow-y: auto; padding: 0 16px 24px; }
@@ -357,7 +317,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   position: absolute; top: 92px; left: 20px; z-index: 20;
   display: grid; justify-items: center; gap: 8px;
   width: 44px; padding: 12px 0 14px;
-  border-radius: 16px; color: var(--muted);
+  border-radius: 0 var(--r-slab) var(--r-slab) 0; color: var(--muted);
   transition: color var(--fast);
 }
 .bg-tab:hover { color: var(--text); }
@@ -369,11 +329,10 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- inspector ---------- */
 .panel {
-  animation: slab-right 560ms 60ms var(--settle) backwards;
-  position: absolute; top: 92px; right: 20px; bottom: 18px; z-index: 20;
+  position: absolute; top: 46px; right: 0; bottom: 0; z-index: 20;
   width: 348px;
   display: grid; grid-template-columns: 78px 1fr;
-  border-radius: var(--r-slab);
+  border-radius: 0; border-width: 0 0 0 1px;
   overflow: hidden;
 }
 .panel-tabs {
@@ -390,24 +349,24 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: background var(--fast), color var(--fast);
 }
 .panel-tabs button:hover { color: var(--text); background: var(--glass-2); }
-.panel-tabs button.on { color: #fff; background: linear-gradient(120deg, rgba(255, 138, 61, 0.28), rgba(255, 95, 162, 0.32)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16); }
+.panel-tabs button.on { color: var(--text); background: var(--glass-3); box-shadow: inset 0 0 0 1px var(--edge); }
 .panel-body { min-height: 0; overflow-y: auto; padding: 0 16px 24px; animation: tab-in 300ms var(--settle); }
 .panel-head {
   position: sticky; top: 0; z-index: 1;
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 16px 0 12px;
   /* same mix as .slab, or the header reads as an opaque box sitting on the panel */
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--glow-a) 12%, rgba(23, 19, 50, 0.82)) 66%,
-    transparent);
-  backdrop-filter: blur(14px) saturate(1.6);
-  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  background: linear-gradient(180deg, var(--glass) 72%, transparent);
 }
-.panel-head h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.03em; white-space: nowrap; }
+.panel-head h2 {
+  margin: 0; font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--faint);
+}
 .group { display: flex; flex-direction: column; gap: 10px; padding: 16px 0; border-top: 1px solid var(--hairline); }
 .panel-head + .group, .bg-body > .group:first-child { border-top: 0; padding-top: 4px; }
 .group h3 {
-  margin: 0 0 1px; font-size: 11px; font-weight: 500; color: var(--faint);
+  margin: 0 0 1px; font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--dim);
   display: flex; align-items: center; justify-content: space-between; min-height: 18px;
 }
 .icon-btn.small { width: 24px; height: 24px; border-radius: 8px; }
@@ -431,7 +390,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 }
 .fs:hover { border-color: var(--edge-lit); }
 .fs:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
-.fs-fill { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(255, 138, 61, 0.28), rgba(255, 95, 162, 0.4)); pointer-events: none; transition: filter var(--fast); }
+.fs-fill { position: absolute; top: 0; bottom: 0; background: var(--glass-3); pointer-events: none; transition: filter var(--fast); }
 .fs:hover .fs-fill { filter: brightness(1.25); }
 .fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(255, 255, 255, 0.85); }
 .fs-fill.neg::after { right: auto; left: -1px; }
@@ -502,8 +461,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   display: inline-flex; align-items: center; gap: 3px;
   padding: 2px 6px 2px 4px; border-radius: 99px;
   font-size: 10.5px; font-weight: 600; font-style: normal; letter-spacing: 0.02em;
-  background: rgba(8, 6, 16, 0.72); color: #fff;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  background: rgba(8, 6, 16, 0.72); color: #fff; -webkit-backdrop-filter: blur(6px);
 }
 .wallpapers button:hover { transform: translateY(-2px); }
 .wallpapers button.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
@@ -528,7 +486,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   transition: color var(--fast), border-color var(--fast), background var(--fast);
 }
 .chip:hover { color: var(--text); border-color: var(--edge-lit); }
-.chip.on { color: #fff; border-color: rgba(255, 95, 162, 0.6); background: var(--accent-dim); }
+.chip.on { color: var(--text); border-color: var(--edge-lit); background: var(--glass-3); }
 
 .align-grid { display: grid; grid-template-columns: repeat(3, 26px); gap: 4px; flex: none; }
 .align-grid button {
@@ -575,7 +533,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   overflow: hidden; perspective: 260px;
   transition: border-color var(--fast), background var(--fast);
 }
-.motion-card.on .motion-stage { border-color: rgba(255, 143, 69, 0.55); background: var(--accent-dim); }
+.motion-card.on .motion-stage { border-color: var(--edge-lit); background: var(--glass-3); }
 .motion-stage i { width: 54%; height: 46%; border-radius: 3px; background: rgba(255, 255, 255, 0.28); }
 .motion-card.on .motion-stage i { background: var(--accent); }
 .m-still i { animation: none; }
@@ -605,7 +563,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 
 /* ---------- empty state ---------- */
 .empty {
-  position: absolute; inset: 92px 376px 96px var(--bg-left, 20px);
+  position: absolute; inset: 46px 348px 0 var(--bg-left, 0px);
   display: grid; place-items: center; padding: 24px;
 }
 .empty-card {
@@ -629,8 +587,7 @@ kbd {
   position: absolute; inset: 12px; z-index: 40;
   display: grid; place-items: center;
   border: 2px dashed var(--accent); border-radius: 20px;
-  background: rgba(255, 143, 69, 0.07);
-  backdrop-filter: blur(2px);
+  background: rgba(255, 255, 255, 0.05);
   pointer-events: none;
 }
 .drop-hint span { font-size: 15px; font-weight: 600; padding: 11px 20px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); box-shadow: var(--lift-2); }
@@ -662,8 +619,8 @@ kbd {
 @media (max-width: 1180px) {
   .panel { width: 310px; }
   .bg-panel { width: 264px; }
-  .stage { inset: 92px 338px 96px var(--bg-left, 20px); }
-  .dock { right: 338px; }
+  .stage { inset: 46px 264px 0 var(--bg-left, 0px); }
+  .dock { right: 264px; }
   .split-meta { display: none; }
 }
 @media (max-width: 900px) {
@@ -693,11 +650,7 @@ kbd {
   /* the phone sheet is glass over the room, so the sticky header has to be lighter
      than the desktop one or it reads as a box laid on the panel */
   .panel-head {
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--glow-a) 12%, rgba(23, 19, 50, 0.58)) 62%,
-      transparent);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, var(--glass) 72%, transparent);
   }
   .menu { inset: 70px 10px auto 10px; width: auto; }
   .toolbar { overflow-x: auto; max-width: calc(100vw - 28px); }

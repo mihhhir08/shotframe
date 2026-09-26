@@ -452,6 +452,15 @@ export const WALLPAPERS: { id: string; name: string; draw: Draw }[] = [
 
 export const SCENES = [...WALLPAPERS, ...THEMES, ...TEXTURES]
 
+// The set the picker opens with. 113 options is an inventory; this is a point of view.
+// Everything else stays one click away under "Show all".
+export const FEATURED = new Set([
+  'fluid-dusk', 'fluid-ink', 'ribbons-amber', 'ribbons-violet', 'drape-arctic',
+  'folds-cobalt', 'satin-pearl', 'haze-alpine',
+  'theme-sequoia', 'theme-bigsur', 'theme-sonoma', 'theme-slate',
+  'tex-paper', 'tex-concrete', 'tex-carbon', 'tex-terrazzo',
+])
+
 // Backgrounds whose generator reads `t`. In Motion they drift; in a still export they are frozen.
 export const ANIMATED = new Set(
   SCENES.filter((x) => /^(fluid|bloom|curtains|satin|theme|ribbons|folds|drape)-/.test(x.id)).map((x) => x.id),
