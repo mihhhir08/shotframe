@@ -1,212 +1,182 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-16T00:00:00.000Z",
+  "generatedAt": "2026-09-25T00:00:00.000Z",
   "title": "Design System: Shotframe",
   "extensions": {
     "colorMeta": {
-      "room": { "role": "neutral", "displayName": "Indigo Night", "canonical": "#06050e", "tonalRamp": ["#06050e", "#0a0817", "#141033", "#1f1a4d", "#2e2770", "#4a3fa3", "#7a6fd1", "#bfb8ef"] },
-      "room-2": { "role": "neutral", "displayName": "Indigo Deep", "canonical": "#0a0817", "tonalRamp": ["#05040b", "#0a0817", "#120e28", "#1c1740", "#2a2360", "#453b94", "#7468c8", "#bbb3ee"] },
-      "glass": { "role": "neutral", "displayName": "Aurora Glass", "canonical": "rgba(26, 22, 46, 0.5)", "tonalRamp": ["#0d0b17", "#1a162e", "#272145", "#342c5c", "#443a76", "#6154a0", "#8f84c4", "#c8c1e6"] },
-      "glass-solid": { "role": "neutral", "displayName": "Solid Glass", "canonical": "#171332", "tonalRamp": ["#0b0919", "#171332", "#221c4a", "#2e2663", "#3f3484", "#5d4fb0", "#8b7fd0", "#c5bfe9"] },
-      "glass-2": { "role": "neutral", "displayName": "Glass Film", "canonical": "rgba(255, 255, 255, 0.07)" },
-      "glass-3": { "role": "neutral", "displayName": "Glass Film Strong", "canonical": "rgba(255, 255, 255, 0.13)" },
-      "edge": { "role": "neutral", "displayName": "Edge", "canonical": "rgba(255, 255, 255, 0.12)" },
-      "edge-lit": { "role": "neutral", "displayName": "Lit Edge", "canonical": "rgba(255, 255, 255, 0.34)" },
-      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(255, 255, 255, 0.09)" },
-      "well": { "role": "neutral", "displayName": "Well", "canonical": "rgba(255, 255, 255, 0.06)" },
-      "well-deep": { "role": "neutral", "displayName": "Well Deep", "canonical": "rgba(255, 255, 255, 0.11)" },
-      "text": { "role": "neutral", "displayName": "Text", "canonical": "#ffffff" },
-      "muted": { "role": "neutral", "displayName": "Muted Violet", "canonical": "#b9b3d6", "tonalRamp": ["#15132a", "#221e45", "#332c66", "#4a4189", "#6961ab", "#918ac4", "#b9b3d6", "#e2dff0"] },
-      "faint": { "role": "neutral", "displayName": "Faint Violet", "canonical": "#a49dc6", "tonalRamp": ["#131129", "#1f1a42", "#2f2863", "#453c87", "#6459a8", "#847bc0", "#a49dc6", "#d6d2ea"] },
-      "dim": { "role": "neutral", "displayName": "Dim Violet", "canonical": "#5d5880", "tonalRamp": ["#0f0e18", "#1a1829", "#26233d", "#363155", "#48426e", "#5d5880", "#8b86ab", "#c3bfd8"] },
-      "accent": { "role": "primary", "displayName": "Aurora Pink", "canonical": "#ff5fa2", "tonalRamp": ["#33091e", "#4f0f2f", "#711644", "#96205c", "#bd2f78", "#e14893", "#ff5fa2", "#ffb3d2"] },
-      "accent-run": { "role": "primary", "displayName": "Aurora Run", "canonical": "linear-gradient(120deg, #ff8a3d, #ff5fa2 55%, #a855f7)" },
-      "accent-hi": { "role": "primary", "displayName": "Aurora Amber", "canonical": "#ff8a3d", "tonalRamp": ["#331704", "#4d2208", "#70320d", "#964414", "#bd591d", "#e0722b", "#ff8a3d", "#ffc59c"] },
-      "accent-dim": { "role": "primary", "displayName": "Aurora Wash", "canonical": "rgba(255, 95, 162, 0.2)" },
-      "accent-ink": { "role": "primary", "displayName": "Aurora Ink", "canonical": "#20081a" },
-      "glow-a": { "role": "secondary", "displayName": "Sampled Warm Glow", "canonical": "#ff8f45", "tonalRamp": ["#331805", "#4d2409", "#70350f", "#964716", "#bd5c20", "#e07530", "#ff8f45", "#ffc9a3"] },
-      "glow-b": { "role": "secondary", "displayName": "Sampled Cool Glow", "canonical": "#7a4bd1", "tonalRamp": ["#170d2b", "#231543", "#331f61", "#452a83", "#5a37a6", "#6c41bd", "#7a4bd1", "#bda3ea"] },
-      "glow-fixed": { "role": "tertiary", "displayName": "Fixed Violet", "canonical": "#6d28d9", "tonalRamp": ["#150829", "#210d40", "#30135e", "#421a80", "#5620a4", "#6d28d9", "#9761ec", "#ccb0f7"] }
+      "room": { "role": "neutral", "displayName": "Graphite Room", "canonical": "#131314", "tonalRamp": ["#0a0a0b", "#131314", "#1a1a1c", "#232325", "#3a3a3d", "#5c5c60", "#8a8a8e", "#f0f0f1"] },
+      "glass": { "role": "neutral", "displayName": "Slab", "canonical": "#1a1a1c", "tonalRamp": ["#0d0d0e", "#131314", "#1a1a1c", "#242426", "#3c3c3f", "#606064", "#9a9a9e", "#ededee"] },
+      "text": { "role": "neutral", "displayName": "Paper White", "canonical": "#f0f0f1", "tonalRamp": ["#26262a", "#3a3a3d", "#5c5c60", "#8a8a8e", "#a0a0a4", "#c6c6c9", "#f0f0f1", "#ffffff"] },
+      "accent": { "role": "primary", "displayName": "Paper White (the accent is the text colour)", "canonical": "#f0f0f1", "tonalRamp": ["#26262a", "#3a3a3d", "#5c5c60", "#8a8a8e", "#a0a0a4", "#c6c6c9", "#f0f0f1", "#ffffff"] },
+      "accent-ink": { "role": "primary", "displayName": "Room Ink", "canonical": "#131314", "tonalRamp": ["#0a0a0b", "#131314", "#1a1a1c", "#232325", "#3a3a3d", "#5c5c60", "#8a8a8e", "#f0f0f1"] },
+      "muted": { "role": "neutral", "displayName": "Muted Label", "canonical": "#a0a0a4", "tonalRamp": ["#1a1a1c", "#2c2c2f", "#454549", "#5c5c60", "#7a7a7e", "#a0a0a4", "#c8c8cb", "#efeff0"] },
+      "faint": { "role": "neutral", "displayName": "Faint Head", "canonical": "#8a8a8e", "tonalRamp": ["#17171a", "#26262a", "#3c3c40", "#525256", "#6e6e72", "#8a8a8e", "#b6b6b9", "#e8e8ea"] },
+      "dim": { "role": "neutral", "displayName": "Dim Mark", "canonical": "#5c5c60", "tonalRamp": ["#121214", "#1e1e21", "#2e2e32", "#414145", "#5c5c60", "#828286", "#adadb1", "#e2e2e4"] },
+      "ink-red": { "role": "tertiary", "displayName": "Annotation Red", "canonical": "#ff3b30", "tonalRamp": ["#3b0a06", "#5e120c", "#8a1b12", "#b8281c", "#e03328", "#ff3b30", "#ff8a83", "#ffd9d6"] },
+      "ink-blue": { "role": "tertiary", "displayName": "Annotation Blue", "canonical": "#0a84ff", "tonalRamp": ["#04203f", "#063362", "#09488c", "#0b5fb8", "#0a72dd", "#0a84ff", "#6fb6ff", "#d3e8ff"] }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "First-run card headline. One per session; the only type above 21px." },
-      "display-mobile": { "displayName": "Display (phone)", "purpose": "The first-run headline under 900px; 40px wraps to five lines in a phone-width card." },
-      "title": { "displayName": "Title", "purpose": "Inspector panel heading; carries the tab's SHORT name." },
-      "brand": { "displayName": "Brand", "purpose": "The wordmark in the command bar." },
-      "lede": { "displayName": "Lede", "purpose": "The first-run paragraph. Nothing else uses it." },
-      "body": { "displayName": "Body", "purpose": "Base size for the whole interface, including fields and buttons." },
-      "control": { "displayName": "Control", "purpose": "Small buttons, segmented options, chips." },
-      "label": { "displayName": "Label", "purpose": "Group headings, menu labels, preset and motion card captions." },
-      "tab": { "displayName": "Tab", "purpose": "Inspector rail labels; rises to 12px on phones." },
-      "numeral": { "displayName": "Numeral", "purpose": "Every value the user reads: dimensions, slider outputs, timecodes, export meta, keycaps. Always tabular." }
+      "display": { "displayName": "Display", "purpose": "The empty-state headline only. 21px on phones." },
+      "headline": { "displayName": "Headline", "purpose": "Empty-state paragraph and the single big call to action." },
+      "brand": { "displayName": "Brand", "purpose": "The wordmark in the 46px command bar. One step above body; deliberately not a display size." },
+      "body": { "displayName": "Body", "purpose": "Root size. Every control label, menu row and field value." },
+      "control": { "displayName": "Control", "purpose": "Small buttons, segmented items, chips, the sample badge." },
+      "panel-head": { "displayName": "Panel Head", "purpose": "Small caps panel title in --faint. Hierarchy from tracking, not size." },
+      "group-head": { "displayName": "Group Head", "purpose": "Small caps group heading in --dim, the one place --dim carries a glyph." },
+      "tab": { "displayName": "Tab Label", "purpose": "Inspector rail labels and tile captions. Every rail icon carries its word." },
+      "numeral": { "displayName": "Numeral", "purpose": "Every user-facing number: dimensions, timecodes, slider outputs, keycaps." }
     },
     "shadows": [
-      { "name": "lift-1", "value": "0 1px 2px rgba(0, 0, 0, 0.5)", "purpose": "Tiny objects resting on glass, e.g. the brand mark." },
-      { "name": "lift-2", "value": "0 8px 24px -8px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4)", "purpose": "Transient and hover-raised objects: sample badge, lifted preset swatch, drop-hint badge." },
-      { "name": "lift-3", "value": "0 34px 80px -26px rgba(0, 0, 0, 0.88), 0 4px 14px rgba(0, 0, 0, 0.5)", "purpose": "Every floating pill and panel, and the toast." },
-      { "name": "glass-inner", "value": "inset 0 1px 0 rgba(255, 255, 255, 0.24), inset 0 -1px 0 rgba(0, 0, 0, 0.3)", "purpose": "Specular top highlight and inner bottom shadow that give a pane thickness." },
-      { "name": "accent-cast-button", "value": "0 1px 0 rgba(255, 255, 255, 0.45) inset, 0 10px 26px -8px rgba(255, 95, 162, 0.65)", "purpose": "The primary/export button's pink cast; the only coloured shadow on a button." },
-      { "name": "accent-cast-tool", "value": "0 8px 20px -7px rgba(255, 95, 162, 0.75)", "purpose": "An active tool in the dock." },
-      { "name": "plate", "value": "0 40px 90px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.07)", "purpose": "The screenshot canvas plate." }
-    ],
-    "materials": [
-      { "name": "glass", "value": "backdrop-filter: blur(34px) saturate(1.9)", "purpose": "Every floating pill and panel." },
-      { "name": "glass-sheen", "value": "linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.03) 42%, transparent)", "purpose": "The specular top sheen over the glass body." },
-      { "name": "glass-body", "value": "linear-gradient(180deg, color-mix(in srgb, var(--glow-a) 14%, var(--glass)), var(--glass) 70%)", "purpose": "The glow-tinted glass body." },
-      { "name": "edge-borrowed", "value": "border-top-color: color-mix(in srgb, var(--glow-a) 34%, var(--edge-lit))", "purpose": "The lit top edge, tinted 34% by the sampled glow." },
-      { "name": "ambient", "value": "opacity 0.66; filter: blur(100px) saturate(1.8); three radials, two image-sampled and one fixed violet", "purpose": "The dominant surface treatment of the room." },
-      { "name": "plate-halo", "value": "opacity 0.85; filter: blur(95px) saturate(2); two glow radials", "purpose": "The light the screenshot throws into the room." }
+      { "name": "lift-1", "value": "none", "purpose": "The default. Docked chrome, groups, wells: depth is a hairline, not a shadow." },
+      { "name": "lift-2", "value": "0 1px 2px rgba(0, 0, 0, 0.4)", "purpose": "Contact shadow for something resting just above its neighbour: sample badge, hovered preset, drop pill." },
+      { "name": "lift-3", "value": "0 2px 8px rgba(0, 0, 0, 0.35)", "purpose": "The deepest shadow in the system. Menu popover, toast, stage plate." },
+      { "name": "plate-ring", "value": "0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.35)", "purpose": "The stage plate: a hairline ring so the image has an edge against any background." },
+      { "name": "selection-ring", "value": "0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent)", "purpose": "Chosen swatch, wallpaper, pattern or ink. A cut, not a halo: the inner stop is the slab colour." }
     ],
     "motion": [
       { "name": "ease", "value": "cubic-bezier(0.2, 0.8, 0.2, 1)", "purpose": "Default easing." },
-      { "name": "fast", "value": "140ms var(--ease)", "purpose": "Colour and background state changes." },
-      { "name": "slow", "value": "260ms var(--ease)", "purpose": "Ambient opacity." },
-      { "name": "settle", "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Damped release on tools and buttons: decelerate, never bounce." },
-      { "name": "light", "value": "700ms var(--ease)", "purpose": "Re-sampled room colour fades rather than cuts." },
-      { "name": "slab-down", "value": "520ms var(--settle) backwards", "purpose": "Command bar entrance." },
-      { "name": "slab-right", "value": "560ms 60ms var(--settle) backwards", "purpose": "Inspector entrance." },
-      { "name": "slab-up", "value": "560ms 120ms var(--settle) backwards", "purpose": "Tool dock entrance." },
-      { "name": "pop", "value": "180ms var(--ease)", "purpose": "Transient surfaces: menu, toast, tool options, first-run card, sample badge." },
-      { "name": "tab-in", "value": "300ms var(--settle)", "purpose": "The panel body on tab change." },
-      { "name": "plate", "value": "400ms var(--ease)", "purpose": "The canvas landing." },
-      { "name": "reduced-motion", "value": "all durations collapse to 0.01ms", "purpose": "prefers-reduced-motion honoured globally." }
+      { "name": "fast", "value": "140ms var(--ease)", "purpose": "Hover, colour and border state changes." },
+      { "name": "slow", "value": "260ms var(--ease)", "purpose": "Stage and dock inset changes when the background panel opens or collapses." },
+      { "name": "settle", "value": "420ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Press-release on tools and buttons: damped, decelerating, never bouncing." },
+      { "name": "pop", "value": "180ms var(--ease) — opacity 0 + translateY(6px) scale(0.99)", "purpose": "Things that genuinely appear: menu, toast, tool-option tray, empty card." },
+      { "name": "tab-in", "value": "300ms var(--settle) — opacity 0 + translateY(5px)", "purpose": "Inspector body on tab change. The only entrance left in the panels." },
+      { "name": "reduced-motion", "value": "animation-duration: 0.01ms; transition-duration: 0.01ms", "purpose": "prefers-reduced-motion collapses all motion." }
     ],
     "breakpoints": [
-      { "name": "narrow", "value": "1180px" },
+      { "name": "compact", "value": "1180px" },
       { "name": "phone", "value": "900px" }
-    ],
-    "annotationInk": {
-      "purpose": "Content colours the user draws with. Never chrome; chrome never adopts them.",
-      "values": ["#ff3b30", "#ff9500", "#ffcc00", "#34c759", "#0a84ff", "#af52de", "#ffffff", "#111111"],
-      "customButton": "conic-gradient(#ff5f45, #ffcc00, #34c759, #0a84ff, #af52de, #ff5f45)"
-    }
+    ]
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Export and other committing actions. The only place the Aurora run runs at full strength.",
-      "html": "<button class=\"ds-btn-primary\">Export</button>",
-      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px; border: 1px solid transparent; border-radius: 12px; font: 600 13px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; color: #fff; background: linear-gradient(120deg, #ff8a3d, #ff5fa2 55%, #a855f7); box-shadow: 0 1px 0 rgba(255,255,255,0.45) inset, 0 10px 26px -8px rgba(255,95,162,0.65); cursor: pointer; transition: transform 420ms cubic-bezier(0.16,1,0.3,1), filter 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-primary:hover { filter: brightness(1.06); } .ds-btn-primary:focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }"
+      "description": "The one committing action in a region: Export, Open image.",
+      "html": "<button class=\"ds-btn-primary\">Export PNG</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px; border: 1px solid transparent; border-radius: 7px; background: #f0f0f1; color: #131314; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-btn-primary:hover { background: #ffffff; } .ds-btn-primary:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }"
     },
     {
       "name": "Quiet Button",
       "kind": "button",
       "refersTo": "button-quiet",
-      "description": "Secondary actions in the command bar and menus; transparent until touched.",
-      "html": "<button class=\"ds-btn-quiet\">Reset</button>",
-      "css": ".ds-btn-quiet { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 34px; padding: 0 13px; border: 1px solid transparent; border-radius: 12px; background: transparent; color: #b9b3d6; font: 500 13px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-quiet:hover { background: rgba(255,255,255,0.07); color: #fff; } .ds-btn-quiet:focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; } .ds-btn-quiet:active { transform: translateY(1px) scale(0.985); transition-duration: 60ms; }"
+      "description": "Secondary and reveal actions, including the picker's \"Show all\".",
+      "html": "<button class=\"ds-btn-quiet\">Show all 31</button>",
+      "css": ".ds-btn-quiet { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 28px; padding: 0 10px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #a0a0a4; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-btn-quiet:hover { background: rgba(255,255,255,0.04); color: #f0f0f1; } .ds-btn-quiet:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; }"
     },
     {
-      "name": "Tool",
-      "kind": "button",
+      "name": "Tool (dock)",
+      "kind": "custom",
       "refersTo": "tool",
-      "description": "A dock tool. Muted at rest; the full Aurora run and a pink cast when active.",
-      "html": "<div style=\"display:flex;gap:3px\"><button class=\"ds-tool\" aria-label=\"Select\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 3l7 17 2.5-7L20 10.5z\"/></svg></button><button class=\"ds-tool ds-tool-on\" aria-label=\"Arrow\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 19L19 5M19 5h-7M19 5v7\"/></svg></button></div>",
-      "css": ".ds-tool { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 15px; background: transparent; color: #b9b3d6; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-tool:hover { background: rgba(255,255,255,0.07); color: #fff; } .ds-tool:active { transform: scale(0.93); transition-duration: 60ms; } .ds-tool:focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; } .ds-tool-on, .ds-tool-on:hover { background: linear-gradient(120deg, #ff8a3d, #ff5fa2 55%, #a855f7); color: #fff; box-shadow: 0 8px 20px -7px rgba(255,95,162,0.75); }"
+      "description": "A 40px tool in the floating dock capsule; active takes the full accent.",
+      "html": "<div class=\"ds-dock\"><button class=\"ds-tool\" aria-label=\"Pointer\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 3l14 8-6 1.5L10 19z\"/></svg></button><button class=\"ds-tool ds-on\" aria-label=\"Arrow\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 19L19 5M19 5h-8M19 5v8\"/></svg></button><span class=\"ds-sep\"></span><button class=\"ds-tool\" aria-label=\"Text\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><path d=\"M5 6h14M12 6v13M9 19h6\"/></svg></button></div>",
+      "css": ".ds-dock { display: inline-flex; align-items: center; gap: 3px; padding: 8px; border-radius: 24px; background: #1a1a1c; border: 1px solid rgba(255,255,255,0.08); } .ds-dock .ds-sep { width: 1px; height: 22px; margin: 0 6px; background: rgba(255,255,255,0.06); } .ds-tool { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 15px; background: none; color: #a0a0a4; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1), transform 420ms cubic-bezier(0.16,1,0.3,1); } .ds-tool:hover { background: rgba(255,255,255,0.04); color: #f0f0f1; } .ds-tool:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-tool:active { transform: scale(0.93); transition-duration: 60ms; } .ds-tool.ds-on { background: #f0f0f1; color: #131314; }"
+    },
+    {
+      "name": "Field-slider",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The signature control: the bar is the slider. Label left, tabular mono value right, dragged horizontally.",
+      "html": "<div class=\"ds-fs\"><span class=\"ds-fs-fill\" style=\"width:46%\"></span><span class=\"ds-fs-label\">Padding</span><output>46</output></div>",
+      "css": ".ds-fs { position: relative; display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; overflow: hidden; cursor: ew-resize; user-select: none; color: #f0f0f1; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-fs:hover { border-color: rgba(255,255,255,0.08); } .ds-fs-fill { position: absolute; top: 0; bottom: 0; left: 0; background: rgba(255,255,255,0.07); transition: filter 140ms; } .ds-fs:hover .ds-fs-fill { filter: brightness(1.25); } .ds-fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(255,255,255,0.85); } .ds-fs-label { position: relative; font-weight: 450; } .ds-fs output { position: relative; font-family: 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-size: 11px; color: #a0a0a4; font-variant-numeric: tabular-nums; }"
     },
     {
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Every text, number and select field. A recessed pane of the same glass, never a black hole.",
-      "html": "<input class=\"ds-input\" type=\"text\" value=\"Shotframe\" aria-label=\"Watermark text\" />",
-      "css": ".ds-input { height: 34px; width: 220px; padding: 0 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; color: #fff; caret-color: #ff5fa2; font: 400 13px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; outline: none; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-input:hover { border-color: rgba(255,255,255,0.34); } .ds-input:focus { border-color: #ff5fa2; background: rgba(255,255,255,0.11); }"
+      "description": "Recessed field: a darker pane of the same slab, accent border on focus, no glow.",
+      "html": "<input class=\"ds-input\" type=\"text\" value=\"Launch shot\" />",
+      "css": ".ds-input { height: 34px; width: 220px; padding: 0 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; color: #f0f0f1; caret-color: #f0f0f1; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; outline: none; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-input:hover { border-color: rgba(255,255,255,0.08); } .ds-input:focus { border-color: #f0f0f1; background: rgba(255,255,255,0.11); }"
     },
     {
-      "name": "Field Slider",
-      "kind": "custom",
-      "refersTo": "input",
-      "description": "The bar is the control: a gradient fill sweeps the field bed with a glowing leading edge, label left, tabular mono output right.",
-      "html": "<div class=\"ds-fs\"><span class=\"ds-fs-fill\" style=\"width:62%\"></span><span class=\"ds-fs-label\">Padding</span><output class=\"ds-fs-out\">124</output></div>",
-      "css": ".ds-fs { position: relative; display: flex; align-items: center; justify-content: space-between; width: 260px; height: 34px; padding: 0 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; overflow: hidden; cursor: ew-resize; user-select: none; transition: border-color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-fs:hover { border-color: rgba(255,255,255,0.34); } .ds-fs-fill { position: absolute; top: 0; bottom: 0; left: 0; background: linear-gradient(90deg, rgba(255,138,61,0.28), rgba(255,95,162,0.4)); transition: filter 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-fs:hover .ds-fs-fill { filter: brightness(1.25); } .ds-fs-fill::after { content: ''; position: absolute; top: 0; bottom: 0; right: -1px; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(255,255,255,0.85); } .ds-fs-label { position: relative; font: 450 13px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; color: #fff; } .ds-fs-out { position: relative; font: 400 11px/1 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; color: #b9b3d6; }"
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segment-item",
+      "description": "A well holding 26px items; the selected item lifts 7% with a 1px inner top highlight.",
+      "html": "<div class=\"ds-seg\"><button>Still</button><button class=\"ds-on\">Motion</button></div>",
+      "css": ".ds-seg { display: inline-flex; gap: 2px; padding: 3px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; } .ds-seg button { flex: 1; height: 26px; padding: 0 7px; border: 0; border-radius: 6px; background: none; display: inline-flex; align-items: center; justify-content: center; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; color: #a0a0a4; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-seg button:hover { color: #f0f0f1; } .ds-seg button:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-seg button.ds-on { background: rgba(255,255,255,0.07); color: #f0f0f1; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }"
     },
     {
       "name": "Chip",
       "kind": "chip",
       "refersTo": "chip",
-      "description": "Preset and option chips inside the inspector. On-state takes the Aurora wash, not the full run.",
-      "html": "<div style=\"display:flex;gap:6px\"><button class=\"ds-chip\">Dark</button><button class=\"ds-chip ds-chip-on\">macOS</button></div>",
-      "css": ".ds-chip { height: 30px; padding: 0 11px; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: rgba(255,255,255,0.06); color: #b9b3d6; font: 500 12px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: color 140ms cubic-bezier(0.2,0.8,0.2,1), border-color 140ms cubic-bezier(0.2,0.8,0.2,1), background 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-chip:hover { color: #fff; border-color: rgba(255,255,255,0.34); } .ds-chip:focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; } .ds-chip-on, .ds-chip-on:hover { color: #fff; border-color: rgba(255,95,162,0.6); background: rgba(255,95,162,0.2); }"
+      "description": "Optional filters and presets. Selected lights the edge and the text, not a fill colour.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\">16:9</button><button class=\"ds-chip ds-on\">4:3</button></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 6px; } .ds-chip { height: 30px; padding: 0 11px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); color: #a0a0a4; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: color 140ms, border-color 140ms, background 140ms; } .ds-chip:hover { color: #f0f0f1; } .ds-chip:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-chip.ds-on { color: #f0f0f1; background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.08); }"
     },
     {
       "name": "Inspector Tab Rail",
       "kind": "nav",
       "refersTo": "panel-tab",
-      "description": "Every tab says what it is. Active takes a held-back amber-to-pink wash with an inset white hairline.",
-      "html": "<nav class=\"ds-rail\" role=\"tablist\" aria-label=\"Settings\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\" aria-label=\"Background\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 16l5-5 4 4 3-3 6 6\"/></svg>Background</button><button class=\"ds-tab ds-tab-on\" role=\"tab\" aria-selected=\"true\" aria-label=\"Canvas &amp; position\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M9 4v16\"/></svg>Canvas</button></nav>",
-      "css": ".ds-rail { display: flex; flex-direction: column; gap: 2px; width: 78px; padding: 10px 8px; background: rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.09); } .ds-tab { display: grid; justify-items: center; gap: 5px; padding: 9px 2px 8px; border: 0; border-radius: 10px; background: transparent; color: #a49dc6; font: 500 10.5px/1.1 'Archivo', ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.01em; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-tab:hover { color: #fff; background: rgba(255,255,255,0.07); } .ds-tab:focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; } .ds-tab-on, .ds-tab-on:hover { color: #fff; background: linear-gradient(120deg, rgba(255,138,61,0.28), rgba(255,95,162,0.32)); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); }"
+      "description": "78px recessed column of icon-over-label tabs. No tab ships icon-only.",
+      "html": "<nav class=\"ds-rail\"><button><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/></svg><span>Frame</span></button><button class=\"ds-on\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><path d=\"M4 18V7M10 18V4M16 18v-8M22 18h-20\"/></svg><span>Background</span></button></nav>",
+      "css": ".ds-rail { display: inline-flex; flex-direction: column; gap: 2px; width: 78px; padding: 14px 8px; background: rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.06); } .ds-rail button { display: grid; justify-items: center; gap: 5px; padding: 9px 2px 8px; border: 0; border-radius: 10px; background: none; color: #8a8a8e; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 10.5px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em; cursor: pointer; transition: background 140ms cubic-bezier(0.2,0.8,0.2,1), color 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-rail button:hover { color: #f0f0f1; background: rgba(255,255,255,0.04); } .ds-rail button:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-rail button.ds-on { color: #f0f0f1; background: rgba(255,255,255,0.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }"
     },
     {
-      "name": "Glass Pill",
+      "name": "Command Bar",
+      "kind": "nav",
+      "refersTo": "command-bar",
+      "description": "Full-width docked bar, 46px, square corners, one bottom hairline. The brand is 14px/500 with a 5px mark.",
+      "html": "<header class=\"ds-bar\"><span class=\"ds-brand\"><i></i>Shotframe</span><span class=\"ds-bar-sep\"></span><span class=\"ds-dims\">1600 × 1000</span></header>",
+      "css": ".ds-bar { display: flex; align-items: center; gap: 14px; height: 46px; padding: 0 10px 0 14px; background: #1a1a1c; border: 1px solid rgba(255,255,255,0.08); border-width: 0 0 1px; border-radius: 0; color: #f0f0f1; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 13px; } .ds-brand { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; letter-spacing: -0.005em; } .ds-brand i { width: 20px; height: 20px; border-radius: 5px; background: #f0f0f1; } .ds-bar-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.06); } .ds-dims { font-family: 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-size: 11px; color: #a0a0a4; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Background Tile (curated picker)",
       "kind": "card",
-      "refersTo": "command-bar",
-      "description": "The shared material of all floating chrome: sheen over a glow-tinted body, a borrowed lit top edge, inner highlight and inner bottom shadow.",
-      "html": "<div class=\"ds-pill\"><span class=\"ds-brand\">Shotframe</span><span class=\"ds-dims\">1600 × 1000</span></div>",
-      "css": ".ds-pill { display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 18px; border-radius: 29px; border: 1px solid rgba(255,255,255,0.12); border-top-color: color-mix(in srgb, var(--glow-a, #ff8f45) 34%, rgba(255,255,255,0.34)); background: linear-gradient(180deg, rgba(255,255,255,0.13), rgba(255,255,255,0.03) 42%, transparent), linear-gradient(180deg, color-mix(in srgb, var(--glow-a, #ff8f45) 14%, rgba(26,22,46,0.5)), rgba(26,22,46,0.5) 70%); backdrop-filter: blur(34px) saturate(1.9); -webkit-backdrop-filter: blur(34px) saturate(1.9); box-shadow: 0 34px 80px -26px rgba(0,0,0,0.88), 0 4px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.24), inset 0 -1px 0 rgba(0,0,0,0.3); } .ds-brand { font: 700 19px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.03em; color: #fff; } .ds-dims { font: 400 11px/1 'Spline Sans Mono', ui-monospace, Menlo, monospace; font-variant-numeric: tabular-nums; color: #b9b3d6; }"
-    },
-    {
-      "name": "Sample Badge",
-      "kind": "custom",
-      "refersTo": "command-bar",
-      "description": "The editor opens on a worked sample and says so. A solid-glass full pill below the plate, with a mono keycap.",
-      "html": "<div class=\"ds-sample\">This is a sample — press <kbd class=\"ds-kbd\">⌘V</kbd> to use your own<button class=\"ds-sample-x\" aria-label=\"Choose a file instead\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 16l5-5 4 4 3-3 6 6\"/></svg></button></div>",
-      "css": ".ds-sample { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; padding: 7px 8px 7px 13px; border-radius: 99px; background: #171332; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 24px -8px rgba(0,0,0,0.65), 0 2px 6px rgba(0,0,0,0.4); color: #b9b3d6; font: 400 12px/1 'Archivo', ui-sans-serif, system-ui, sans-serif; } .ds-kbd { font: 500 11.5px/1 'Spline Sans Mono', ui-monospace, Menlo, monospace; padding: 3px 7px; border-radius: 6px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-bottom-color: rgba(0,0,0,0.6); color: #fff; } .ds-sample-x { display: grid; place-items: center; width: 22px; height: 22px; border: 0; border-radius: 50%; background: none; color: #a49dc6; cursor: pointer; } .ds-sample-x:hover { color: #fff; background: rgba(255,255,255,0.07); }"
+      "refersTo": "slab",
+      "description": "A 16:10 tile with its name over a scrim, a Moves badge when animated, and a ring when chosen.",
+      "html": "<div class=\"ds-tiles\"><button class=\"ds-tile\"><span class=\"ds-art ds-a1\"></span><i class=\"ds-moves\">Moves</i><span class=\"ds-name\">Fluid dusk</span></button><button class=\"ds-tile ds-on\"><span class=\"ds-art ds-a2\"></span><span class=\"ds-name\">Satin pearl</span></button></div>",
+      "css": ".ds-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; width: 268px; } .ds-tile { position: relative; overflow: hidden; aspect-ratio: 16 / 10; border: 0; padding: 0; border-radius: 10px; background: none; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); transition: transform 140ms cubic-bezier(0.2,0.8,0.2,1), box-shadow 140ms cubic-bezier(0.2,0.8,0.2,1); } .ds-tile .ds-art { position: absolute; inset: 0; display: block; } .ds-a1 { background: linear-gradient(135deg, #2b2440, #6d5aa0 60%, #caa9d9); } .ds-a2 { background: linear-gradient(135deg, #e9e5df, #b9b2a8); } .ds-tile .ds-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 9px 6px; text-align: left; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 11px; font-weight: 500; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,0.6)); } .ds-tile .ds-moves { position: absolute; top: 6px; left: 6px; padding: 2px 6px; border-radius: 99px; font-family: 'Archivo', ui-sans-serif, system-ui, sans-serif; font-size: 10.5px; font-weight: 600; font-style: normal; letter-spacing: 0.02em; background: rgba(8,6,16,0.72); color: #fff; } .ds-tile:hover { transform: translateY(-2px); } .ds-tile:focus-visible { outline: 2px solid #f0f0f1; outline-offset: 2px; } .ds-tile.ds-on { box-shadow: 0 0 0 2px #1a1a1c, 0 0 0 4px #f0f0f1; }"
     }
   ],
   "narrative": {
-    "northStar": "The Aurora Room",
-    "overview": "Shotframe's editor is a deep indigo night with a light in it. The room is almost black but never neutral: it is violet-black, and the only real illumination comes from two places — the screenshot plate, which throws its own halo, and an ambient field of three enormous soft radials, two of which are sampled live from the user's own image. Chrome does not sit on this room; it floats above it as heavy, specular glass pills that pick up the room's colour through a 34px blur and hand it back as a lit top edge.\n\nDensity is high but quiet. The interface is built almost entirely from 34px controls, 11px labels and mono numerals, packed tightly so that nothing competes with the plate. The one place the world raises its voice is the accent, which is not a colour but a light: a 120-degree run from amber through pink to violet, used only where something is running, armed or on. Everything else is glass, edge and text.\n\nThe arrangement is the thesis. This world refuses the docked-toolbar-plus-settings-form layout every screenshot tool ships. Nothing is edge-docked: the command bar is a centred pill, the tool dock is a pill, and the inspector is a floating rounded panel with a 20px margin of room visible on every side.",
+    "northStar": "The Graphite Bench",
+    "overview": "Shotframe is a workbench, not a showroom. The interface is one unlit neutral room (--room #131314) with its chrome docked hard to the window edges, cut apart by 1px hairlines. Nothing in the chrome carries hue, nothing blurs, nothing glows, and nothing floats over anything else except the tool dock. The single saturated object on screen is the user's screenshot on the stage plate. Everything else is graphite, so the work reads true.\n\nDensity is instrument-panel tight: 34px controls, 10-16px rhythm, 10-11px uppercase small caps for every panel and group heading, and tabular mono for every numeral a user reads. The world earns its seriousness from restraint — hairline separation instead of glass, opaque fills instead of backdrop-filter, near-flat shadows instead of lift. This replaced an earlier indigo-and-gradient world that read as generated rather than built; the rejection of specular glass pills, chromatic accents and ambient runtime glow is a confirmed, durable one.\n\nMotion is a response, never an entrance. No surface animates in on load. Press-release on tools and buttons, a 300ms tab-in when the inspector changes tab, a 180ms pop for things that genuinely appear (menus, toasts, tool options), and full honour of prefers-reduced-motion.",
     "keyCharacteristics": [
-      "Indigo-black room, never grey, never neutral",
-      "Chrome is pills and floating panels; nothing docks to an edge",
-      "Heavy specular glass: 34px blur at 1.9 saturation, top sheen, lit top edge, inner bottom shadow",
-      "The accent is a gradient light source, used only for state",
-      "Ambient light is sampled from the user's image and is the dominant surface treatment",
-      "Every user-read numeral is tabular mono"
+      "One neutral room, zero chroma in the chrome.",
+      "The accent is the text colour (#f0f0f1); selection reads as light, not as colour.",
+      "Separation is always a 1px hairline, never blur and never glow.",
+      "Chrome docks to window edges with square corners; only the tool dock floats.",
+      "Near-flat elevation: the deepest shadow in the system is 0 2px 8px.",
+      "Small-caps labelling, tabular numerals, no icon-only tab."
     ],
     "rules": [
-      { "name": "The One Lit Object Rule", "body": "The screenshot plate is the brightest thing on screen. No chrome surface may out-glow it; glass stays at glass values and only the plate carries a halo (0.85 opacity, 95px blur).", "section": "colors" },
-      { "name": "The Borrowed Light Rule", "body": "Room colour is never authored per-surface. Anything that should feel lit reads --glow-a / --glow-b, which the image publishes at runtime. A new surface that wants warmth mixes the glow token in; it does not pick a hue.", "section": "colors" },
-      { "name": "The Accent-Is-State Rule", "body": "The Aurora run means \"this is on, focused, selected or about to export\". Never use it for emphasis, decoration or hierarchy. Where a gradient will not fit, use the flat accent — never a fourth pink.", "section": "colors" },
-      { "name": "The Dim-Is-Not-Text Rule", "body": "--dim never carries a glyph. Text bottoms out at --faint.", "section": "colors" },
-      { "name": "The Tabular Numeral Rule", "body": "Every numeral a user reads is Spline Sans Mono with font-variant-numeric: tabular-nums. A dragged value must never reflow the control around it.", "section": "typography" },
-      { "name": "The Labelled Tab Rule", "body": "No tab, and no icon-only control, ships without a visible label or an accessible name. Icons never carry meaning alone.", "section": "typography" },
-      { "name": "The Two Faces Rule", "body": "Archivo for language, Spline Sans Mono for number. There is no third family in the chrome.", "section": "typography" },
-      { "name": "The Floating Chrome Rule", "body": "No chrome surface touches a viewport edge. Every pill and panel keeps a visible margin of room on all sides, at every breakpoint.", "section": "layout" },
-      { "name": "The Real Height Rule", "body": "Phone layout anchors to --plate-h, the canvas's measured height, never to a guessed constant.", "section": "layout" },
-      { "name": "The Light-Not-Borders Rule", "body": "Surfaces separate by light: a lit top edge, an inner highlight, an inner shadow and a large diffuse cast. A four-sided full-strength border is never the separator.", "section": "elevation" },
-      { "name": "The Borrowed Edge Rule", "body": "The lit top edge is not a fixed white. It mixes 34% of the sampled glow into --edge-lit, so the chrome's highlight changes colour with the user's image.", "section": "elevation" },
-      { "name": "The No Square Corner Rule", "body": "Every surface, control and overlay is rounded. If a new element needs a radius and no token fits, it takes --r-control.", "section": "shapes" }
+      { "name": "The One Lit Object Rule", "body": "The screenshot plate is the only saturated, only genuinely lit thing on screen. If a new chrome surface needs colour to be understood, the surface is wrong, not the palette.", "section": "colors" },
+      { "name": "The Colourless Chrome Rule", "body": "No hue enters the interface. Every chrome value is graphite or white-alpha. State is expressed by lightness (4% → 7% → full white), never by hue.", "section": "colors" },
+      { "name": "The Accent-Is-Light Rule", "body": "\"Selected\", \"focused\", \"on\" and \"primary\" all read as the text colour at full strength on a room-ink ground. There is no second accent to reach for, and a gradient accent is not available.", "section": "colors" },
+      { "name": "The Dim-Is-Not-Body Rule", "body": "--dim never sets body text. Readable text bottoms out at --faint; --dim is reserved for the group-heading small caps and non-text marks.", "section": "colors" },
+      { "name": "The Small-Caps Head Rule", "body": "Headings inside chrome are not larger, they are smaller and spaced: 11px/0.07em uppercase in --faint for a panel, 10px/0.08em uppercase in --dim for a group. Hierarchy comes from tracking and colour, not from size.", "section": "typography" },
+      { "name": "The Tabular Numeral Rule", "body": "Every numeral a user reads is Spline Sans Mono with font-variant-numeric: tabular-nums, so a value never jitters as it changes.", "section": "typography" },
+      { "name": "The Two Faces Rule", "body": "Archivo for language, Spline Sans Mono for number. There is no third face, and no system-UI display face; the one system stack that remains is inside the canvas text tool, where it matches what the exported image will render.", "section": "typography" },
+      { "name": "The Labelled Tab Rule", "body": "No tab and no rail item ships icon-only. The inspector rail is 78px wide precisely so every icon carries its word underneath (10.5px), and it becomes a scrolling row of icon+word pairs below 900px.", "section": "typography" },
+      { "name": "The Docked Chrome Rule", "body": "Chrome meets the window edge. A panel that touches an edge has square corners on that side and a single hairline on its inner side; it does not inset itself, round itself away from the frame, or cast a shadow onto the room. Only the tool dock floats.", "section": "layout" },
+      { "name": "The Hairline Separation Rule", "body": "Regions are separated by exactly one 1px hairline. Never two adjacent borders, never a blur, never a gradient scrim standing in for an edge.", "section": "layout" },
+      { "name": "The Real Height Rule", "body": "The phone layout anchors to --plate-h, the canvas's measured height, not to a guessed offset, so nothing stacks below a dead band.", "section": "layout" },
+      { "name": "The Flat-By-Default Rule", "body": "A new surface gets --lift-1 (none) unless it overlays content the user was already looking at. Shadow is permission to cover, not decoration.", "section": "elevation" },
+      { "name": "The No Atmosphere Rule", "body": "No backdrop-filter on chrome, no ambient glow layer, no room tint sampled from the user's image. The room is a fixed neutral; the image lights nothing but itself.", "section": "elevation" },
+      { "name": "The Two Radius Families Rule", "body": "If it touches the window frame, it is square there and ≤10px inside. If it floats over the stage, it is ≥13px and usually a capsule. Nothing in between.", "section": "shapes" },
+      { "name": "The Point-Of-View Rule", "body": "A picker opens on a point of view, not an inventory. The default view is a curated subset chosen by the house; the full list is always exactly one click away and never the first thing shown.", "section": "components" }
     ],
     "dos": [
-      "Do float new chrome as a pill or rounded panel with a visible margin of room on every side.",
-      "Do separate surfaces with a lit top edge, an inner highlight and a diffuse cast — never a full-strength four-sided border.",
-      "Do mix --glow-a / --glow-b into anything that should read as lit, instead of authoring a hue.",
-      "Do reserve the Aurora run for state: primary action, active tool, active tab.",
-      "Do build recessed fields from white alpha (--well / --well-deep) — a darker pane of the same glass.",
-      "Do set every user-read numeral in Spline Sans Mono with tabular figures.",
-      "Do give every icon-only control a visible label or an accessible name.",
-      "Do anchor phone layout to --plate-h."
+      "Do dock new chrome to a window edge: square corners on the edge side, one 1px --edge hairline on the inner side, no shadow.",
+      "Do express state with lightness — 4% (glass-2) hover, 7% (glass-3) selected, full accent for active.",
+      "Do use the accent (#f0f0f1 on #131314 ink) for exactly one thing at a time in a region: the on tool, the focused field, the chosen tile.",
+      "Do head panels at 11px/0.07em uppercase --faint and groups at 10px/0.08em uppercase --dim.",
+      "Do set every user-facing number in Spline Sans Mono with tabular-nums.",
+      "Do recess anything editable into a --well and raise nothing.",
+      "Do ship every rail item and tab with a visible word beside its icon.",
+      "Do open any long list on a curated subset with \"Show all N\" behind a quiet button.",
+      "Do keep --lift-1 (none) as the default elevation and justify anything heavier by the surface actually covering content."
     ],
     "donts": [
-      "Don't let any chrome surface out-glow the canvas plate.",
-      "Don't use --dim on text; --faint is the floor.",
-      "Don't use the accent for emphasis, decoration or hierarchy.",
-      "Don't introduce a third type family or a system-UI display face into the chrome.",
-      "Don't cut a recessed field as a black hole; it is glass, darker.",
-      "Don't add a hard offset shadow; every shadow in this world is large and diffuse, and the only coloured cast is the accent's.",
-      "Don't ship a square corner in the chrome.",
-      "Don't use a bouncing, springing or elastic curve.",
-      "Don't dock chrome into a solid frame or wrap settings in a form panel with structural rules — that is the arrangement this world exists to refuse."
-    ],
-    "acceptedDeviations": [
-      "Resolved: the command bar is now a centred, width-capped pill (min(1180px, 100% − 32px), 29px radius), which matches the direction contract's \"floating at top centre\". The previous full-bleed deviation is closed, and the rule for new top-level chrome changes with it.",
-      "Outstanding: the direction contract comment in index.html still describes the previous world (near-black room, smoked glass, one amber accent). The build is the truth; the comment needs rewriting. Flagged, not edited."
-    ],
-    "openDecisions": [
-      "How far the glass goes — partly taken. The specular top sheen and the inner bottom shadow now exist, so a pane reads as having thickness. Still open: no specular falloff along a pane's length (a 1180px bar is lit identically at both ends), no near/far weighting (bar, dock and inspector share one blur, one edge and one shadow), and no edge refraction where a pane crosses the plate's light. Taking the rest deepens the signature; leaving it keeps the chrome quieter behind the screenshot. The product owner decides."
+      "Don't introduce a hue into the chrome — no coloured accent, no gradient accent, no tinted surface. Saturation belongs inside the plate.",
+      "Don't use backdrop-filter on chrome, an ambient glow layer, or any room tint sampled from the user's image.",
+      "Don't float a panel over the room with an inset and a drop shadow; the tool dock is the only floating surface.",
+      "Don't animate a surface in on page load.",
+      "Don't exceed 0 2px 8px of shadow, or use a shadow to imply a border.",
+      "Don't put body text in --dim.",
+      "Don't add a third typeface, or set an interface heading larger than 14px.",
+      "Don't double a separator: one hairline between two regions, never a border on both."
     ]
   }
 }

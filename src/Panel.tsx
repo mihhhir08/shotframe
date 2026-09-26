@@ -486,7 +486,7 @@ export function bgCss(s: Settings) {
   if (s.bgType === 'mesh') return meshCss(s.meshColors)
   if (s.bgType === 'solid') return s.solidColor
   if (s.bgType === 'pattern') return s.patternBack
-  if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2447 0 25%, #1c1734 0 50%) 0 0 / 10px 10px'
+  if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2a2d 0 25%, #1f1f22 0 50%) 0 0 / 10px 10px'
   return 'linear-gradient(135deg, #6b5aa8, #241d45)'
 }
 

@@ -198,7 +198,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), var(--lift-3);
 }
 .stage-canvas canvas { display: block; border-radius: var(--r-plate); }
-.checker { background: repeating-conic-gradient(#221c3f 0 25%, #16122c 0 50%) 0 0 / 16px 16px; }
+.checker { background: repeating-conic-gradient(#232326 0 25%, #1a1a1d 0 50%) 0 0 / 16px 16px; }
 .overlay { position: absolute; inset: 0; overflow: hidden; touch-action: none; }
 
 .sel-box { position: absolute; border: 1.5px dashed var(--accent); border-radius: 6px; pointer-events: none; }
