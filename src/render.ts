@@ -79,13 +79,29 @@ export function render(canvas: HTMLCanvasElement, scene: Scene, px: number, opts
   ctx.translate(L.cx, L.cy)
   if (!opts.flat) ctx.rotate((s.rotate * Math.PI) / 180)
   ctx.scale(L.k, L.k)
-  if (s.shadowOpacity > 0) {
-    // shadow values are in device px and ignore the transform
-    ctx.shadowColor = `rgba(0,0,0,${s.shadowOpacity / 100})`
-    ctx.shadowBlur = s.shadowBlur * L.u * px * L.k
-    ctx.shadowOffsetY = s.shadowY * L.u * px * L.k
+  // A real shadow is two things: a wide ambient one that sets the object in the room, and a
+  // tight contact one right under it that says it is resting on something. One blur alone
+  // reads as a sticker. Shadow values are in device px and ignore the transform.
+  const draw = () => ctx.drawImage(layer, -lw / 2, -lh / 2, lw, lh)
+  const alpha = s.shadowOpacity / 100
+  const spread = s.shadowBlur * L.u * px * L.k
+  const drop = s.shadowY * L.u * px * L.k
+  if (alpha > 0) {
+    ctx.shadowColor = `rgba(0,0,0,${alpha * 0.82})`
+    ctx.shadowBlur = spread
+    ctx.shadowOffsetY = drop
+    draw()
+    // The contact pass repaints the same opaque pixels, so only a translucent frame would
+    // double up — glass keeps the single pass.
+    if (s.frame !== 'glass') {
+      ctx.shadowColor = `rgba(0,0,0,${Math.min(0.9, alpha * 0.55)})`
+      ctx.shadowBlur = spread * 0.2
+      ctx.shadowOffsetY = drop * 0.26 + 1 * L.u * px * L.k
+      draw()
+    }
+  } else {
+    draw()
   }
-  ctx.drawImage(layer, -lw / 2, -lh / 2, lw, lh)
   ctx.restore()
 
   drawText(ctx, s, L, px)
