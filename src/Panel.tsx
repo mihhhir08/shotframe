@@ -487,7 +487,7 @@ export function bgCss(s: Settings) {
   if (s.bgType === 'solid') return s.solidColor
   if (s.bgType === 'pattern') return s.patternBack
   if (s.bgType === 'transparent') return 'repeating-conic-gradient(#2a2a2d 0 25%, #1f1f22 0 50%) 0 0 / 10px 10px'
-  return 'linear-gradient(135deg, #6b5aa8, #241d45)'
+  return 'linear-gradient(135deg, #3a3a3e, #1f1f22)'
 }
 
 // Hover an animated one and it plays, so "Moves" means something before you pick it.

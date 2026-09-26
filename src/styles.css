@@ -288,7 +288,7 @@ select:focus, input:focus, textarea:focus { border-color: var(--accent); backgro
 }
 .ink:hover { transform: scale(1.15); }
 .ink.on { box-shadow: 0 0 0 2px var(--glass-solid), 0 0 0 4px var(--accent); }
-.ink.custom { background: conic-gradient(#ff5f45, #ffcc00, #34c759, #0a84ff, #af52de, #ff5f45); }
+.ink.custom { background: conic-gradient(#ff3b30, #ffcc00, #34c759, #0a84ff, #af52de, #ff3b30); }
 .ink.custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 .timeline { display: flex; align-items: center; gap: 12px; padding: 8px 18px 8px 8px; border-radius: 26px; }
