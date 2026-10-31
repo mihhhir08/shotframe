@@ -159,7 +159,7 @@ export default function App() {
     setToolRaw('select')
   }, [update])
 
-  // #sample still loads the demo image for screenshots and tests; nothing in the UI offers it.
+  // #sample loads the demo image (the empty state offers it too).
   // A style link is applied once, then dropped from the URL so a reload keeps later edits.
   useEffect(() => {
     const sample = new URLSearchParams(location.hash.slice(1)).has('sample')
@@ -529,6 +529,7 @@ export default function App() {
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileRef.current?.click() } }}>
                 <Icon name="image" size={17} /> Choose a file
               </label>
+              <button className="btn quiet small try-sample" onClick={() => openImage(sampleImage())}>No screenshot to hand? Try a sample</button>
               <small>Your images never leave your device. Nothing is uploaded.</small>
             </div>
           </div>

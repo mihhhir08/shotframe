@@ -572,6 +572,7 @@ label.btn { cursor: pointer; }
 .empty p { margin: 0 0 24px; color: var(--muted); font-size: 15.5px; line-height: 1.55; }
 
 .empty small { display: block; margin-top: 22px; color: var(--faint); }
+.try-sample { display: flex; margin: 12px auto 0; }
 .btn.big { height: 46px; padding: 0 22px; font-size: 15px; border-radius: 15px; }
 kbd {
   font-family: var(--mono); font-size: 11.5px; font-weight: 500;
