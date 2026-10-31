@@ -629,7 +629,9 @@ kbd {
   /* hug the plate to the top of its box so nothing stacks below a dead band */
   .bg-panel, .bg-tab { display: none; }
   .stage { inset: 72px 14px auto 14px; height: min(42dvh, 380px); place-items: start center; }
-  .dock { right: 14px; bottom: auto; top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 38px); }
+  .dock { left: 14px; right: 14px; bottom: auto; top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 38px); }
+  /* the empty card takes the plate's box, so the sheet below never covers it */
+  .empty { inset: 72px 14px auto 14px; height: min(42dvh, 380px); padding: 0; }
   .panel {
     top: calc(72px + var(--plate-h, min(42dvh, 380px)) + 96px); right: 14px; left: 14px; bottom: 14px;
     width: auto; grid-template-columns: 1fr; grid-template-rows: auto 1fr;
@@ -650,7 +652,8 @@ kbd {
     background: linear-gradient(180deg, var(--surface) 72%, transparent);
   }
   .menu { inset: 70px 10px auto 10px; width: auto; }
-  .toolbar { overflow-x: auto; max-width: calc(100vw - 28px); }
+  /* twelve tools don't fit a phone: scroll, with the same fade as the tab row to say so */
+  .toolbar { overflow-x: auto; max-width: calc(100vw - 28px); scrollbar-width: none; mask-image: linear-gradient(90deg, #000 88%, transparent); }
   .empty-card { padding: 26px 20px 22px; }
   .empty h1 { font-size: 21px; }
   .empty p { font-size: 13.5px; margin-bottom: 18px; }
