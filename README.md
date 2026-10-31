@@ -39,7 +39,7 @@ Any style can travel as a link, written as plain params in the URL hash:
 https://shotframe-wheat.vercel.app/#preset=Glass&padding=96&caption=Launch%20day
 ```
 
-Open it, paste a screenshot, and it's already styled. **Copy style link** in the Presets panel makes one from whatever you've set up. A team can share one look across every post this way.
+Open it, paste a screenshot (or try the sample), and it's already styled. A short note confirms the style loaded. **Copy style link** in the Presets panel makes one from whatever you've set up. A team can share one look across every post this way.
 
 The hash is never sent to a server, so links stay as private as the rest of the app. Every field is checked on the way in. Unknown keys, out-of-range numbers and bad colours are dropped one field at a time, so a bad value never breaks the page (see [`share.ts`](src/share.ts) and its tests).
 
@@ -87,6 +87,7 @@ A few decisions that shaped the product:
 | `V` `C` `A` `R` `O` `H` `T` `N` `P` `B` `X` `S` | Select, crop, arrow, box, ellipse, highlight, text, step, pen, blur, pixelate, spotlight |
 | `⌫` | Delete selected annotation |
 | `Esc` / `Enter` | Back to select / finish crop |
+| `?` | Show every shortcut |
 
 Drag the screenshot to reposition it. Double-click a text annotation to edit it. Drag an arrow's middle handle to bend it. In Motion, space plays and pauses. On Windows, use Ctrl in place of ⌘.
 

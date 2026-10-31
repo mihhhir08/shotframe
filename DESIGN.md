@@ -563,6 +563,10 @@ the system is 5px.
   plays `tab-in` (300ms, 5px rise) on change — the one entrance left in the system.
 - **Background tab:** when the left panel is collapsed, a 44px stub with a vertical-writing
   11px/0.04em label, rounded only on its outer side.
+- **Shortcut sheet:** a native `<dialog>` opened with `?` or the keyboard button in the
+  command bar. It uses the export menu's surface: `--surface`, 1px `--edge`, `--r-slab`,
+  `--lift-3`, a 50% black backdrop. Label left in `muted`, `kbd` right, rows cut by
+  hairlines, two columns on desktop and one on phones.
 
 ### Signature: the curated picker
 Background pickers open on a curated FEATURED set of sixteen — 8 wallpapers, 4 themes,
