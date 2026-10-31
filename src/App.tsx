@@ -27,6 +27,11 @@ const TOOLS: [Tool, IconName, string, string][] = [
   ['pixelate', 'pixelate', 'Pixelate', 'X'],
   ['spotlight', 'spotlight', 'Spotlight', 'S'],
 ]
+const KEYS: [string, string][] = [
+  ['⌘V', 'Paste image'], ['⌘O', 'Open image'], ['⌘C', 'Copy result'], ['⌘S', 'Export'],
+  ['⌘Z', 'Undo'], ['⌘⇧Z', 'Redo'], ['⌘B', 'Fold backgrounds'], ['⌫', 'Delete annotation'],
+  ['Esc', 'Back to select'], ['?', 'Shortcuts'],
+]
 const INK = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#0a84ff', '#af52de', '#ffffff', '#111111']
 const FORMATS = ['png', 'jpeg', 'webp'] as const
 const SCALES = [0.5, 1, 2, 3, 4]
@@ -111,6 +116,7 @@ export default function App() {
   const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const keysRef = useRef<HTMLDialogElement>(null)
   const toastTimer = useRef(0)
   const bgTime = useRef(0) // frame the preview is showing, so a PNG exports what you see
 
@@ -387,7 +393,8 @@ export default function App() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement
-      if (t.closest('textarea, select, [contenteditable]') || t.matches('input:not([type=file])')) return
+      if (t.closest('textarea, select, [contenteditable]') || t.matches('input:not([type=file])') || keysRef.current?.open) return
+      if (e.key === '?') return keysRef.current?.showModal()
       const mod = e.metaKey || e.ctrlKey
       const k = e.key.toLowerCase()
       if (mod && k === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo() }
@@ -453,6 +460,7 @@ export default function App() {
           <div className="bar-group">
             <button className="icon-btn" disabled={!canUndo} onClick={undo} aria-label="Undo" title={`Undo (${MOD}Z)`}><Icon name="undo" size={17} /></button>
             <button className="icon-btn" disabled={!canRedo} onClick={redo} aria-label="Redo" title={`Redo (${MOD}⇧Z)`}><Icon name="redo" size={17} /></button>
+            <button className="icon-btn" onClick={() => keysRef.current?.showModal()} aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)"><Icon name="keyboard" size={17} /></button>
           </div>
           <span className="bar-sep" />
           {mode === 'static' && <button className="btn" disabled={!scene} onClick={copy} title={`Copy image (${MOD}C)`}><Icon name="copy" size={15} /> Copy</button>}
@@ -634,6 +642,18 @@ export default function App() {
         showBackground={narrow}
       />
 
+
+      <dialog ref={keysRef} className="keys" aria-labelledby="keys-title" onClick={(e) => e.target === e.currentTarget && keysRef.current?.close()}>
+        <header className="panel-head">
+          <h2 id="keys-title">Shortcuts</h2>
+          <button className="icon-btn" onClick={() => keysRef.current?.close()} aria-label="Close"><Icon name="x" size={16} /></button>
+        </header>
+        <dl>
+          {[...KEYS.map(([k, l]): [string, string] => [k.replace('⌘', MOD), l]), ...TOOLS.map(([, , l, k]): [string, string] => [k, l])].map(([k, l]) => (
+            <div key={l}><dt>{l}</dt><dd><kbd>{k}</kbd></dd></div>
+          ))}
+        </dl>
+      </dialog>
 
       {toast && <div className="toast" role="status">{toast}</div>}
       <input ref={fileRef} id={FILE_INPUT_ID} type="file" accept="image/*" className="file-input" onChange={(e) => {
