@@ -1,0 +1,45 @@
+# Shotframe
+
+> Shotframe turns a raw screenshot into something worth posting: backgrounds, window frames, shadows, 3D tilt, annotations, and an animated MP4. It runs entirely in the browser. Images never leave the device; there is no account, upload or API key.
+
+Source: https://github.com/mihhhir08/shotframe
+
+## Open Shotframe with a style
+
+A style is written in the URL hash as plain params. The hash is never sent to a server.
+
+    https://shotframe-wheat.vercel.app/#preset=Glass&padding=96&caption=Launch%20day
+
+- Every field is optional. Start from a preset, then override single fields.
+- Unknown fields, unknown values and numbers beyond ±10000 are ignored, never an error.
+- Colour lists are comma-separated hex, with or without `#`: `gradColors=ffb347,e8541e`.
+- The user then pastes (⌘V / Ctrl+V), drops or opens their screenshot. The style is already applied.
+- The style is applied once, then removed from the address bar.
+
+## Fields
+
+- `preset`: Ember, Clean, Glass, Tilted, Browser, Midnight, Blurred, Meadow, Lagoon
+- `bgType`: wallpaper, theme, texture, pattern, gradient, mesh, solid, blurred, transparent
+- `wallpaper`: fluid-dusk fluid-reef fluid-ember fluid-ink bloom-halo bloom-sunrise bloom-frost haze-sahara haze-alpine haze-rose curtains-borealis curtains-magenta curtains-solar nebula-deep nebula-crimson nebula-teal satin-pearl satin-onyx satin-jade ribbons-amber ribbons-violet ribbons-ocean ribbons-rose folds-cobalt folds-jade folds-magenta folds-slate drape-sunset drape-arctic drape-moss drape-dune
+- `theme`: theme-sonoma theme-sequoia theme-bigsur theme-monterey theme-ventura theme-tahoe theme-sunset theme-lavender theme-mint theme-slate theme-rose theme-sand
+- `texture`: tex-paper tex-linen tex-concrete tex-carbon tex-brushed tex-plaster tex-denim tex-cork tex-slate tex-terrazzo
+- `pattern`: dots grid lines checks rings cross, with `patternBack`, `patternFore` (hex), `patternScale` (30–260), `patternAngle` (0–90)
+- `gradColors` (2+ hex), `gradAngle` (0–360), `gradRadial` (true/false)
+- `meshColors`: 5 hex, base first
+- `solidColor`: hex
+- `noise`: grain 0–100
+- `frame`: none macLight macDark browserLight browserDark windowsLight windowsDark glass, with `frameTitle`
+- `padding` 0–300, `scale` 20–200, `radius` 0–80, `inset` 0–160, `insetColor`
+- `shadowBlur` 0–200, `shadowOpacity` 0–100, `shadowY` −100–150
+- `borderWidth` 0–20, `borderColor` (hex, alpha allowed)
+- `tiltX`, `tiltY`, `rotate`: −45–45 degrees
+- `aspect`: auto 1:1 4:3 3:2 16:9 16:10 9:16 4:5 x linkedin og ph dribbble yt custom, with `customW`, `customH`
+- `caption`, `captionSize` 12–140, `captionColor`, `captionPos` (top/bottom)
+- `watermark`, `watermarkPos` (tl tc tr bl bc br), `watermarkOpacity` 5–100
+- `motion`: still tilt-in zoom-in rise push float swing orbit; `motionDuration` 2–12 seconds; `bgAnimate` (true/false); `bgSpeed` 25–300
+
+## In-browser agents (WebMCP)
+
+Where the browser provides `navigator.modelContext`, Shotframe registers one tool:
+
+- `apply_style`: takes the fields above as a JSON object and restyles the open screenshot. It returns the names of the fields it applied, or says that none were valid.
