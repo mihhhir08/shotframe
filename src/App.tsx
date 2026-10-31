@@ -7,6 +7,7 @@ import { computeLayout } from './layout.ts'
 import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
 import { Background, Panel, Seg, TABS, type BgPick, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type RenderCache, type Scene } from './render.ts'
+import { styleFromHash, styleToHash } from './share.ts'
 import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
 import { SIZES, Stage } from './Stage.tsx'
 
@@ -80,7 +81,8 @@ function useHistory(initial: Doc) {
 }
 
 export default function App() {
-  const initial = useMemo<Doc>(() => ({ settings: { ...DEFAULTS, ...load<Partial<Settings>>('shotframe:settings', {}), crop: null }, annotations: [] }), [])
+  // a style link (#preset=Glass&padding=96) wins over the stored style; see share.ts
+  const initial = useMemo<Doc>(() => ({ settings: { ...DEFAULTS, ...(styleFromHash(location.hash) ?? load<Partial<Settings>>('shotframe:settings', {})), crop: null }, annotations: [] }), [])
   const { doc, update, undo, redo, canUndo, canRedo } = useHistory(initial)
   const s = doc.settings
 
@@ -158,8 +160,11 @@ export default function App() {
   }, [update])
 
   // #sample still loads the demo image for screenshots and tests; nothing in the UI offers it.
+  // A style link is applied once, then dropped from the URL so a reload keeps later edits.
   useEffect(() => {
-    if (location.hash === '#sample') openImage(sampleImage())
+    const sample = new URLSearchParams(location.hash.slice(1)).has('sample')
+    if (sample) openImage(sampleImage())
+    if (styleFromHash(location.hash)) history.replaceState(null, '', location.pathname + (sample ? '#sample' : ''))
   }, [openImage])
 
   const openFile = useCallback(async (file: Blob) => {
@@ -570,6 +575,14 @@ export default function App() {
           const next = [...presets.filter((p) => p.name !== name), { name, settings: style }]
           if (save('shotframe:presets', next)) setPresets(next)
           else flash('Preset too large to store. Try without a background image.')
+        }}
+        onShareStyle={async () => {
+          try {
+            await navigator.clipboard.writeText(`${location.origin}${location.pathname}#${styleToHash(s)}`)
+            flash(s.bgType === 'image' ? 'Style link copied, without your background image' : 'Style link copied')
+          } catch {
+            flash('Copy failed.')
+          }
         }}
         onDeletePreset={(name) => {
           const next = presets.filter((p) => p.name !== name)

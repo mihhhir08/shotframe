@@ -36,6 +36,7 @@ const PATHS = {
   headNone: 'M4 12h16',
   dash: 'M3 12h4M10 12h4M17 12h4',
   chevron: 'M6 9l6 6 6-6',
+  link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
 }
 
 export type IconName = keyof typeof PATHS

@@ -38,6 +38,7 @@ interface Props {
   image: LoadedImage | null
   presets: UserPreset[]
   onSavePreset: (name: string) => void
+  onShareStyle: () => void
   onDeletePreset: (name: string) => void
   onReset: () => void
   onAnimateBg: () => void
@@ -46,7 +47,7 @@ interface Props {
   onRecent: (p: BgPick) => void
 }
 
-export function Panel({ tab, onTab, motion, showBackground, s, set, layout, image, presets, onSavePreset, onDeletePreset, onReset, onAnimateBg, motionReady, recent, onRecent }: Props) {
+export function Panel({ tab, onTab, motion, showBackground, s, set, layout, image, presets, onSavePreset, onShareStyle, onDeletePreset, onReset, onAnimateBg, motionReady, recent, onRecent }: Props) {
   const tabs = TABS.filter(([id]) => (motion || id !== 'motion') && (showBackground || id !== 'background'))
   const current = tabs.find((t) => t[0] === tab) ?? tabs[0]
   // the stored tab can point at a tab this mode does not show (Motion, after a reload in Static)
@@ -101,7 +102,7 @@ export function Panel({ tab, onTab, motion, showBackground, s, set, layout, imag
             </Group>
           </>
         )}
-        {active === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onDelete={onDeletePreset} />}
+        {active === 'presets' && <Presets s={s} set={set} presets={presets} onSave={onSavePreset} onShare={onShareStyle} onDelete={onDeletePreset} />}
         {active === 'background' && <Background s={s} set={set} image={image} recent={recent} onRecent={onRecent} onAnimateBg={onAnimateBg} motionReady={motionReady} />}
 
         {active === 'canvas' && (
@@ -236,7 +237,7 @@ export function Panel({ tab, onTab, motion, showBackground, s, set, layout, imag
   )
 }
 
-function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetSettings; presets: UserPreset[]; onSave: (n: string) => void; onDelete: (n: string) => void }) {
+function Presets({ s, set, presets, onSave, onShare, onDelete }: { s: Settings; set: SetSettings; presets: UserPreset[]; onSave: (n: string) => void; onShare: () => void; onDelete: (n: string) => void }) {
   const [naming, setNaming] = useState<string | null>(null)
   return (
     <>
@@ -272,6 +273,7 @@ function Presets({ s, set, presets, onSave, onDelete }: { s: Settings; set: SetS
             <button className="btn" type="submit" aria-label="Save preset"><Icon name="check" size={14} /></button>
           </form>
         )}
+        <button className="btn wide quiet" onClick={onShare} title="Copy a link that opens Shotframe with this style"><Icon name="link" size={14} /> Copy style link</button>
       </Group>
     </>
   )
