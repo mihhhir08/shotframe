@@ -164,7 +164,9 @@ export default function App() {
   useEffect(() => {
     const sample = new URLSearchParams(location.hash.slice(1)).has('sample')
     if (sample) openImage(sampleImage())
-    if (styleFromHash(location.hash)) history.replaceState(null, '', location.pathname + (sample ? '#sample' : ''))
+    if (!styleFromHash(location.hash)) return
+    history.replaceState(null, '', location.pathname + (sample ? '#sample' : ''))
+    flash(sample ? 'Style loaded from link' : 'Style loaded. Paste a screenshot to use it.')
   }, [openImage])
 
   // WebMCP: an agent in the browser (Chrome's navigator.modelContext) can restyle the shot
