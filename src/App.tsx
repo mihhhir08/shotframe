@@ -8,7 +8,7 @@ import { motionPatch, videoMime, VIDEO_SIZES } from './motion.ts'
 import { Background, Panel, Seg, TABS, type BgPick, type PanelTab, type SetSettings, type UserPreset } from './Panel.tsx'
 import { render, type RenderCache, type Scene } from './render.ts'
 import { styleFromHash, styleToHash } from './share.ts'
-import { DEFAULTS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
+import { DEFAULTS, FRAMES, STYLE_PRESETS, type Annotation, type ArrowHeads, type Settings, type StrokeOpts, type Tool } from './settings.ts'
 import { SIZES, Stage } from './Stage.tsx'
 
 interface Doc { settings: Settings; annotations: Annotation[] }
@@ -166,6 +166,42 @@ export default function App() {
     if (sample) openImage(sampleImage())
     if (styleFromHash(location.hash)) history.replaceState(null, '', location.pathname + (sample ? '#sample' : ''))
   }, [openImage])
+
+  // WebMCP: an agent in the browser (Chrome's navigator.modelContext) can restyle the shot
+  // through the same validated params as a style link. Absent everywhere else, so it no-ops.
+  useEffect(() => {
+    type Ctx = { registerTool(tool: object, opts: { signal: AbortSignal }): void }
+    const mc = (navigator as unknown as { modelContext?: Ctx }).modelContext
+    if (!mc?.registerTool) return
+    const ctl = new AbortController()
+    mc.registerTool({
+      name: 'apply_style',
+      description: 'Restyle the screenshot open in Shotframe. Takes the same fields as a style link; every field is optional and unknown or out-of-range values are ignored. Full field list: /llms.txt',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: true,
+        properties: {
+          preset: { type: 'string', enum: STYLE_PRESETS.map((p) => p.name) },
+          bgType: { type: 'string', enum: ['wallpaper', 'theme', 'texture', 'pattern', 'gradient', 'mesh', 'solid', 'blurred', 'transparent'] },
+          gradColors: { type: 'array', items: { type: 'string', description: 'hex colour' } },
+          frame: { type: 'string', enum: FRAMES.map((f) => f.id) },
+          padding: { type: 'number', minimum: 0, maximum: 300 },
+          radius: { type: 'number', minimum: 0, maximum: 80 },
+          tiltX: { type: 'number', minimum: -45, maximum: 45 },
+          tiltY: { type: 'number', minimum: -45, maximum: 45 },
+          caption: { type: 'string' },
+        },
+      },
+      execute: async (input: Record<string, unknown>) => {
+        const params = new URLSearchParams(Object.entries(input).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : String(v)]))
+        const patch = styleFromHash(params.toString())
+        if (!patch) return 'Nothing applied: no valid fields. See /llms.txt for the field list.'
+        set(patch)
+        return `Applied ${Object.keys(patch).join(', ')}.`
+      },
+    }, { signal: ctl.signal })
+    return () => ctl.abort()
+  }, [set])
 
   const openFile = useCallback(async (file: Blob) => {
     try {
